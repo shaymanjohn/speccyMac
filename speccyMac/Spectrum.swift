@@ -8,10 +8,12 @@
 
 import Cocoa
 
-protocol Screen : class {
+protocol Machine : class {
     func refreshScreen()
     
-    var borderColour: UInt8 {get set}
+    var borderColour:  UInt8 { get set }
+    var ticksPerFrame: UInt32 { get }
+    var clickCount: UInt32 { get set }
 }
 
 class Spectrum: NSViewController {
@@ -20,17 +22,21 @@ class Spectrum: NSViewController {
     
     var z80: Z80!
     var border: UInt8 = 0
+    var clicksCount: UInt32 = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let memory = Memory("48.rom")
         z80 = Z80(memory: memory)
-        z80.screen = self
+        z80.machine = self
         
         DispatchQueue.global(qos: .background).async {
             self.z80.start()
         }
+        
+        self.spectrumScreen.wantsLayer = true
+        self.spectrumScreen.layer?.backgroundColor = NSColor.black.cgColor
     }
     
     func loadGame(_ game: String) {
@@ -41,7 +47,20 @@ class Spectrum: NSViewController {
 
 }
 
-extension Spectrum : Screen {
+extension Spectrum : Machine {
+    var clickCount: UInt32 {
+        get {
+            return self.clicksCount
+        }
+        set {
+            self.clicksCount = newValue
+        }
+    }
+    
+    var ticksPerFrame: UInt32 {
+        return 69888
+    }
+    
     var borderColour: UInt8 {
         get {
             return self.border

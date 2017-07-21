@@ -92,10 +92,12 @@ extension Z80 {
     
     @inline(__always) func out(port: UInt8, register: UInt8) {
         if port == 0xfe {
-            screen?.borderColour = register & 0x07
+            machine?.borderColour = register & 0x07
             
             if register & 0x10 > 0 {
-                self.clicksCount = self.clicksCount + 1
+                if let clicks = machine?.clickCount {
+                    machine!.clickCount = clicks + 1
+                }
             }
         }
     }

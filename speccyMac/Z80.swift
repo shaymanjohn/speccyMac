@@ -89,7 +89,7 @@ class Z80 {
         }
     }
     
-    weak var screen: Screen?
+    weak var machine: Machine?
     
     var memory: Memory
     
@@ -99,13 +99,12 @@ class Z80 {
     var exde: UInt16 = 0
     
     var counter:       UInt32 = 0
-    let ticksPerFrame: UInt32 = 69888
     
     var paused:        Bool = false
     var ula:           UInt16 = 0
     var videoRow:      UInt16 = 0
     var lastFrame:     TimeInterval = 0
-    let frameTime:     TimeInterval = 0.02
+    let frameTime:     TimeInterval = 0.02      // 50 Fps
     var lateFrames:    UInt16 = 0
     var interrupts:    Bool = false
     var halted:        Bool = false
@@ -129,7 +128,7 @@ class Z80 {
     var overFlowAdd:   Array<UInt8> = [0, 0, 0, 1 << 2, 1 << 2, 0, 0, 0]
     var overFlowSub:   Array<UInt8> = [0, 1 << 2, 0, 0, 0, 0, 1 << 2, 0]
     
-    var clicksCount:   UInt32 = 0
+//    var clicksCount:   UInt32 = 0
     
     struct Instruction {
         var length:     UInt16
@@ -160,7 +159,7 @@ class Z80 {
         
         while running {
             do {
-                if counter >= self.ticksPerFrame {
+                if counter >= machine?.ticksPerFrame ?? 0 {
                     self.serviceInterrupts()
                 } else if !paused {
                     do {
@@ -201,11 +200,13 @@ class Z80 {
                     }
                 }
                 
+                // machine specifics here...
+                
                 if self.ula >= 224 {
                     if self.videoRow > 63 && self.videoRow < 256 {
                         
                     } else if self.videoRow == 311 {
-                        self.screen?.refreshScreen()
+                        self.machine?.refreshScreen()
                     }
                     
                     self.ula = self.ula - 224
@@ -255,7 +256,7 @@ class Z80 {
                 iff2 = 0;
             }
             
-            screen?.borderColour = loader.borderColour;
+            machine?.borderColour = loader.borderColour;
             
             counter = 0;
             lateFrames = 0;
@@ -264,7 +265,7 @@ class Z80 {
             videoRow = 0;
             
             // Sound vars
-            clicksCount = 0;
+//            clicksCount = 0;
             //            beep = false;
             //            soundCounter = 0;
             //            bufferIndex = 0;
@@ -360,7 +361,7 @@ class Z80 {
             self.lastFrame = self.lastFrame + self.frameTime
         }
         
-        self.counter = self.counter - self.ticksPerFrame
+        self.counter = self.counter - (machine?.ticksPerFrame ?? 0)
         self.ula = UInt16(self.counter)
         self.videoRow = 0
         
