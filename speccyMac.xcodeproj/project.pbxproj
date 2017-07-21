@@ -1,0 +1,371 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6F8E10851F2259E10039C0BB /* Z80+functions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8E10841F2259E10039C0BB /* Z80+functions.swift */; };
+		6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90C1F2238A500F9AD93 /* Memory.swift */; };
+		6FEFA90F1F2238C200F9AD93 /* Z80.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90E1F2238C200F9AD93 /* Z80.swift */; };
+		6FEFA91E1F223B5A00F9AD93 /* z80ops.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6FEFA91B1F223AA400F9AD93 /* z80ops.txt */; };
+		6FEFA91F1F223B5E00F9AD93 /* 48.rom in Resources */ = {isa = PBXBuildFile; fileRef = 6FEFA91D1F223B3A00F9AD93 /* 48.rom */; };
+		6FEFA9201F223B6200F9AD93 /* manic.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FEFA91C1F223B3200F9AD93 /* manic.sna */; };
+		6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA9211F223FCE00F9AD93 /* Loader.swift */; };
+		6FEFA9261F224F9000F9AD93 /* Z80+cb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA9251F224F9000F9AD93 /* Z80+cb.swift */; };
+		6FEFA9281F224FC000F9AD93 /* Z80+dd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA9271F224FC000F9AD93 /* Z80+dd.swift */; };
+		6FEFA92A1F224FF500F9AD93 /* Z80+ed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA9291F224FF500F9AD93 /* Z80+ed.swift */; };
+		6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA92B1F22503000F9AD93 /* Z80+unprefixed.swift */; };
+		6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA92D1F2250B200F9AD93 /* Z80+ddcb.swift */; };
+		6FFB31541F22379B00C15CD7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFB31531F22379B00C15CD7 /* AppDelegate.swift */; };
+		6FFB31561F22379B00C15CD7 /* Spectrum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFB31551F22379B00C15CD7 /* Spectrum.swift */; };
+		6FFB31581F22379B00C15CD7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FFB31571F22379B00C15CD7 /* Assets.xcassets */; };
+		6FFB315B1F22379B00C15CD7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FFB31591F22379B00C15CD7 /* Main.storyboard */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		6F8E10841F2259E10039C0BB /* Z80+functions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+functions.swift"; sourceTree = "<group>"; };
+		6FEFA90C1F2238A500F9AD93 /* Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memory.swift; sourceTree = "<group>"; };
+		6FEFA90E1F2238C200F9AD93 /* Z80.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z80.swift; sourceTree = "<group>"; };
+		6FEFA91B1F223AA400F9AD93 /* z80ops.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = z80ops.txt; sourceTree = SOURCE_ROOT; };
+		6FEFA91C1F223B3200F9AD93 /* manic.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = manic.sna; sourceTree = SOURCE_ROOT; };
+		6FEFA91D1F223B3A00F9AD93 /* 48.rom */ = {isa = PBXFileReference; lastKnownFileType = file; path = 48.rom; sourceTree = SOURCE_ROOT; };
+		6FEFA9211F223FCE00F9AD93 /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
+		6FEFA9251F224F9000F9AD93 /* Z80+cb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+cb.swift"; sourceTree = "<group>"; };
+		6FEFA9271F224FC000F9AD93 /* Z80+dd.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+dd.swift"; sourceTree = "<group>"; };
+		6FEFA9291F224FF500F9AD93 /* Z80+ed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+ed.swift"; sourceTree = "<group>"; };
+		6FEFA92B1F22503000F9AD93 /* Z80+unprefixed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+unprefixed.swift"; sourceTree = "<group>"; };
+		6FEFA92D1F2250B200F9AD93 /* Z80+ddcb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+ddcb.swift"; sourceTree = "<group>"; };
+		6FFB31501F22379B00C15CD7 /* speccyMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = speccyMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6FFB31531F22379B00C15CD7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		6FFB31551F22379B00C15CD7 /* Spectrum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spectrum.swift; sourceTree = "<group>"; };
+		6FFB31571F22379B00C15CD7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6FFB315A1F22379B00C15CD7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		6FFB315C1F22379B00C15CD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6FFB315D1F22379B00C15CD7 /* speccyMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = speccyMac.entitlements; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6FFB314D1F22379B00C15CD7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6FEFA9101F2239AD00F9AD93 /* Roms */ = {
+			isa = PBXGroup;
+			children = (
+				6FEFA91D1F223B3A00F9AD93 /* 48.rom */,
+				6FEFA91C1F223B3200F9AD93 /* manic.sna */,
+			);
+			path = Roms;
+			sourceTree = "<group>";
+		};
+		6FFB31471F22379B00C15CD7 = {
+			isa = PBXGroup;
+			children = (
+				6FFB31521F22379B00C15CD7 /* speccyMac */,
+				6FFB31511F22379B00C15CD7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6FFB31511F22379B00C15CD7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6FFB31501F22379B00C15CD7 /* speccyMac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6FFB31521F22379B00C15CD7 /* speccyMac */ = {
+			isa = PBXGroup;
+			children = (
+				6FFB31531F22379B00C15CD7 /* AppDelegate.swift */,
+				6FFB31551F22379B00C15CD7 /* Spectrum.swift */,
+				6FEFA90C1F2238A500F9AD93 /* Memory.swift */,
+				6FEFA90E1F2238C200F9AD93 /* Z80.swift */,
+				6F8E10841F2259E10039C0BB /* Z80+functions.swift */,
+				6FEFA92B1F22503000F9AD93 /* Z80+unprefixed.swift */,
+				6FEFA9251F224F9000F9AD93 /* Z80+cb.swift */,
+				6FEFA9271F224FC000F9AD93 /* Z80+dd.swift */,
+				6FEFA9291F224FF500F9AD93 /* Z80+ed.swift */,
+				6FEFA92D1F2250B200F9AD93 /* Z80+ddcb.swift */,
+				6FEFA9211F223FCE00F9AD93 /* Loader.swift */,
+				6FEFA9101F2239AD00F9AD93 /* Roms */,
+				6FFB31571F22379B00C15CD7 /* Assets.xcassets */,
+				6FEFA91B1F223AA400F9AD93 /* z80ops.txt */,
+				6FFB31591F22379B00C15CD7 /* Main.storyboard */,
+				6FFB315C1F22379B00C15CD7 /* Info.plist */,
+				6FFB315D1F22379B00C15CD7 /* speccyMac.entitlements */,
+			);
+			path = speccyMac;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6FFB314F1F22379B00C15CD7 /* speccyMac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6FFB31601F22379B00C15CD7 /* Build configuration list for PBXNativeTarget "speccyMac" */;
+			buildPhases = (
+				6FFB314C1F22379B00C15CD7 /* Sources */,
+				6FFB314D1F22379B00C15CD7 /* Frameworks */,
+				6FFB314E1F22379B00C15CD7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = speccyMac;
+			productName = speccyMac;
+			productReference = 6FFB31501F22379B00C15CD7 /* speccyMac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6FFB31481F22379B00C15CD7 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0900;
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = "John Ward";
+				TargetAttributes = {
+					6FFB314F1F22379B00C15CD7 = {
+						CreatedOnToolsVersion = 9.0;
+					};
+				};
+			};
+			buildConfigurationList = 6FFB314B1F22379B00C15CD7 /* Build configuration list for PBXProject "speccyMac" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6FFB31471F22379B00C15CD7;
+			productRefGroup = 6FFB31511F22379B00C15CD7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6FFB314F1F22379B00C15CD7 /* speccyMac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6FFB314E1F22379B00C15CD7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6FFB31581F22379B00C15CD7 /* Assets.xcassets in Resources */,
+				6FFB315B1F22379B00C15CD7 /* Main.storyboard in Resources */,
+				6FEFA91F1F223B5E00F9AD93 /* 48.rom in Resources */,
+				6FEFA91E1F223B5A00F9AD93 /* z80ops.txt in Resources */,
+				6FEFA9201F223B6200F9AD93 /* manic.sna in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6FFB314C1F22379B00C15CD7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */,
+				6FFB31561F22379B00C15CD7 /* Spectrum.swift in Sources */,
+				6FEFA90F1F2238C200F9AD93 /* Z80.swift in Sources */,
+				6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */,
+				6FEFA9261F224F9000F9AD93 /* Z80+cb.swift in Sources */,
+				6FEFA9281F224FC000F9AD93 /* Z80+dd.swift in Sources */,
+				6FEFA92A1F224FF500F9AD93 /* Z80+ed.swift in Sources */,
+				6F8E10851F2259E10039C0BB /* Z80+functions.swift in Sources */,
+				6FFB31541F22379B00C15CD7 /* AppDelegate.swift in Sources */,
+				6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */,
+				6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		6FFB31591F22379B00C15CD7 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6FFB315A1F22379B00C15CD7 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		6FFB315E1F22379B00C15CD7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		6FFB315F1F22379B00C15CD7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+			};
+			name = Release;
+		};
+		6FFB31611F22379B00C15CD7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = speccyMac/speccyMac.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = B7LWR6U3HW;
+				INFOPLIST_FILE = speccyMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		6FFB31621F22379B00C15CD7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = speccyMac/speccyMac.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = B7LWR6U3HW;
+				INFOPLIST_FILE = speccyMac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6FFB314B1F22379B00C15CD7 /* Build configuration list for PBXProject "speccyMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6FFB315E1F22379B00C15CD7 /* Debug */,
+				6FFB315F1F22379B00C15CD7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6FFB31601F22379B00C15CD7 /* Build configuration list for PBXNativeTarget "speccyMac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6FFB31611F22379B00C15CD7 /* Debug */,
+				6FFB31621F22379B00C15CD7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6FFB31481F22379B00C15CD7 /* Project object */;
+}
