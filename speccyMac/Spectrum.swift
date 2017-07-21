@@ -16,6 +16,8 @@ protocol Screen : class {
 
 class Spectrum: NSViewController {
     
+    @IBOutlet weak var spectrumScreen: NSImageView!
+    
     var z80: Z80!
     var border: UInt8 = 0
     
@@ -25,8 +27,6 @@ class Spectrum: NSViewController {
         let memory = Memory("48.rom")
         z80 = Z80(memory: memory)
         z80.screen = self
-        
-//        loadGame("manic.sna")
         
         DispatchQueue.global(qos: .background).async {
             self.z80.start()
@@ -46,6 +46,7 @@ extension Spectrum : Screen {
         get {
             return self.border
         }
+        
         set {
             self.border = newValue
         }

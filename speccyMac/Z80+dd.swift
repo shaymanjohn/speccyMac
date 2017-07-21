@@ -10,17 +10,12 @@ import Foundation
 
 extension Z80 {
     
-    final func ddprefix(opcode: UInt8, first: UInt8, second: UInt8) -> Bool {
-        var success = true
+    final func ddprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
         let word16 = (UInt16(second) << 8) + UInt16(first)
         let instruction = self.ddprefixedOps[Int(opcode)]
         
         let offset = UInt16(first)
-        
-        //        let hexPc = String(self.pc, radix: 16, uppercase: true)
-        //        let hexOp = String(opcode, radix: 16, uppercase: false)
-        //        print("\(hexPc) \(hexOp) \(instruction.opCode)")
         
         switch opcode {
             
@@ -33,10 +28,7 @@ extension Z80 {
             print("offset \(offset)")
             
         default:
-            success = false
-            let hex = String(opcode, radix: 16, uppercase: true)
-            let hexPc = String(self.pc, radix: 16, uppercase: true)
-            print("\(hexPc) ddprefix \(hex) unknown, operation \(instruction.opCode)")
+            throw NSError(domain: "ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode])
         }
         
         self.pc = self.pc + instruction.length
@@ -46,7 +38,5 @@ extension Z80 {
         
         self.incR()
         self.incR()
-        
-        return success
     }
 }

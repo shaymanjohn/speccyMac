@@ -10,7 +10,7 @@ import Foundation
 
 extension Z80 {
     
-    final func ddcbprefix(opcode: UInt8, first: UInt8) -> Bool {
-        return true
+    final func ddcbprefix(opcode: UInt8, first: UInt8) throws {
+        
     }
 }

@@ -10,8 +10,8 @@ import Foundation
 
 extension Z80 {
     
-    final func unprefixed(opcode: UInt8, first: UInt8, second: UInt8) -> Bool {
-        var success = true
+    final func unprefixed(opcode: UInt8, first: UInt8, second: UInt8) throws {
+        
         var normalFlow = true
         let word16 = (UInt16(second) << 8) + UInt16(first)
         
@@ -178,10 +178,7 @@ extension Z80 {
             self.iff2 = 1
             
         default:
-            success = false
-            let hex = String(opcode, radix: 16, uppercase: true)
-            let hexPc = String(self.pc, radix: 16, uppercase: true)
-            print("\(hexPc) unprefixed \(hex) unknown, operation \(instruction.opCode)")
+            throw NSError(domain: "ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode])
         }
         
         self.pc = self.pc + instruction.length
@@ -195,7 +192,5 @@ extension Z80 {
         }
         
         self.incR()
-        
-        return success
     }
 }

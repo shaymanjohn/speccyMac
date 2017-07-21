@@ -10,8 +10,7 @@ import Foundation
 
 extension Z80 {
     
-    final func cbprefix(opcode: UInt8, first: UInt8, second: UInt8) -> Bool {
+    final func cbprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
         print("cbprefix")
-        return true
     }
 }

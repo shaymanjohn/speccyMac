@@ -150,8 +150,6 @@ class Z80 {
     }
     
     func start() {
-        var success = true
-        
         var tempPC: UInt16
         var opCode: UInt8
         var byte1:  UInt8
@@ -160,61 +158,68 @@ class Z80 {
         
         self.running = true
         
-        while success == true {
-            if counter >= self.ticksPerFrame {
-                self.serviceInterrupts()
-            } else if paused == true {
-                
-            } else {
-                tempPC = self.pc
-                opCode = memory.get(tempPC)
-                byte1  = memory.get(tempPC + 1)
-                byte2  = memory.get(tempPC + 2)
-                byte3  = memory.get(tempPC + 3)
-                
-                switch opCode {
-                case 0xcb:
-                    success = self.cbprefix(opcode: byte1, first: byte2, second: byte3)
-                    
-                case 0xdd:
-                    self.ixy = self.ix
-                    if byte1 == 0xcb {
-                        success = self.ddcbprefix(opcode: byte3, first: byte2)
-                    } else {
-                        success = self.ddprefix(opcode: byte1, first: byte2, second: byte3)
+        while running {
+            do {
+                if counter >= self.ticksPerFrame {
+                    self.serviceInterrupts()
+                } else if !paused {
+                    do {
+                        tempPC = self.pc
+                        opCode = memory.get(tempPC)
+                        byte1  = memory.get(tempPC + 1)
+                        byte2  = memory.get(tempPC + 2)
+                        byte3  = memory.get(tempPC + 3)
+                        
+                        switch opCode {
+                        case 0xcb:
+                            try self.cbprefix(opcode: byte1, first: byte2, second: byte3)
+                            
+                        case 0xdd:
+                            self.ixy = self.ix
+                            if byte1 == 0xcb {
+                                try self.ddcbprefix(opcode: byte3, first: byte2)
+                            } else {
+                                try self.ddprefix(opcode: byte1, first: byte2, second: byte3)
+                            }
+                            self.ix = self.ixy
+                            
+                        case 0xed:
+                            try self.edprefix(opcode: byte1, first: byte2, second: byte3)
+                            
+                        case 0xfd:
+                            self.ixy = self.iy
+                            if byte1 == 0xcb {
+                                try self.ddcbprefix(opcode: byte3, first: byte2)
+                            } else {
+                                try self.ddprefix(opcode: byte1, first: byte2, second: byte3)
+                            }
+                            self.iy = self.ixy
+                            
+                        default:
+                            try self.unprefixed(opcode: opCode, first: byte1, second: byte2)
+                        }
                     }
-                    self.ix = self.ixy
-                    
-                case 0xed:
-                    success = self.edprefix(opcode: byte1, first: byte2, second: byte3)
-                    
-                case 0xfd:
-                    self.ixy = self.iy
-                    if byte1 == 0xcb {
-                        success = self.ddcbprefix(opcode: byte3, first: byte2)
-                    } else {
-                        success = self.ddprefix(opcode: byte1, first: byte2, second: byte3)
-                    }
-                    self.iy = self.ixy
-                    
-                default:
-                    success = self.unprefixed(opcode: opCode, first: byte1, second: byte2)
-                }
-            }
-            
-            if self.ula >= 224 {
-                if self.videoRow > 63 && self.videoRow < 256 {
-                    
-                } else if self.videoRow == 311 {
-                    self.screen?.refreshScreen()
                 }
                 
-                self.ula = self.ula - 224
-                self.videoRow = self.videoRow + 1
+                if self.ula >= 224 {
+                    if self.videoRow > 63 && self.videoRow < 256 {
+                        
+                    } else if self.videoRow == 311 {
+                        self.screen?.refreshScreen()
+                    }
+                    
+                    self.ula = self.ula - 224
+                    self.videoRow = self.videoRow + 1
+                }
+            } catch {
+                let err = error as NSError
+                print("Unknown opcode error, \(err.domain), \(err.userInfo)")
+                running = false
+                break
             }
         }
         
-        self.running = false
+        print("Game over")
     }
     
     func loadGame(_ game: String) {
@@ -258,13 +263,13 @@ class Z80 {
             ula = 0;
             videoRow = 0;
             
-// Sound vars
+            // Sound vars
             clicksCount = 0;
-//            beep = false;
-//            soundCounter = 0;
-//            bufferIndex = 0;
+            //            beep = false;
+            //            soundCounter = 0;
+            //            bufferIndex = 0;
             
-//            kempston = 0;
+            //            kempston = 0;
         }
     }
     
@@ -340,7 +345,7 @@ class Z80 {
         sz53Table[0]   = sz53Table[0] | self.zBit
         sz53pvTable[0] = sz53pvTable[0] | self.zBit
     }
-        
+    
     final func serviceInterrupts() {
         let timeNow = Date.timeIntervalSinceReferenceDate
         let thisFrameTime = timeNow - self.lastFrame
@@ -382,5 +387,5 @@ class Z80 {
             }
         }
     }
-
+    
 }
