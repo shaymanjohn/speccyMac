@@ -1,5 +1,5 @@
 //
-//  Z80+functions.swift
+//  Z80+core.swift
 //  speccyMac
 //
 //  Created by John Ward on 21/07/2017.

@@ -290,7 +290,7 @@ class Z80 {
     final func parseInstructions() {
         var json: String
         do {
-            let path = Bundle.main.path(forResource: "z80ops", ofType: "txt")
+            let path = Bundle.main.path(forResource: "z80ops", ofType: "json")
             try json = String.init(contentsOfFile: path!)
             
             let data = json.data(using: .utf8)

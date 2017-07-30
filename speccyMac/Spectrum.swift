@@ -11,9 +11,9 @@ import Cocoa
 protocol Machine : class {
     func refreshScreen()
     
-    var borderColour:  UInt8 { get set }
+    var borderColour:  UInt8  { get set }
     var ticksPerFrame: UInt32 { get }
-    var clickCount: UInt32 { get set }
+    var clickCount:    UInt32 { get set }
 }
 
 class Spectrum: NSViewController {

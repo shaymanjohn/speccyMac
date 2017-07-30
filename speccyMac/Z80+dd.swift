@@ -19,13 +19,12 @@ extension Z80 {
         
         switch opcode {
             
-        case 0x21:
+        case 0x21:  // ld ixy, nnnn
             self.ixy = word16
             
-        case 0x35:
-            //            let paired = Int(self.ixy + offset)
-            //            self.byteDec(paired)
-            print("offset \(offset)")
+        case 0x35:  // dec (ixy + d)
+            let paired = self.ixy + offset
+            memory.set(paired, byte: memory.get(paired))
             
         default:
             throw NSError(domain: "ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode])

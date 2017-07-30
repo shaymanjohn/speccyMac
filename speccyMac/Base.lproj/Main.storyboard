@@ -712,7 +712,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UOb-xd-KSE">
-                                <rect key="frame" x="60" y="0.0" width="360" height="270"/>
+                                <rect key="frame" x="87" y="20" width="306" height="230"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="UOb-xd-KSE" secondAttribute="height" multiplier="4:3" id="Snr-Gy-Cxp"/>
                                 </constraints>
@@ -722,7 +722,7 @@
                         <constraints>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="QA9-hk-KIl"/>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="fwy-wg-1dG"/>
-                            <constraint firstItem="UOb-xd-KSE" firstAttribute="height" secondItem="m2S-Jp-Qdl" secondAttribute="height" id="pSj-Tj-lcg"/>
+                            <constraint firstItem="UOb-xd-KSE" firstAttribute="height" secondItem="m2S-Jp-Qdl" secondAttribute="height" constant="-40" id="pSj-Tj-lcg"/>
                         </constraints>
                     </view>
                     <connections>
