@@ -13,29 +13,29 @@ extension Z80 {
     final func ddprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
         let word16 = (UInt16(second) << 8) + UInt16(first)
-        let instruction = self.ddprefixedOps[Int(opcode)]
+        let instruction = ddprefixedOps[Int(opcode)]
         
         let offset = UInt16(first)
         
         switch opcode {
             
         case 0x21:  // ld ixy, nnnn
-            self.ixy = word16
+            ixy = word16
             
         case 0x35:  // dec (ixy + d)
-            let paired = self.ixy + offset
+            let paired = ixy + offset
             memory.set(paired, byte: memory.get(paired))
             
         default:
-            throw NSError(domain: "ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode])
+            throw NSError(domain: "z80+dd", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
         }
         
-        self.pc = self.pc + instruction.length
+        pc = pc + instruction.length
         
         let ts = instruction.tStates
-        self.incCounters(amount: UInt16(ts))
+        incCounters(amount: UInt16(ts))
         
-        self.incR()
-        self.incR()
+        incR()
+        incR()
     }
 }

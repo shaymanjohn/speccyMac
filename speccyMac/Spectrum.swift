@@ -35,8 +35,8 @@ class Spectrum: NSViewController {
             self.z80.start()
         }
         
-        self.spectrumScreen.wantsLayer = true
-        self.spectrumScreen.layer?.backgroundColor = NSColor.black.cgColor
+        spectrumScreen.wantsLayer = true
+        spectrumScreen.layer?.backgroundColor = NSColor.black.cgColor
     }
     
     func loadGame(_ game: String) {
@@ -50,10 +50,10 @@ class Spectrum: NSViewController {
 extension Spectrum : Machine {
     var clickCount: UInt32 {
         get {
-            return self.clicksCount
+            return clicksCount
         }
         set {
-            self.clicksCount = newValue
+            clicksCount = newValue
         }
     }
     
@@ -63,11 +63,11 @@ extension Spectrum : Machine {
     
     var borderColour: UInt8 {
         get {
-            return self.border
+            return border
         }
         
         set {
-            self.border = newValue
+            border = newValue
         }
     }
     

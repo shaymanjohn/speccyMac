@@ -137,15 +137,16 @@ class Z80 {
         var opCode:     String
     }
     
-    var unprefixedOps: Array<Instruction> = []
-    var edprefixedOps: Array<Instruction> = []
-    var ddprefixedOps: Array<Instruction> = []
+    var unprefixedOps:   Array<Instruction> = []
+    var edprefixedOps:   Array<Instruction> = []
+    var ddprefixedOps:   Array<Instruction> = []
+    var cbprefixedOps:   Array<Instruction> = []
     
     init(memory: Memory) {
         self.memory = memory
         
-        self.parseInstructions()
-        self.calculateTables()
+        parseInstructions()
+        calculateTables()
     }
     
     func start() {
@@ -155,15 +156,15 @@ class Z80 {
         var byte2:  UInt8
         var byte3:  UInt8
         
-        self.running = true
+        running = true
         
         while running {
             do {
                 if counter >= machine?.ticksPerFrame ?? 0 {
-                    self.serviceInterrupts()
+                    serviceInterrupts()
                 } else if !paused {
                     do {
-                        tempPC = self.pc
+                        tempPC = pc
                         opCode = memory.get(tempPC)
                         byte1  = memory.get(tempPC + 1)
                         byte2  = memory.get(tempPC + 2)
@@ -171,46 +172,46 @@ class Z80 {
                         
                         switch opCode {
                         case 0xcb:
-                            try self.cbprefix(opcode: byte1, first: byte2, second: byte3)
+                            try cbprefix(opcode: byte1, first: byte2, second: byte3)
                             
                         case 0xdd:
-                            self.ixy = self.ix
+                            ixy = ix
                             if byte1 == 0xcb {
-                                try self.ddcbprefix(opcode: byte3, first: byte2)
+                                try ddcbprefix(opcode: byte3, first: byte2)
                             } else {
-                                try self.ddprefix(opcode: byte1, first: byte2, second: byte3)
+                                try ddprefix(opcode: byte1, first: byte2, second: byte3)
                             }
-                            self.ix = self.ixy
+                            ix = ixy
                             
                         case 0xed:
-                            try self.edprefix(opcode: byte1, first: byte2, second: byte3)
+                            try edprefix(opcode: byte1, first: byte2, second: byte3)
                             
                         case 0xfd:
-                            self.ixy = self.iy
+                            ixy = iy
                             if byte1 == 0xcb {
-                                try self.ddcbprefix(opcode: byte3, first: byte2)
+                                try ddcbprefix(opcode: byte3, first: byte2)
                             } else {
-                                try self.ddprefix(opcode: byte1, first: byte2, second: byte3)
+                                try ddprefix(opcode: byte1, first: byte2, second: byte3)
                             }
-                            self.iy = self.ixy
+                            iy = ixy
                             
                         default:
-                            try self.unprefixed(opcode: opCode, first: byte1, second: byte2)
+                            try unprefixed(opcode: opCode, first: byte1, second: byte2)
                         }
                     }
                 }
                 
                 // machine specifics here...
                 
-                if self.ula >= 224 {
-                    if self.videoRow > 63 && self.videoRow < 256 {
+                if ula >= 224 {
+                    if videoRow > 63 && videoRow < 256 {
                         
-                    } else if self.videoRow == 311 {
-                        self.machine?.refreshScreen()
+                    } else if videoRow == 311 {
+                        machine?.refreshScreen()
                     }
                     
-                    self.ula = self.ula - 224
-                    self.videoRow = self.videoRow + 1
+                    ula = ula - 224
+                    videoRow = videoRow + 1
                 }
             } catch {
                 let err = error as NSError
@@ -225,22 +226,22 @@ class Z80 {
     
     func loadGame(_ game: String) {
         
-        if let loader = Loader(game, memory: self.memory) {
-            self.af = loader.af
-            self.hl = loader.hl
-            self.bc = loader.bc
-            self.de = loader.de
+        if let loader = Loader(game, memory: memory) {
+            af = loader.af
+            hl = loader.hl
+            bc = loader.bc
+            de = loader.de
             
-            self.exaf = loader.exaf
-            self.exhl = loader.exhl
-            self.exbc = loader.exbc
-            self.exde = loader.exde
+            exaf = loader.exaf
+            exhl = loader.exhl
+            exbc = loader.exbc
+            exde = loader.exde
             
-            self.sp = loader.sp
-            self.pc = loader.pc
+            sp = loader.sp
+            pc = loader.pc
             
-            self.ix = loader.ix;
-            self.iy = loader.iy;
+            ix = loader.ix;
+            iy = loader.iy;
             
             r = loader.r;
             i = loader.i;
@@ -283,8 +284,8 @@ class Z80 {
     }
     
     final func incCounters(amount: UInt16) {
-        self.counter = self.counter + UInt32(amount)
-        self.ula = self.ula + amount
+        counter = counter + UInt32(amount)
+        ula = ula + amount
     }
     
     final func parseInstructions() {
@@ -298,22 +299,32 @@ class Z80 {
             do {
                 try dict = JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! Dictionary<String, Any>
                 
-                let unprefixed = dict["unprefixed"] as! Array<Dictionary<String, Any>>
-                for opDic in unprefixed {
-                    let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
-                    self.unprefixedOps.append(inst)
+                if let unprefixed = dict["unprefixed"] as? Array<Dictionary<String, Any>> {
+                    for opDic in unprefixed {
+                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
+                        unprefixedOps.append(inst)
+                    }
                 }
                 
-                let edprefixed = dict["edprefix"] as! Array<Dictionary<String, Any>>
-                for opDic in edprefixed {
-                    let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
-                    self.edprefixedOps.append(inst)
+                if let edprefixed = dict["edprefix"] as? Array<Dictionary<String, Any>> {
+                    for opDic in edprefixed {
+                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
+                        edprefixedOps.append(inst)
+                    }
                 }
                 
-                let ddprefixed = dict["ddprefix"] as! Array<Dictionary<String, Any>>
-                for opDic in ddprefixed {
-                    let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
-                    self.ddprefixedOps.append(inst)
+                if let ddprefixed = dict["ddprefix"] as? Array<Dictionary<String, Any>> {
+                    for opDic in ddprefixed {
+                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
+                        ddprefixedOps.append(inst)
+                    }
+                }
+                
+                if let cbprefixed = dict["cbprefix"] as? Array<Dictionary<String, Any>> {
+                    for opDic in cbprefixed {
+                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
+                        cbprefixedOps.append(inst)
+                    }
                 }
                 
             } catch {
@@ -326,7 +337,7 @@ class Z80 {
     
     func calculateTables() {
         for ii in 0...255 {
-            self.sz53Table.append(UInt8(ii) & (self.threeBit | self.fiveBit | self.sBit))
+            sz53Table.append(UInt8(ii) & (threeBit | fiveBit | sBit))
             var j = UInt(ii)
             var parity:UInt8 = 0
             for _ in 0...7 {
@@ -335,56 +346,56 @@ class Z80 {
             }
             
             if parity == 0 {
-                self.parityBit.append(0)
+                parityBit.append(0)
             } else {
-                self.parityBit.append(self.pvBit)
+                parityBit.append(pvBit)
             }
             
-            self.sz53pvTable.append(sz53Table[ii] | parityBit[ii])
+            sz53pvTable.append(sz53Table[ii] | parityBit[ii])
         }
         
-        sz53Table[0]   = sz53Table[0] | self.zBit
-        sz53pvTable[0] = sz53pvTable[0] | self.zBit
+        sz53Table[0]   = sz53Table[0]   | zBit
+        sz53pvTable[0] = sz53pvTable[0] | zBit
     }
     
     final func serviceInterrupts() {
         let timeNow = Date.timeIntervalSinceReferenceDate
-        let thisFrameTime = timeNow - self.lastFrame
+        let thisFrameTime = timeNow - lastFrame
         
-        if thisFrameTime < self.frameTime {
-            self.lastFrame = self.lastFrame + self.frameTime
-            Thread.sleep(forTimeInterval: self.frameTime - thisFrameTime)
-        } else if thisFrameTime > self.frameTime {
-            self.lateFrames = self.lateFrames + 1
-            self.lastFrame = timeNow
+        if thisFrameTime < frameTime {
+            lastFrame = lastFrame + frameTime
+            Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
+        } else if thisFrameTime > frameTime {
+            lateFrames = lateFrames + 1
+            lastFrame = timeNow
         } else {
-            self.lastFrame = self.lastFrame + self.frameTime
+            lastFrame = lastFrame + frameTime
         }
         
-        self.counter = self.counter - (machine?.ticksPerFrame ?? 0)
-        self.ula = UInt16(self.counter)
-        self.videoRow = 0
+        counter = counter - (machine?.ticksPerFrame ?? 0)
+        ula = UInt16(counter)
+        videoRow = 0
         
-        if self.interrupts == true {
-            self.interrupts = false
+        if interrupts == true {
+            interrupts = false
             
-            if self.halted == true {
-                self.pc = self.pc + 1
-                self.halted = false
+            if halted == true {
+                pc = pc + 1
+                halted = false
             }
             
-            self.push(registerPair: self.pc)
-            self.incR()
+            push(registerPair: pc)
+            incR()
             
-            if self.interruptMode < 2 {
-                self.pc = 0x0038
-                self.incCounters(amount: 13)
+            if interruptMode < 2 {
+                pc = 0x0038
+                incCounters(amount: 13)
             } else {
-                let vector = (UInt16(self.i) << 8) + 0xff
+                let vector = (UInt16(i) << 8) + 0xff
                 let loByte = memory.get(vector + 1)
                 let hiByte = memory.get(vector)
-                self.pc = (UInt16(hiByte) << 8) + UInt16(loByte)
-                self.incCounters(amount: 19)
+                pc = (UInt16(hiByte) << 8) + UInt16(loByte)
+                incCounters(amount: 19)
             }
         }
     }

@@ -22,7 +22,7 @@ class Memory {
                 try romData = Data.init(contentsOf: romUrl)
                 
                 if let data = romData {
-                    self.romSize = UInt16(data.count)
+                    romSize = UInt16(data.count)
                     
                     for ix in 0..<data.count {
                         memory[ix] = data[ix]
