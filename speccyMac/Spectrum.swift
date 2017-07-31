@@ -24,8 +24,18 @@ class Spectrum: NSViewController {
     var border: UInt8 = 0
     var clicksCount: UInt32 = 0
     
+    let colourSpace = CGColorSpaceCreateDeviceRGB()
+    
+    var screenData = [UInt32](repeating: 0, count: 32 * 8 * 24 * 8)
+    var provider: CGDataProvider!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let callback: CGDataProviderReleaseDataCallback = {
+            (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
+        }
+        provider = CGDataProvider(dataInfo: nil, data: screenData, size: 1024, releaseData: callback)!
         
         let memory = Memory("48.rom")
         z80 = Z80(memory: memory)
@@ -71,8 +81,16 @@ extension Spectrum : Machine {
         }
     }
     
-    func refreshScreen() {
-        print("refreshing screen")
+    final func refreshScreen() {
+        for ix in 0..<screenData.count {
+            screenData[ix] = UInt32(arc4random()%256)
+        }
+        
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue).union(CGBitmapInfo())
+        
+        if let image = CGImage(width: 256, height: 192, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 1024, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: true, intent: .defaultIntent) {
+            spectrumScreen.image = NSImage(cgImage: image, size: .zero)
+        }
     }
 }
 

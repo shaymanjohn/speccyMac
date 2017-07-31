@@ -207,7 +207,9 @@ class Z80 {
                     if videoRow > 63 && videoRow < 256 {
                         
                     } else if videoRow == 311 {
-                        machine?.refreshScreen()
+                        DispatchQueue.main.async {
+                            self.machine?.refreshScreen()
+                        }
                     }
                     
                     ula = ula - 224
