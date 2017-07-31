@@ -101,7 +101,7 @@ class Z80 {
     var counter:       UInt32 = 0
     
     var paused:        Bool = false
-    var ula:           UInt16 = 0
+    var ula:           UInt32 = 0
     var videoRow:      UInt16 = 0
     var lastFrame:     TimeInterval = 0
     let frameTime:     TimeInterval = 0.02      // 50 Fps
@@ -132,8 +132,8 @@ class Z80 {
     
     struct Instruction {
         var length:     UInt16
-        var tStates:    Int
-        var altTStates: Int
+        var tStates:    UInt32
+        var altTStates: UInt32
         var opCode:     String
     }
     
@@ -150,7 +150,6 @@ class Z80 {
     }
     
     func start() {
-        var tempPC: UInt16
         var opCode: UInt8
         var byte1:  UInt8
         var byte2:  UInt8
@@ -158,17 +157,21 @@ class Z80 {
         
         running = true
         
+        var insCount = 0
+        
         while running {
             do {
                 if counter >= machine?.ticksPerFrame ?? 0 {
                     serviceInterrupts()
                 } else if !paused {
                     do {
-                        tempPC = pc
-                        opCode = memory.get(tempPC)
-                        byte1  = memory.get(tempPC + 1)
-                        byte2  = memory.get(tempPC + 2)
-                        byte3  = memory.get(tempPC + 3)
+                        opCode = memory.get(pc)
+                        byte1  = memory.get(pc + 1)
+                        byte2  = memory.get(pc + 2)
+                        byte3  = memory.get(pc + 3)
+                        
+//                        print("insCount: \(insCount), pc: \(pc)")
+//                        insCount = insCount + 1
                         
                         switch opCode {
                         case 0xcb:
@@ -219,11 +222,12 @@ class Z80 {
                 let err = error as NSError
                 print("Unknown opcode error, \(err.domain), \(err.userInfo)")
                 running = false
-                break
             }
         }
         
-        print("Game over")
+        DispatchQueue.main.async {
+            print("Game over")
+        }
     }
     
     func loadGame(_ game: String) {
@@ -285,8 +289,8 @@ class Z80 {
         paused = false
     }
     
-    final func incCounters(amount: UInt16) {
-        counter = counter + UInt32(amount)
+    final func incCounters(amount: UInt32) {
+        counter = counter + amount
         ula = ula + amount
     }
     
@@ -303,28 +307,28 @@ class Z80 {
                 
                 if let unprefixed = dict["unprefixed"] as? Array<Dictionary<String, Any>> {
                     for opDic in unprefixed {
-                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
+                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! UInt32, altTStates: opDic["alt_tstate"] as! UInt32, opCode: opDic["opcode"] as! String)
                         unprefixedOps.append(inst)
                     }
                 }
                 
                 if let edprefixed = dict["edprefix"] as? Array<Dictionary<String, Any>> {
                     for opDic in edprefixed {
-                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
+                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! UInt32, altTStates: opDic["alt_tstate"] as! UInt32, opCode: opDic["opcode"] as! String)
                         edprefixedOps.append(inst)
                     }
                 }
                 
                 if let ddprefixed = dict["ddprefix"] as? Array<Dictionary<String, Any>> {
                     for opDic in ddprefixed {
-                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
+                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! UInt32, altTStates: opDic["alt_tstate"] as! UInt32, opCode: opDic["opcode"] as! String)
                         ddprefixedOps.append(inst)
                     }
                 }
                 
                 if let cbprefixed = dict["cbprefix"] as? Array<Dictionary<String, Any>> {
                     for opDic in cbprefixed {
-                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! Int, altTStates: opDic["alt_tstate"] as! Int, opCode: opDic["opcode"] as! String)
+                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! UInt32, altTStates: opDic["alt_tstate"] as! UInt32, opCode: opDic["opcode"] as! String)
                         cbprefixedOps.append(inst)
                     }
                 }
@@ -375,7 +379,7 @@ class Z80 {
         }
         
         counter = counter - (machine?.ticksPerFrame ?? 0)
-        ula = UInt16(counter)
+        ula = counter
         videoRow = 0
         
         if interrupts == true {
@@ -386,7 +390,7 @@ class Z80 {
                 halted = false
             }
             
-            push(registerPair: pc)
+            push(pc)
             incR()
             
             if interruptMode < 2 {

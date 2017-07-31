@@ -91,6 +91,16 @@ extension Z80 {
         case 0x2b:  // dec hl
             hl = hl &- 1
             
+        case 0x2d:  // dec l
+            l = dec(l)
+            
+        case 0x2e:  // ld l, n
+            l = first
+            
+        case 0x2f:  // cpl
+            a = a ^ 0xff
+            f = (f & (cBit | pvBit | zBit | sBit)) | (a & (threeBit | fiveBit)) | (nBit | hBit)
+            
         case 0x30:  // jr nc, nn
             if f & cBit > 0 {
                 normalFlow = false
@@ -113,17 +123,53 @@ extension Z80 {
         case 0x36:  // ld (hl), n
             memory.set(hl, byte: first)
             
+        case 0x38:  // jr c, nn
+            if f & cBit > 0 {
+                if first > 127 {
+                    let npc = Int(pc) - (256 - Int(first))
+                    pc = UInt16(npc)
+                } else {
+                    pc = pc &+ UInt16(first)
+                }
+            } else {
+                normalFlow = false
+            }
+            
+        case 0x3c:  // inc a
+            a = inc(a)
+            
         case 0x3e:  // ld a, n
             a = first
             
+        case 0x3f:  // ccf
+            f = (f & (pvBit | zBit | sBit)) | ((f & cBit) > 0 ? hBit : cBit) | (a & (threeBit | fiveBit))
+            
+        case 0x40:  // ld b, b
+            break
+            
         case 0x47:  // ld b, a
             b = a
+            
+        case 0x54:  // ld d, h
+            d = h
+            
+        case 0x56:  // ld d, (hl)
+            d = memory.get(hl)
+            
+        case 0x5e:  // ld e, (hl)
+            e = memory.get(hl)
             
         case 0x62:  // ld h, d
             h = d
             
         case 0x6b:  // ld l, e
             l = e
+            
+        case 0x7a:  // ld a, d
+            a = d
+            
+        case 0x7c:  // ld a, h
+            a = h
             
         case 0x7e:  // ld a, (hl)
             a = memory.get(hl)
@@ -132,25 +178,31 @@ extension Z80 {
             f = f & 0xfc
             
         case 0xaf:  // xor a
-            xor(byte: a)
+            xor(a)
+            
+        case 0xb5:  // or l
+            or(l)
             
         case 0xbc:  // cp h
-            compare(byte: h)
+            compare(h)
             
         case 0xc3:  // jp nnnn
             pc = word16
             pc = pc &- 3
             
+        case 0xc5:  // push bc
+            push(bc)
+            
         case 0xc8:  // ret z
             if f & zBit > 0 {
-                pc = pop(pc)
+                pc = pop()
                 pc = pc &- 1
             } else {
                 normalFlow = false
             }
             
         case 0xcd:  // call nnnn
-            push(registerPair: pc &+ 3)
+            push(pc &+ 3)
             pc = word16
             pc = pc &- 3
             
@@ -158,12 +210,15 @@ extension Z80 {
             if f & cBit > 0 {
                 normalFlow = false
             } else {
-                pc = pop(pc)
+                pc = pop()
                 pc = pc &- 1
             }
             
         case 0xd3:  // out (n), a
-            out(port:first, byte:a)
+            out(first, byte:a)
+            
+        case 0xd5:  // push de
+            push(de)
             
         case 0xd9:  // exx
             var temp:UInt16 = bc
@@ -181,6 +236,16 @@ extension Z80 {
         case 0xdf:  // rst 18
             rst(0x0018)
             
+        case 0xe5:  // push hl
+            push(hl)
+            
+        case 0xe6:  // and n
+            and(first)
+            
+        case 0xe9:  // jp (hl)
+            pc = hl
+            pc = pc &- 1
+            
         case 0xeb:  // ex de, hl
             let temp = de
             de = hl
@@ -191,6 +256,9 @@ extension Z80 {
             iff1 = 0
             iff2 = 2
             
+        case 0xf5:  // push af
+            push(af)
+            
         case 0xf9:  // ld sp, hl
             sp = hl
             
@@ -200,7 +268,7 @@ extension Z80 {
             iff2 = 1
             
         case 0xfe:  // cp n
-            compare(byte: first)
+            compare(first)
             
         case 0xff:  // rst 38
             rst(0x0038)
@@ -209,16 +277,16 @@ extension Z80 {
             throw NSError(domain: "z80 unprefixed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
         }
         
-//        print(String(pc, radix: 16), instruction.opCode)
+//        print("\(pc) : \(instruction.opCode)")        
         
-        pc = pc + instruction.length
+        pc = pc &+ instruction.length
         
         if normalFlow == true {
             let ts = instruction.tStates
-            incCounters(amount: UInt16(ts))
+            incCounters(amount: ts)
         } else {
             let ts = instruction.altTStates
-            incCounters(amount: UInt16(ts))
+            incCounters(amount: ts)
         }
         
         incR()

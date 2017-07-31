@@ -49,14 +49,14 @@ extension Z80 {
         pc = pc + offset
     }
     
-    @inline(__always) func push(registerPair: UInt16) {
+    @inline(__always) func push(_ registerPair: UInt16) {
         sp = sp &- 1
         memory.set(sp, byte: UInt8(UInt16(registerPair) >> 8))
         sp = sp &- 1
         memory.set(sp, byte: UInt8(registerPair & 0x00ff))
     }
     
-    @inline(__always) func pop(_ registerPair: UInt16) -> UInt16 {
+    @inline(__always) func pop() -> UInt16 {
         let byte1 = memory.get(sp)
         sp = sp &+ 1
         let byte2 = memory.get(sp)
@@ -81,7 +81,7 @@ extension Z80 {
         }
     }
     
-    @inline(__always) func compare(byte: UInt8) {
+    @inline(__always) func compare(_ byte: UInt8) {
         let cpTemp = Int(a) - Int(byte)
         
         if cpTemp == 0 {
@@ -98,18 +98,34 @@ extension Z80 {
         incCounters(amount: 23)
     }
     
-    @inline(__always) func xor(byte: UInt8) {
+    @inline(__always) func or(_ byte: UInt8) {
+        a = a | byte
+        f = sz53pvTable[Int(a)]
+    }
+    
+    @inline(__always) func xor(_ byte: UInt8) {
         a = a ^ byte
         f = sz53pvTable[Int(a)]
     }
     
+    @inline(__always) func and(_ byte: UInt8) {
+        a = a & byte
+        f = hBit | sz53pvTable[Int(a)]
+    }
+    
+    @inline(__always) func rlc(_ byte: UInt8) -> UInt8 {
+        let val = (byte << 1) | (byte >> 7)
+        f = (val & cBit) | sz53pvTable[Int(val)]
+        return val
+    }
+    
     @inline(__always) func rst(_ address: UInt16) {
-        push(registerPair: pc &+ 1)
+        push(pc &+ 1)
         pc = address
         pc = pc &- 1
     }
     
-    @inline(__always) func out(port: UInt8, byte: UInt8) {
+    @inline(__always) func out(_ port: UInt8, byte: UInt8) {
         if port == 0xfe {
             machine?.borderColour = byte & 0x07
             
@@ -119,6 +135,12 @@ extension Z80 {
                 }
             }
         }
+    }
+    
+    @inline(__always) func portIn(_ high: UInt8, low: UInt8) -> UInt8 {
+        let byte = 0xff
+        f = (f & cBit) | sz53pvTable[byte]
+        return UInt8(byte)
     }
     
 }

@@ -30,10 +30,12 @@ extension Z80 {
             throw NSError(domain: "z80+dd", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
         }
         
-        pc = pc + instruction.length
+//        print("\(pc) : \(instruction.opCode)")
+        
+        pc = pc &+ instruction.length
         
         let ts = instruction.tStates
-        incCounters(amount: UInt16(ts))
+        incCounters(amount: ts)
         
         incR()
         incR()

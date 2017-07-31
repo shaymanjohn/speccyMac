@@ -42,6 +42,9 @@ extension Z80 {
         case 0x56:  // im 1
             interruptMode = 1
             
+        case 0x78:  // in a, (c)
+            a = portIn(b, low: c)
+            
         case 0xb0:  // ldir
             let val = memory.get(hl)
             memory.set(de, byte: val)
@@ -72,10 +75,12 @@ extension Z80 {
             throw NSError(domain: "z80+ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
         }
         
-        pc = pc + instruction.length
+//        print("\(pc) : \(instruction.opCode)")
+        
+        pc = pc &+ instruction.length
         
         let ts = instruction.tStates
-        incCounters(amount: UInt16(ts))
+        incCounters(amount: ts)
         
         incR()
         incR()
