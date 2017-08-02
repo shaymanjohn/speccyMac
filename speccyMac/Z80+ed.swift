@@ -13,7 +13,7 @@ extension Z80 {
     final func edprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
         let word16 = (UInt16(second) << 8) + UInt16(first)
-        let instruction = edprefixedOps[Int(opcode)]
+        let instruction = edprefixedOps[opcode]
 
         switch opcode {
             
@@ -24,7 +24,7 @@ extension Z80 {
         case 0x47:  // ld i, a
             i = a
             
-        case 0x52:  // sbc hl, de
+        case 0x52:  // sbc hl, de 
             var result = Int(hl) - Int(de)
             if f & cBit > 0 {
                 result = result - 1

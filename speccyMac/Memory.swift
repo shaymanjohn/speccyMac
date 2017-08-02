@@ -37,7 +37,7 @@ class Memory {
     }
     
     @inline(__always) func get(_ address: UInt16) -> UInt8 {
-        return memory[Int(address)]
+        return memory[address]
     }
     
     @inline(__always) func set(_ address: UInt16, byte: UInt8) {

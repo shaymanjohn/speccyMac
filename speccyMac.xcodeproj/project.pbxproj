@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1792091F31B0D700A984F0 /* Array+extensions.swift */; };
 		6F8E10851F2259E10039C0BB /* Z80+core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8E10841F2259E10039C0BB /* Z80+core.swift */; };
 		6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90C1F2238A500F9AD93 /* Memory.swift */; };
 		6FEFA90F1F2238C200F9AD93 /* Z80.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90E1F2238C200F9AD93 /* Z80.swift */; };
@@ -26,7 +27,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		6F1792091F31B0D700A984F0 /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
 		6F8E10841F2259E10039C0BB /* Z80+core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+core.swift"; sourceTree = "<group>"; };
+		6F9ED15A1F325E47000BEFF9 /* z80defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = z80defines.h; sourceTree = "<group>"; };
 		6FEFA90C1F2238A500F9AD93 /* Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memory.swift; sourceTree = "<group>"; };
 		6FEFA90E1F2238C200F9AD93 /* Z80.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z80.swift; sourceTree = "<group>"; };
 		6FEFA91B1F223AA400F9AD93 /* z80ops.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = z80ops.json; sourceTree = SOURCE_ROOT; };
@@ -97,6 +100,8 @@
 				6FEFA9251F224F9000F9AD93 /* Z80+cb.swift */,
 				6FEFA92D1F2250B200F9AD93 /* Z80+ddcb.swift */,
 				6FEFA9211F223FCE00F9AD93 /* Loader.swift */,
+				6F1792091F31B0D700A984F0 /* Array+extensions.swift */,
+				6F9ED15A1F325E47000BEFF9 /* z80defines.h */,
 				6FEFA9101F2239AD00F9AD93 /* Roms */,
 				6FFB31571F22379B00C15CD7 /* Assets.xcassets */,
 				6FEFA91B1F223AA400F9AD93 /* z80ops.json */,
@@ -191,6 +196,7 @@
 				6FFB31541F22379B00C15CD7 /* AppDelegate.swift in Sources */,
 				6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */,
 				6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */,
+				6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

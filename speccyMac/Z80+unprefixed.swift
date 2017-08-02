@@ -12,7 +12,7 @@ extension Z80 {
     
     final func unprefixed(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
-        let instruction = unprefixedOps[Int(opcode)]
+        let instruction = unprefixedOps[opcode]
         var normalFlow = true
         let word16 = (UInt16(second) << 8) + UInt16(first)
         
@@ -33,6 +33,41 @@ extension Z80 {
         case 0x04:  // inc b
             b = inc(b)
             
+        case 0x05:  // dec b
+            b = dec(b)
+            
+        case 0x06:  // ld b, n
+            b = first
+            
+        case 0x07:  // rlca
+            rlca()
+            
+        case 0x08:  // ex af, af'
+            let temp = af
+            af = exaf
+            exaf = temp
+            
+        case 0x09:  // add hl, bc
+            add16(bc)
+            
+        case 0x0a:  // ld a, (bc)
+            a = memory.get(bc)
+            
+        case 0x0b:  // dec bc
+            bc = bc &- 1
+            
+        case 0x0c:  // inc c
+            c = inc(c)
+            
+        case 0x0d:  // dec c
+            c = dec(c)
+            
+        case 0x0e:  // ld c, n
+            c = first
+            
+        case 0x0f:  // rrca
+            rrca()
+            
         case 0x10:  // djnz nn
             b = b &- 1
             if b > 0 {
@@ -44,6 +79,9 @@ extension Z80 {
         case 0x11:  // ld de, nnnn
             de = word16
             
+        case 0x14:  // inc d
+            d = inc(d)
+            
         case 0x19:  // add hl, de
             hl = hl &+ de
             
@@ -54,12 +92,7 @@ extension Z80 {
             if f & zBit > 0 {
                 normalFlow = false
             } else {
-                if first > 127 {
-                    let npc = Int(pc) - (256 - Int(first))
-                    pc = UInt16(npc)
-                } else {
-                    pc = pc &+ UInt16(first)
-                }
+                setRelativePC(first)
             }
             
         case 0x21:  // ld hl, nnnn
@@ -74,12 +107,7 @@ extension Z80 {
             
         case 0x28:  // jr z, nn
             if f & zBit > 0 {
-                if first > 127 {
-                    let npc = Int(pc) - (256 - Int(first))
-                    pc = UInt16(npc)
-                } else {
-                    pc = pc &+ UInt16(first)
-                }
+                setRelativePC(first)
             } else {
                 normalFlow = false
             }
@@ -105,12 +133,7 @@ extension Z80 {
             if f & cBit > 0 {
                 normalFlow = false
             } else {
-                if first > 127 {
-                    let npc = Int(pc) - (256 - Int(first))
-                    pc = UInt16(npc)
-                } else {
-                    pc = pc &+ UInt16(first)
-                }
+                setRelativePC(first)
             }
             
         case 0x32:  // ld (nnnn), a
@@ -125,12 +148,7 @@ extension Z80 {
             
         case 0x38:  // jr c, nn
             if f & cBit > 0 {
-                if first > 127 {
-                    let npc = Int(pc) - (256 - Int(first))
-                    pc = UInt16(npc)
-                } else {
-                    pc = pc &+ UInt16(first)
-                }
+                setRelativePC(first)
             } else {
                 normalFlow = false
             }
@@ -162,6 +180,9 @@ extension Z80 {
         case 0x62:  // ld h, d
             h = d
             
+        case 0x67:  // ld h, a
+            h = a
+            
         case 0x6b:  // ld l, e
             l = e
             
@@ -170,6 +191,9 @@ extension Z80 {
             
         case 0x7c:  // ld a, h
             a = h
+            
+        case 0x7d:  // ld a, l
+            a = l
             
         case 0x7e:  // ld a, (hl)
             a = memory.get(hl)
@@ -185,6 +209,14 @@ extension Z80 {
             
         case 0xbc:  // cp h
             compare(h)
+            
+        case 0xc0:  // ret nz
+            if f & zBit > 0 {
+                normalFlow = false
+            } else {
+                pc = pop()
+                pc = pc &- 1
+            }
             
         case 0xc3:  // jp nnnn
             pc = word16
@@ -220,8 +252,11 @@ extension Z80 {
         case 0xd5:  // push de
             push(de)
             
+        case 0xd6:  // sub n
+            sub(first)
+            
         case 0xd9:  // exx
-            var temp:UInt16 = bc
+            var temp = bc
             bc = exbc
             exbc = temp
             
@@ -281,14 +316,7 @@ extension Z80 {
         
         pc = pc &+ instruction.length
         
-        if normalFlow == true {
-            let ts = instruction.tStates
-            incCounters(amount: ts)
-        } else {
-            let ts = instruction.altTStates
-            incCounters(amount: ts)
-        }
-        
+        incCounters(amount: normalFlow ? instruction.tStates : instruction.altTStates)        
         incR()
     }
 }

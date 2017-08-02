@@ -34,7 +34,7 @@ class Spectrum: NSViewController {
     
     let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue).union(CGBitmapInfo())
     
-    var screenData = [UInt32](repeating: 0, count: 32 * 8 * 24 * 8)
+    var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 24 * 8)
     var provider: CGDataProvider!
     
     let colourTable = [colour(r: 0x00, g: 0x00, b: 0x00), colour(r: 0x00, g: 0x00, b: 0xcd), colour(r: 0xcd, g: 0x00, b: 0x00), colour(r: 0xcd, g: 0x00, b: 0xcd),
@@ -61,7 +61,7 @@ class Spectrum: NSViewController {
         let callback: CGDataProviderReleaseDataCallback = {
             (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
         }
-        provider = CGDataProvider(dataInfo: nil, data: screenData, size: 1024, releaseData: callback)!
+        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 1024, releaseData: callback)!
         
         z80 = Z80(memory: memory)
         z80.machine = self
@@ -106,7 +106,7 @@ extension Spectrum : Machine {
         }
     }
     
-    final func refreshScreen() {
+    final func refreshScreen() {        
         
         var index = 0
         var screenIndex:UInt16 = 16384
@@ -117,14 +117,14 @@ extension Spectrum : Machine {
         for _ in 0..<6144 {
             let byte = memory.get(screenIndex)
             
-            screenData[index + 0] = (byte & 0x80) > 0 ? ink : paper
-            screenData[index + 1] = (byte & 0x40) > 0 ? ink : paper
-            screenData[index + 2] = (byte & 0x20) > 0 ? ink : paper
-            screenData[index + 3] = (byte & 0x10) > 0 ? ink : paper
-            screenData[index + 4] = (byte & 0x08) > 0 ? ink : paper
-            screenData[index + 5] = (byte & 0x04) > 0 ? ink : paper
-            screenData[index + 6] = (byte & 0x02) > 0 ? ink : paper
-            screenData[index + 7] = (byte & 0x01) > 0 ? ink : paper
+            bmpData[index + 0] = (byte & 0x80) > 0 ? ink : paper
+            bmpData[index + 1] = (byte & 0x40) > 0 ? ink : paper
+            bmpData[index + 2] = (byte & 0x20) > 0 ? ink : paper
+            bmpData[index + 3] = (byte & 0x10) > 0 ? ink : paper
+            bmpData[index + 4] = (byte & 0x08) > 0 ? ink : paper
+            bmpData[index + 5] = (byte & 0x04) > 0 ? ink : paper
+            bmpData[index + 6] = (byte & 0x02) > 0 ? ink : paper
+            bmpData[index + 7] = (byte & 0x01) > 0 ? ink : paper
                 
             index = index + 8
             screenIndex = screenIndex + 1
@@ -132,6 +132,8 @@ extension Spectrum : Machine {
         
         if let image = CGImage(width: 256, height: 192, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 1024, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: true, intent: .defaultIntent) {
             spectrumScreen.image = NSImage(cgImage: image, size: .zero)
+            
+//            print("refresh, \(z80.pc)")
         }
     }
 }

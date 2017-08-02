@@ -12,9 +12,15 @@ extension Z80 {
         
     final func ddcbprefix(opcode: UInt8, first: UInt8) throws {
         
-        let instruction = cbprefixedOps[Int(opcode)]
+        let instruction = cbprefixedOps[opcode]
         
-        let offset = UInt16(first)
+        var offset = ixy
+        
+        if first > 127 {
+            offset = offset - (UInt16(256) - UInt16(first))
+        } else {
+            offset = offset + UInt16(first)
+        }
         
         switch opcode {
             

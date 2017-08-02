@@ -137,7 +137,7 @@ class Z80 {
         var opCode:     String
     }
     
-    var unprefixedOps:   Array<Instruction> = []
+    var  unprefixedOps:   Array<Instruction> = []
     var edprefixedOps:   Array<Instruction> = []
     var ddprefixedOps:   Array<Instruction> = []
     var cbprefixedOps:   Array<Instruction> = []
@@ -157,7 +157,7 @@ class Z80 {
         
         running = true
         
-        var insCount = 0
+//        var insCount = 0
         
         while running {
             do {
@@ -172,6 +172,7 @@ class Z80 {
                         
 //                        print("insCount: \(insCount), pc: \(pc)")
 //                        insCount = insCount + 1
+//                        print("pc: \(pc)")
                         
                         switch opCode {
                         case 0xcb:
@@ -309,7 +310,7 @@ class Z80 {
                     for opDic in unprefixed {
                         let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! UInt32, altTStates: opDic["alt_tstate"] as! UInt32, opCode: opDic["opcode"] as! String)
                         unprefixedOps.append(inst)
-                    }
+                    }                    
                 }
                 
                 if let edprefixed = dict["edprefix"] as? Array<Dictionary<String, Any>> {

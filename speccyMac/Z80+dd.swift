@@ -13,9 +13,12 @@ extension Z80 {
     final func ddprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
         let word16 = (UInt16(second) << 8) + UInt16(first)
-        let instruction = ddprefixedOps[Int(opcode)]
+        let instruction = ddprefixedOps[opcode]
         
-        let offset = UInt16(first)
+        var offset = UInt16(first)
+        if first > 127 {
+            offset = UInt16(256) - UInt16(first)
+        }
         
         switch opcode {
             
