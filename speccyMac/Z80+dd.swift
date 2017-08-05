@@ -23,10 +23,10 @@ extension Z80 {
         switch opcode {
             
         case 0x21:  // ld ixy, nnnn
-            ixy = word16
+            ixy.value = word16
             
         case 0x35:  // dec (ixy + d)
-            let paired = ixy + offset
+            let paired = ixy.value + offset
             memory.set(paired, byte: memory.get(paired))
             
         default:

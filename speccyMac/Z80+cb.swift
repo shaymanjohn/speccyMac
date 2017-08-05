@@ -17,7 +17,7 @@ extension Z80 {
         switch opcode {
             
         case 0x00:  // rlc b
-            b = rlc(b)
+            b.rlc()
             
         default:
             throw NSError(domain: "z80+cb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])

@@ -18,58 +18,58 @@ extension Z80 {
         switch opcode {
             
         case 0x43:  // ld (nnnn), bc
-            memory.set(word16, byte: c)
-            memory.set(word16 &+ 1, byte: b)
+            memory.set(word16, byte: c.value)
+            memory.set(word16 &+ 1, byte: b.value)
             
         case 0x47:  // ld i, a
-            i = a
+            i = a.value
             
         case 0x52:  // sbc hl, de 
-            var result = Int(hl) - Int(de)
-            if f & cBit > 0 {
+            var result = Int(hl.value) - Int(de.value)
+            if Z80.f.value & Z80.cBit > 0 {
                 result = result - 1
             }
             if (result < 0) {
-                hl = UInt16(65536 + result)
+                hl.value = UInt16(65536 + result)
             } else {
-                hl = UInt16(result)
+                hl.value = UInt16(result)
             }
             
         case 0x53:  // ld (nnnn), de
-            memory.set(word16, byte: e)
-            memory.set(word16 &+ 1, byte: d)
+            memory.set(word16, byte: e.value)
+            memory.set(word16 &+ 1, byte: d.value)
             
         case 0x56:  // im 1
             interruptMode = 1
             
         case 0x78:  // in a, (c)
-            a = portIn(b, low: c)
+            a.value = portIn(b.value, low: c.value)
             
         case 0xb0:  // ldir
             let val = memory.get(hl)
-            memory.set(de, byte: val)
-            bc = bc &- 1
+            memory.set(de.value, byte: val)
+            bc.value = bc.value &- 1
             
-            if bc > 0 {
+            if bc.value > 0 {
                 pc = pc &- 2
                 incCounters(amount: 5)
             }
             
-            hl = hl &+ 1
-            de = de &+ 1
+            hl.value = hl.value &+ 1
+            de.value = de.value &+ 1
             
         case 0xb8:  // lddr
             let val = memory.get(hl)
-            memory.set(de, byte: val)
-            bc = bc &- 1
+            memory.set(de.value, byte: val)
+            bc.value = bc.value &- 1
             
-            if bc > 0 {
+            if bc.value > 0 {
                 pc = pc &- 2
                 incCounters(amount: 5)
             }
             
-            hl = hl &- 1
-            de = de &- 1
+            hl.value = hl.value &- 1
+            de.value = de.value &- 1
             
         default:
             throw NSError(domain: "z80+ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])

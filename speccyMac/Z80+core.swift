@@ -9,94 +9,62 @@
 import Foundation
 
 extension Z80 {
-    
-    @inline(__always) func inc(_ byte: UInt8) -> UInt8 {
-        let thisByte = byte &+ 1
-        f = (f & cBit) | (thisByte == 0x80 ? pvBit : 0) | thisByte & 0x0f > 0 ? 0 : hBit | sz53Table[thisByte]
-        return thisByte
-    }
-    
-    @inline(__always) func dec(_ byte: UInt8) -> UInt8 {        
-        f = (f & cBit) | (byte & 0x0f > 0 ? 0 : hBit ) | nBit
-        let thisByte = byte &- 1
-        f |= (thisByte == 0x7f ? pvBit : 0) | sz53Table[thisByte]
-        return thisByte
-    }
-    
+        
     @inline(__always) func add(_ byte: UInt8) {
-        let addTemp = UInt16(a) + UInt16(byte)
+        let addTemp = UInt16(a.value) + UInt16(byte)
 
-        let part1 = (a & 0x88) >> 3
+        let part1 = (a.value & 0x88) >> 3
         let part2 = (byte & 0x88) >> 2
         let part3 = UInt8((addTemp & 0x88) >> 1)
         
         let lookup = part1 | part2 | part3
         
-        a = UInt8(addTemp & 0xff)
+        a.value = UInt8(addTemp & 0xff)
         
-        let part4 = addTemp & 0x100 > 0 ? cBit : 0
-        let part5 = halfCarryAdd[lookup & 0x07]
-        let part6 = overFlowAdd[lookup >> 4]
-        let part7 = sz53Table[a]
+        let part4 = addTemp & 0x100 > 0 ? Z80.cBit : 0
+        let part5 = Z80.halfCarryAdd[lookup & 0x07]
+        let part6 = Z80.overFlowAdd[lookup >> 4]
+        let part7 = Z80.sz53Table[a.value]
         
-        f = part4 | part5 | part6 | part7
-    }
-    
-    @inline(__always) func sub(_ byte: UInt8) {
-        let subTemp = UInt16(a) - UInt16(byte)
-        
-        let part1 = (a & 0x88) >> 3
-        let part2 = (byte & 0x88) >> 2
-        let part3 = UInt8((subTemp & 0x88) >> 1)
-        
-        let lookup = part1 | part2 | part3
-        
-        a = UInt8(subTemp & 0xff)
-        
-        let part4 = subTemp & 0x100 > 0 ? cBit : 0
-        let part5 = halfCarrySub[lookup & 0x07]
-        let part6 = overFlowSub[lookup >> 4]
-        let part7 = sz53Table[a]
-        
-        f = part4 | nBit | part5 | part6 | part7
+        Z80.f.value = part4 | part5 | part6 | part7
     }
     
     @inline(__always) func addc(_ byte: UInt8) {
-        let addcTemp = UInt16(a) + UInt16(byte) + UInt16(f & cBit)
+        let addcTemp = UInt16(a.value) + UInt16(byte) + UInt16(Z80.f.value & Z80.cBit)
         
-        let part1 = (a & 0x88) >> 3
+        let part1 = (a.value & 0x88) >> 3
         let part2 = (byte & 0x88) >> 2
         let part3 = UInt8((addcTemp & 0x88) >> 1)
         
         let lookup = part1 | part2 | part3
         
-        a = UInt8(addcTemp & 0xff)
+        a.value = UInt8(addcTemp & 0xff)
         
-        let part4 = addcTemp & 0x100 > 0 ? cBit : 0
-        let part5 = halfCarryAdd[lookup & 0x07]
-        let part6 = overFlowAdd[lookup >> 4]
-        let part7 = sz53Table[a]
+        let part4 = addcTemp & 0x100 > 0 ? Z80.cBit : 0
+        let part5 = Z80.halfCarryAdd[lookup & 0x07]
+        let part6 = Z80.overFlowAdd[lookup >> 4]
+        let part7 = Z80.sz53Table[a.value]
         
-        f = part4 | part5 | part6 | part7
+        Z80.f.value = part4 | part5 | part6 | part7
     }
     
     @inline(__always) func subc(_ byte: UInt8) {
-        let subcTemp = UInt16(a) - UInt16(byte) - UInt16(f & cBit)
+        let subcTemp = UInt16(a.value) - UInt16(byte) - UInt16(Z80.f.value & Z80.cBit)
         
-        let part1 = (a & 0x88) >> 3
+        let part1 = (a.value & 0x88) >> 3
         let part2 = (byte & 0x88) >> 2
         let part3 = UInt8((subcTemp & 0x88) >> 1)
         
         let lookup = part1 | part2 | part3
         
-        a = UInt8(subcTemp & 0xff)
+        a.value = UInt8(subcTemp & 0xff)
         
-        let part4 = subcTemp & 0x100 > 0 ? cBit : 0
-        let part5 = halfCarrySub[lookup & 0x07]
-        let part6 = overFlowSub[lookup >> 4]
-        let part7 = sz53Table[a]
+        let part4 = subcTemp & 0x100 > 0 ? Z80.cBit : 0
+        let part5 = Z80.halfCarrySub[lookup & 0x07]
+        let part6 = Z80.overFlowSub[lookup >> 4]
+        let part7 = Z80.sz53Table[a.value]
         
-        f = part4 | nBit | part5 | part6 | part7
+        Z80.f.value = part4 | Z80.nBit | part5 | part6 | part7
     }
     
     @inline(__always) func wordsubc(_ word: UInt16) {
@@ -105,45 +73,6 @@ extension Z80 {
     
     @inline(__always) func wordaddc(_ word: UInt16) {
         print("stub: wordaddc")
-    }
-    
-    @inline(__always) func and(_ byte: UInt8) {
-        a = a & byte
-        f = hBit | sz53pvTable[a]
-    }
-    
-    @inline(__always) func xor(_ byte: UInt8) {
-        a = a ^ byte
-        f = sz53pvTable[a]
-    }
-    
-    @inline(__always) func or(_ byte: UInt8) {
-        a = a | byte
-        f = sz53pvTable[a]
-    }
-    
-    @inline(__always) func compare(_ byte: UInt8) {
-        var cpTemp: UInt16 = 0
-        
-        if byte > a {
-            cpTemp = UInt16(byte) - UInt16(a)
-            cpTemp = (65535 - cpTemp) + 1
-        } else {
-            cpTemp = UInt16(a) - UInt16(byte)
-        }
-        
-        let part1 = (a & 0x88) >> 3
-        let part2 = (byte & 0x88) >> 2
-        let part3 = (cpTemp & 0x88) >> 1
-        
-        let lookup = part1 | part2 | UInt8(part3)
-        
-        let part4 = cpTemp & 0x100 > 0 ? cBit : (cpTemp > 0 ? 0 : zBit)
-        let part5 = halfCarrySub[lookup & 0x07]
-        let part6 = overFlowSub[lookup >> 4]
-        let part7 = byte & (threeBit | fiveBit) | (UInt8(cpTemp & 0xff) & sBit)
-        
-        f = part4 | nBit | part5 | part6 | part7
     }
     
     @inline(__always) func pop() -> UInt16 {
@@ -162,10 +91,11 @@ extension Z80 {
         memory.set(sp, byte: UInt8(registerPair & 0xff))
     }
     
-    @inline(__always) func rlc(_ byte: UInt8) -> UInt8 {
-        let val = (byte << 1) | (byte >> 7)
-        f = (val & cBit) | sz53pvTable[val]
-        return val
+    final func push(_ regPair: RegisterPair) {
+        sp = sp &- 1
+        memory.set(sp, byte: regPair.hi.value)
+        sp = sp &- 1
+        memory.set(sp, byte: regPair.lo.value)
     }
     
     @inline(__always) func rlca() {
@@ -182,16 +112,16 @@ extension Z80 {
     }
     
     @inline(__always) func add16(_ word: UInt16) {
-        let val: UInt32 = UInt32(hl) + UInt32(word)
-        let part1 = (hl & 0x0800) >> 11
+        let val: UInt32 = UInt32(hl.value) + UInt32(word)
+        let part1 = (hl.value & 0x0800) >> 11
         let part2 = (word & 0x0800) >> 10
         let part3 = (val & 0x0800) >> 9
         
         let lookup = UInt8(part1) | UInt8(part2) | UInt8(part3)
         
-        hl = UInt16(val & 0xffff)
+        hl.value = UInt16(val & 0xffff)
         
-        f = (f & (pvBit | zBit | sBit)) | (val & 0x10000 > 0 ? cBit : 0) | (UInt8((val >> 8)) & (threeBit | fiveBit)) | halfCarryAdd[lookup];
+        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (val & 0x10000 > 0 ? Z80.cBit : 0) | (UInt8((val >> 8)) & (Z80.threeBit | Z80.fiveBit)) | Z80.halfCarryAdd[lookup];
     }
     
     @inline(__always) func setRelativePC(_ byte: UInt8) {
@@ -245,7 +175,7 @@ extension Z80 {
     
     @inline(__always) func portIn(_ high: UInt8, low: UInt8) -> UInt8 {
         let byte = 0xff
-        f = (f & cBit) | sz53pvTable[byte]
+        Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[byte]
         return UInt8(byte)
     }
     

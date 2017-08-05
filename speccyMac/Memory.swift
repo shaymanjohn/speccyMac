@@ -8,6 +8,8 @@
 
 import Foundation
 
+// @inline(__always) 
+
 class Memory {
     
     var romSize: UInt16 = 0
@@ -36,11 +38,15 @@ class Memory {
         }
     }
     
-    @inline(__always) func get(_ address: UInt16) -> UInt8 {
+    final func get(_ address: UInt16) -> UInt8 {
         return memory[address]
     }
     
-    @inline(__always) func set(_ address: UInt16, byte: UInt8) {
+    final func get(_ regPair: RegisterPair) -> UInt8 {
+        return memory[regPair.value]
+    }
+    
+    final func set(_ address: UInt16, byte: UInt8) {
         if address >= romSize {
             memory[Int(address)] = byte
         }

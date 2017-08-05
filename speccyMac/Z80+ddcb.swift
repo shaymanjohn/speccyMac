@@ -14,7 +14,7 @@ extension Z80 {
         
         let instruction = cbprefixedOps[opcode]
         
-        var offset = ixy
+        var offset = ixy.value
         
         if first > 127 {
             offset = offset - (UInt16(256) - UInt16(first))

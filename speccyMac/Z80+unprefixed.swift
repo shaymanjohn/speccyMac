@@ -22,196 +22,199 @@ extension Z80 {
             break
             
         case 0x01:  // ld bc, nnnn
-            bc = word16
+            bc.value = word16
             
         case 0x02:  // ld (bc), a
-            memory.set(bc, byte: a)
+            memory.set(bc.value, byte: a.value)
             
         case 0x03:  // inc bc
-            bc = bc &+ 1
+            bc.inc()
             
         case 0x04:  // inc b
-            b = inc(b)
+            b.inc()
             
         case 0x05:  // dec b
-            b = dec(b)
+            b.dec()
             
         case 0x06:  // ld b, n
-            b = first
+            b.value = first
             
         case 0x07:  // rlca
             rlca()
             
         case 0x08:  // ex af, af'
-            let temp = af
-            af = exaf
+            let temp = af.value
+            af.value = exaf
             exaf = temp
             
         case 0x09:  // add hl, bc
-            add16(bc)
+            hl.add(bc.value)
             
         case 0x0a:  // ld a, (bc)
-            a = memory.get(bc)
+            a.value = memory.get(bc)
             
         case 0x0b:  // dec bc
-            bc = bc &- 1
+            bc.dec()
             
         case 0x0c:  // inc c
-            c = inc(c)
+            c.inc()
             
         case 0x0d:  // dec c
-            c = dec(c)
+            c.dec()
             
         case 0x0e:  // ld c, n
-            c = first
+            c.value = first
             
         case 0x0f:  // rrca
             rrca()
             
         case 0x10:  // djnz nn
-            b = b &- 1
-            if b > 0 {
+            b.value = b.value &- 1
+            if b.value > 0 {
                 setRelativePC(first)
             } else {
                 normalFlow = false
             }
             
         case 0x11:  // ld de, nnnn
-            de = word16
+            de.value = word16
             
         case 0x14:  // inc d
-            d = inc(d)
+            d.inc()
             
         case 0x19:  // add hl, de
-            hl = hl &+ de
+            hl.add(de.value)
             
         case 0x1d:  // dec e
-            e = dec(e)
+            e.dec()
             
         case 0x20:  // jr nz, nn
-            if f & zBit > 0 {
+            if Z80.f.value & Z80.zBit > 0 {
                 normalFlow = false
             } else {
                 setRelativePC(first)
             }
             
         case 0x21:  // ld hl, nnnn
-            hl = word16
+            hl.value = word16
             
         case 0x22:  // ld (nnnn), hl
-            memory.set(word16, byte: l)
-            memory.set(word16 &+ 1, byte: h)
+            memory.set(word16, byte: l.value)
+            memory.set(word16 &+ 1, byte: h.value)
             
         case 0x23:  // inc hl
-            hl = hl &+ 1
+            hl.inc()
             
         case 0x28:  // jr z, nn
-            if f & zBit > 0 {
+            if Z80.f.value & Z80.zBit > 0 {
                 setRelativePC(first)
             } else {
                 normalFlow = false
             }
             
         case 0x2a:  // ld hl, (nnnn)
-            l = memory.get(word16)
-            h = memory.get(word16 &+ 1)
+            l.value = memory.get(word16)
+            h.value = memory.get(word16 &+ 1)
             
         case 0x2b:  // dec hl
-            hl = hl &- 1
+            hl.dec()
             
         case 0x2d:  // dec l
-            l = dec(l)
+            l.dec()
             
         case 0x2e:  // ld l, n
-            l = first
+            l.value = first
             
         case 0x2f:  // cpl
-            a = a ^ 0xff
-            f = (f & (cBit | pvBit | zBit | sBit)) | (a & (threeBit | fiveBit)) | (nBit | hBit)
+            a.cpl()
             
         case 0x30:  // jr nc, nn
-            if f & cBit > 0 {
+            if Z80.f.value & Z80.cBit > 0 {
                 normalFlow = false
             } else {
                 setRelativePC(first)
             }
             
         case 0x32:  // ld (nnnn), a
-            memory.set(word16, byte: a)
+            memory.set(word16, byte: a.value)
             
         case 0x35:  // dec (hl)
-            let val = memory.get(hl)
-            memory.set(hl, byte: dec(val))
+            let temp = a.value
+            a.value = memory.get(hl)
+            a.dec()
+            memory.set(hl.value, byte: a.value)
+            a.value = temp
+            
             
         case 0x36:  // ld (hl), n
-            memory.set(hl, byte: first)
+            memory.set(hl.value, byte: first)
             
         case 0x38:  // jr c, nn
-            if f & cBit > 0 {
+            if Z80.f.value & Z80.cBit > 0 {
                 setRelativePC(first)
             } else {
                 normalFlow = false
             }
             
         case 0x3c:  // inc a
-            a = inc(a)
+            a.inc()
             
         case 0x3e:  // ld a, n
-            a = first
+            a.value = first
             
         case 0x3f:  // ccf
-            f = (f & (pvBit | zBit | sBit)) | ((f & cBit) > 0 ? hBit : cBit) | (a & (threeBit | fiveBit))
+            Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))
             
         case 0x40:  // ld b, b
             break
             
         case 0x47:  // ld b, a
-            b = a
+            b.value = a.value
             
         case 0x54:  // ld d, h
-            d = h
+            d.value = h.value
             
         case 0x56:  // ld d, (hl)
-            d = memory.get(hl)
+            d.value = memory.get(hl)
             
         case 0x5e:  // ld e, (hl)
-            e = memory.get(hl)
+            e.value = memory.get(hl)
             
         case 0x62:  // ld h, d
-            h = d
+            h.value = d.value
             
         case 0x67:  // ld h, a
-            h = a
+            h.value = a.value
             
         case 0x6b:  // ld l, e
-            l = e
+            l.value = e.value
             
         case 0x7a:  // ld a, d
-            a = d
+            a.value = d.value
             
         case 0x7c:  // ld a, h
-            a = h
+            a.value = h.value
             
         case 0x7d:  // ld a, l
-            a = l
+            a.value = l.value
             
         case 0x7e:  // ld a, (hl)
-            a = memory.get(hl)
+            a.value = memory.get(hl)
             
         case 0xa7:  // and a
-            f = f & 0xfc
+            a.and(a)
             
         case 0xaf:  // xor a
-            xor(a)
+            a.xor(a)
             
         case 0xb5:  // or l
-            or(l)
+            a.or(l)
             
         case 0xbc:  // cp h
-            compare(h)
+            a.cp(h)
             
         case 0xc0:  // ret nz
-            if f & zBit > 0 {
+            if Z80.f.value & Z80.zBit > 0 {
                 normalFlow = false
             } else {
                 pc = pop()
@@ -226,7 +229,7 @@ extension Z80 {
             push(bc)
             
         case 0xc8:  // ret z
-            if f & zBit > 0 {
+            if Z80.f.value & Z80.zBit > 0 {
                 pc = pop()
                 pc = pc &- 1
             } else {
@@ -239,7 +242,7 @@ extension Z80 {
             pc = pc &- 3
             
         case 0xd0:  // ret nc
-            if f & cBit > 0 {
+            if Z80.f.value & Z80.cBit > 0 {
                 normalFlow = false
             } else {
                 pc = pop()
@@ -247,25 +250,25 @@ extension Z80 {
             }
             
         case 0xd3:  // out (n), a
-            out(first, byte:a)
+            out(first, byte:a.value)
             
         case 0xd5:  // push de
             push(de)
             
         case 0xd6:  // sub n
-            sub(first)
+            a.sub(first)
             
         case 0xd9:  // exx
-            var temp = bc
-            bc = exbc
+            var temp = bc.value
+            bc.value = exbc
             exbc = temp
             
-            temp = de
-            de = exde
+            temp = de.value
+            de.value = exde
             exde = temp
             
-            temp = hl
-            hl = exhl
+            temp = hl.value
+            hl.value = exhl
             exhl = temp
             
         case 0xdf:  // rst 18
@@ -275,16 +278,16 @@ extension Z80 {
             push(hl)
             
         case 0xe6:  // and n
-            and(first)
+            a.and(first)
             
         case 0xe9:  // jp (hl)
-            pc = hl
+            pc = hl.value
             pc = pc &- 1
             
         case 0xeb:  // ex de, hl
-            let temp = de
-            de = hl
-            hl = temp
+            let temp = de.value
+            de.value = hl.value
+            hl.value = temp
             
         case 0xf3:  // di
             interrupts = false
@@ -295,7 +298,7 @@ extension Z80 {
             push(af)
             
         case 0xf9:  // ld sp, hl
-            sp = hl
+            sp = hl.value
             
         case 0xfb:  // ei
             interrupts = true
@@ -303,7 +306,7 @@ extension Z80 {
             iff2 = 1
             
         case 0xfe:  // cp n
-            compare(first)
+            a.cp(first)
             
         case 0xff:  // rst 38
             rst(0x0038)

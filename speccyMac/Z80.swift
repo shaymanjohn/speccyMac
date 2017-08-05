@@ -10,17 +10,26 @@ import Foundation
 
 class Z80 {
     
-    var a: UInt8 = 0
-    var b: UInt8 = 0
-    var c: UInt8 = 0
-    var d: UInt8 = 0
-    var e: UInt8 = 0
-    var f: UInt8 = 0
-    var h: UInt8 = 0
-    var l: UInt8 = 0
+    let a = Accumulator()
+    let b = Register()
+    let c = Register()
+    let d = Register()
+    let e = Register()
     
-    var ixyh: UInt8 = 0
-    var ixyl: UInt8 = 0
+    static let f = Register()
+    
+    let h = Register()
+    let l = Register()
+
+    let ixyh = Register()
+    let ixyl = Register()
+    
+    let af: RegisterPair
+    let hl: RegisterPair
+    let bc: RegisterPair
+    let de: RegisterPair
+    
+    var ixy: RegisterPair
     
     var ix: UInt16 = 0
     var iy: UInt16 = 0
@@ -33,61 +42,6 @@ class Z80 {
     
     var iff1: UInt8 = 0
     var iff2: UInt8 = 0
-    
-    var af: UInt16 {
-        @inline(__always) get {
-            return (UInt16(a) << 8) + UInt16(f)
-        }
-        
-        @inline(__always) set(newValue) {
-            a = UInt8(newValue >> 8)
-            f = UInt8(newValue & 0x00ff)
-        }
-    }
-    
-    var bc: UInt16 {
-        @inline(__always) get {
-            return (UInt16(b) << 8) + UInt16(c)
-        }
-        
-        @inline(__always) set(newValue) {
-            b = UInt8(newValue >> 8)
-            c = UInt8(newValue & 0x00ff)
-        }
-    }
-    
-    var de: UInt16 {
-        @inline(__always) get {
-            return (UInt16(d) << 8) + UInt16(e)
-        }
-        
-        @inline(__always) set(newValue) {
-            d = UInt8(newValue >> 8)
-            e = UInt8(newValue & 0x00ff)
-        }
-    }
-    
-    var hl: UInt16 {
-        @inline(__always) get {
-            return (UInt16(h) << 8) + UInt16(l)
-        }
-        
-        @inline(__always) set(newValue) {
-            h = UInt8(newValue >> 8)
-            l = UInt8(newValue & 0x00ff)
-        }
-    }
-    
-    var ixy: UInt16 {
-        @inline(__always) get {
-            return (UInt16(ixyh) << 8) + UInt16(ixyl)
-        }
-        
-        @inline(__always) set(newValue) {
-            ixyh = UInt8(newValue >> 8)
-            ixyl = UInt8(newValue & 0x00ff)
-        }
-    }
     
     weak var machine: Machine?
     
@@ -111,22 +65,23 @@ class Z80 {
     var interruptMode: UInt8 = 0
     var running:       Bool = false
     
-    var cBit:          UInt8 = 1 << 0
-    var nBit:          UInt8 = 1 << 1
-    var pvBit:         UInt8 = 1 << 2
-    var threeBit:      UInt8 = 1 << 3
-    var hBit:          UInt8 = 1 << 4
-    var fiveBit:       UInt8 = 1 << 5
-    var zBit:          UInt8 = 1 << 6
-    var sBit:          UInt8 = 1 << 7
+    static let cBit:     UInt8 = 1 << 0
+    static let nBit:     UInt8 = 1 << 1
+    static let pvBit:    UInt8 = 1 << 2
+    static let threeBit: UInt8 = 1 << 3
+    static let hBit:     UInt8 = 1 << 4
+    static let fiveBit:  UInt8 = 1 << 5
+    static let zBit:     UInt8 = 1 << 6
+    static let sBit:     UInt8 = 1 << 7
     
-    var sz53pvTable:   Array<UInt8> = []
-    var sz53Table:     Array<UInt8> = []
-    var parityBit:     Array<UInt8> = []
-    let halfCarryAdd:  Array<UInt8> = [0, 1 << 4, 1 << 4, 1 << 4, 0, 0, 0, 1 << 4]
-    let halfCarrySub:  Array<UInt8> = [0, 0, 1 << 4, 0, 1 << 4, 0, 1 << 4, 1 << 4]
-    var overFlowAdd:   Array<UInt8> = [0, 0, 0, 1 << 2, 1 << 2, 0, 0, 0]
-    var overFlowSub:   Array<UInt8> = [0, 1 << 2, 0, 0, 0, 0, 1 << 2, 0]
+    static var sz53pvTable: Array<UInt8> = []
+    static var sz53Table:   Array<UInt8> = []
+    static var parityBit:   Array<UInt8> = []
+    
+    static let halfCarryAdd:  Array<UInt8> = [0, 1 << 4, 1 << 4, 1 << 4, 0, 0, 0, 1 << 4]
+    static let halfCarrySub:  Array<UInt8> = [0, 0, 1 << 4, 0, 1 << 4, 0, 1 << 4, 1 << 4]
+    static let overFlowAdd:   Array<UInt8> = [0, 0, 0, 1 << 2, 1 << 2, 0, 0, 0]
+    static let overFlowSub:   Array<UInt8> = [0, 1 << 2, 0, 0, 0, 0, 1 << 2, 0]
     
 //    var clicksCount:   UInt32 = 0
     
@@ -137,12 +92,19 @@ class Z80 {
         var opCode:     String
     }
     
-    var  unprefixedOps:   Array<Instruction> = []
+    var  unprefixedOps:  Array<Instruction> = []
     var edprefixedOps:   Array<Instruction> = []
     var ddprefixedOps:   Array<Instruction> = []
     var cbprefixedOps:   Array<Instruction> = []
     
     init(memory: Memory) {
+        af = RegisterPair(hi: a, lo: Z80.f)
+        hl = RegisterPair(hi: h, lo: l)
+        bc = RegisterPair(hi: b, lo: c)
+        de = RegisterPair(hi: d, lo: e)
+        
+        ixy = RegisterPair(hi: ixyh, lo: ixyl)
+        
         self.memory = memory
         
         parseInstructions()
@@ -179,25 +141,25 @@ class Z80 {
                             try cbprefix(opcode: byte1, first: byte2, second: byte3)
                             
                         case 0xdd:
-                            ixy = ix
+                            ixy.value = ix
                             if byte1 == 0xcb {
                                 try ddcbprefix(opcode: byte3, first: byte2)
                             } else {
                                 try ddprefix(opcode: byte1, first: byte2, second: byte3)
                             }
-                            ix = ixy
+                            ix = ixy.value
                             
                         case 0xed:
                             try edprefix(opcode: byte1, first: byte2, second: byte3)
                             
                         case 0xfd:
-                            ixy = iy
+                            ixy.value = iy
                             if byte1 == 0xcb {
                                 try ddcbprefix(opcode: byte3, first: byte2)
                             } else {
                                 try ddprefix(opcode: byte1, first: byte2, second: byte3)
                             }
-                            iy = ixy
+                            iy = ixy.value
                             
                         default:
                             try unprefixed(opcode: opCode, first: byte1, second: byte2)
@@ -234,10 +196,10 @@ class Z80 {
     func loadGame(_ game: String) {
         
         if let loader = Loader(game, memory: memory) {
-            af = loader.af
-            hl = loader.hl
-            bc = loader.bc
-            de = loader.de
+            af.value = loader.af
+            hl.value = loader.hl
+            bc.value = loader.bc
+            de.value = loader.de
             
             exaf = loader.exaf
             exhl = loader.exhl
@@ -344,7 +306,7 @@ class Z80 {
     
     func calculateTables() {
         for ii in 0...255 {
-            sz53Table.append(UInt8(ii) & (threeBit | fiveBit | sBit))
+            Z80.sz53Table.append(UInt8(ii) & (Z80.threeBit | Z80.fiveBit | Z80.sBit))
             var j = UInt(ii)
             var parity:UInt8 = 0
             for _ in 0...7 {
@@ -353,16 +315,16 @@ class Z80 {
             }
             
             if parity == 0 {
-                parityBit.append(0)
+                Z80.parityBit.append(0)
             } else {
-                parityBit.append(pvBit)
+                Z80.parityBit.append(Z80.pvBit)
             }
             
-            sz53pvTable.append(sz53Table[ii] | parityBit[ii])
+            Z80.sz53pvTable.append(Z80.sz53Table[ii] | Z80.parityBit[ii])
         }
         
-        sz53Table[0]   = sz53Table[0]   | zBit
-        sz53pvTable[0] = sz53pvTable[0] | zBit
+        Z80.sz53Table[0]   = Z80.sz53Table[0]   | Z80.zBit
+        Z80.sz53pvTable[0] = Z80.sz53pvTable[0] | Z80.zBit
     }
     
     final func serviceInterrupts() {
