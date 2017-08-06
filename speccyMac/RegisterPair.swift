@@ -56,7 +56,7 @@ class RegisterPair {
         value = UInt16(sub16temp & 0xffff)
         
         let part1 = (sub16temp & 0x10000 > 0 ? Z80.cBit : 0) | Z80.nBit
-        let part2 = Z80.overFlowSub[lookup >> 4]
+        let part2 = Z80.overFlowSub[UInt8(lookup & 0xff) >> 4]
         let part3 = hi.value & (Z80.threeBit | Z80.fiveBit | Z80.sBit)
         Z80.f.value = part1 | part2 | part3 | Z80.halfCarrySub[lookup&0x07] | (value > 0 ? 0 : Z80.zBit)
     }

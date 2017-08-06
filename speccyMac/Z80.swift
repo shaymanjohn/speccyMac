@@ -170,12 +170,17 @@ class Z80 {
                 // machine specifics here...
                 
                 if ula >= 224 {
-                    if videoRow > 63 && videoRow < 256 {
+                    switch videoRow {
+                    case 64...255:
+                        self.machine?.captureRow(videoRow - 64)
                         
-                    } else if videoRow == 311 {
+                    case 311:
                         DispatchQueue.main.async {
                             self.machine?.refreshScreen()
                         }
+                        
+                    default:
+                        break
                     }
                     
                     ula = ula - 224

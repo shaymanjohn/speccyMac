@@ -10,6 +10,8 @@
 		6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1792091F31B0D700A984F0 /* Array+extensions.swift */; };
 		6F7421E11F36FDFF00C056EA /* RefreshReg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7421E01F36FDFF00C056EA /* RefreshReg.swift */; };
 		6F8E10851F2259E10039C0BB /* Z80+core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8E10841F2259E10039C0BB /* Z80+core.swift */; };
+		6FE5147A1F372D96004F0751 /* registerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE514791F372D96004F0751 /* registerTests.swift */; };
+		6FE5147C1F3732A3004F0751 /* registerPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE5147B1F3732A3004F0751 /* registerPairTests.swift */; };
 		6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90C1F2238A500F9AD93 /* Memory.swift */; };
 		6FEFA90F1F2238C200F9AD93 /* Z80.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90E1F2238C200F9AD93 /* Z80.swift */; };
 		6FEFA91E1F223B5A00F9AD93 /* z80ops.json in Resources */ = {isa = PBXBuildFile; fileRef = 6FEFA91B1F223AA400F9AD93 /* z80ops.json */; };
@@ -28,13 +30,28 @@
 		6FFC9E081F35CFA400B9322C /* Register.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E071F35CFA400B9322C /* Register.swift */; };
 		6FFC9E0A1F35CFB200B9322C /* RegisterPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E091F35CFB200B9322C /* RegisterPair.swift */; };
 		6FFC9E0C1F35D65C00B9322C /* Accumulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */; };
+		6FFE6FC21F376BEF00EBCC3B /* memoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFE6FC11F376BEF00EBCC3B /* memoryTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		6FE514741F372CF1004F0751 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6FFB31481F22379B00C15CD7 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6FFB314F1F22379B00C15CD7;
+			remoteInfo = speccyMac;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		6F1792091F31B0D700A984F0 /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
 		6F7421E01F36FDFF00C056EA /* RefreshReg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshReg.swift; sourceTree = "<group>"; };
 		6F8E10841F2259E10039C0BB /* Z80+core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+core.swift"; sourceTree = "<group>"; };
 		6F9ED15A1F325E47000BEFF9 /* z80defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = z80defines.h; sourceTree = "<group>"; };
+		6FE5146F1F372CF1004F0751 /* speccyMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = speccyMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		6FE514731F372CF1004F0751 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6FE514791F372D96004F0751 /* registerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = registerTests.swift; sourceTree = "<group>"; };
+		6FE5147B1F3732A3004F0751 /* registerPairTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = registerPairTests.swift; sourceTree = "<group>"; };
 		6FEFA90C1F2238A500F9AD93 /* Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memory.swift; sourceTree = "<group>"; };
 		6FEFA90E1F2238C200F9AD93 /* Z80.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z80.swift; sourceTree = "<group>"; };
 		6FEFA91B1F223AA400F9AD93 /* z80ops.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = z80ops.json; sourceTree = SOURCE_ROOT; };
@@ -56,9 +73,17 @@
 		6FFC9E071F35CFA400B9322C /* Register.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register.swift; sourceTree = "<group>"; };
 		6FFC9E091F35CFB200B9322C /* RegisterPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterPair.swift; sourceTree = "<group>"; };
 		6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accumulator.swift; sourceTree = "<group>"; };
+		6FFE6FC11F376BEF00EBCC3B /* memoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = memoryTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		6FE5146C1F372CF1004F0751 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6FFB314D1F22379B00C15CD7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -69,9 +94,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6FE514701F372CF1004F0751 /* speccyMacTests */ = {
+			isa = PBXGroup;
+			children = (
+				6FE514731F372CF1004F0751 /* Info.plist */,
+				6FE514791F372D96004F0751 /* registerTests.swift */,
+				6FE5147B1F3732A3004F0751 /* registerPairTests.swift */,
+				6FFE6FC11F376BEF00EBCC3B /* memoryTests.swift */,
+			);
+			path = speccyMacTests;
+			sourceTree = "<group>";
+		};
 		6FEFA9101F2239AD00F9AD93 /* Roms */ = {
 			isa = PBXGroup;
 			children = (
+				6F9ED15A1F325E47000BEFF9 /* z80defines.h */,
 				6FEFA91D1F223B3A00F9AD93 /* 48.rom */,
 				6FEFA91C1F223B3200F9AD93 /* manic.sna */,
 			);
@@ -82,6 +119,7 @@
 			isa = PBXGroup;
 			children = (
 				6FFB31521F22379B00C15CD7 /* speccyMac */,
+				6FE514701F372CF1004F0751 /* speccyMacTests */,
 				6FFB31511F22379B00C15CD7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				6FFB31501F22379B00C15CD7 /* speccyMac.app */,
+				6FE5146F1F372CF1004F0751 /* speccyMacTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -113,7 +152,6 @@
 				6FEFA92D1F2250B200F9AD93 /* Z80+ddcb.swift */,
 				6FEFA9211F223FCE00F9AD93 /* Loader.swift */,
 				6F1792091F31B0D700A984F0 /* Array+extensions.swift */,
-				6F9ED15A1F325E47000BEFF9 /* z80defines.h */,
 				6FEFA9101F2239AD00F9AD93 /* Roms */,
 				6FFB31571F22379B00C15CD7 /* Assets.xcassets */,
 				6FEFA91B1F223AA400F9AD93 /* z80ops.json */,
@@ -127,6 +165,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		6FE5146E1F372CF1004F0751 /* speccyMacTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6FE514761F372CF1004F0751 /* Build configuration list for PBXNativeTarget "speccyMacTests" */;
+			buildPhases = (
+				6FE5146B1F372CF1004F0751 /* Sources */,
+				6FE5146C1F372CF1004F0751 /* Frameworks */,
+				6FE5146D1F372CF1004F0751 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6FE514751F372CF1004F0751 /* PBXTargetDependency */,
+			);
+			name = speccyMacTests;
+			productName = speccyMacTests;
+			productReference = 6FE5146F1F372CF1004F0751 /* speccyMacTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		6FFB314F1F22379B00C15CD7 /* speccyMac */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6FFB31601F22379B00C15CD7 /* Build configuration list for PBXNativeTarget "speccyMac" */;
@@ -154,6 +210,10 @@
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "John Ward";
 				TargetAttributes = {
+					6FE5146E1F372CF1004F0751 = {
+						CreatedOnToolsVersion = 9.0;
+						TestTargetID = 6FFB314F1F22379B00C15CD7;
+					};
 					6FFB314F1F22379B00C15CD7 = {
 						CreatedOnToolsVersion = 9.0;
 					};
@@ -173,11 +233,19 @@
 			projectRoot = "";
 			targets = (
 				6FFB314F1F22379B00C15CD7 /* speccyMac */,
+				6FE5146E1F372CF1004F0751 /* speccyMacTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		6FE5146D1F372CF1004F0751 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6FFB314E1F22379B00C15CD7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -193,6 +261,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		6FE5146B1F372CF1004F0751 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6FE5147C1F3732A3004F0751 /* registerPairTests.swift in Sources */,
+				6FFE6FC21F376BEF00EBCC3B /* memoryTests.swift in Sources */,
+				6FE5147A1F372D96004F0751 /* registerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		6FFB314C1F22379B00C15CD7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -218,6 +296,14 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		6FE514751F372CF1004F0751 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6FFB314F1F22379B00C15CD7 /* speccyMac */;
+			targetProxy = 6FE514741F372CF1004F0751 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin PBXVariantGroup section */
 		6FFB31591F22379B00C15CD7 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
@@ -230,6 +316,36 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		6FE514771F372CF1004F0751 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = B7LWR6U3HW;
+				INFOPLIST_FILE = speccyMacTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/speccyMac.app/Contents/MacOS/speccyMac";
+			};
+			name = Debug;
+		};
+		6FE514781F372CF1004F0751 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = B7LWR6U3HW;
+				INFOPLIST_FILE = speccyMacTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/speccyMac.app/Contents/MacOS/speccyMac";
+			};
+			name = Release;
+		};
 		6FFB315E1F22379B00C15CD7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -369,6 +485,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		6FE514761F372CF1004F0751 /* Build configuration list for PBXNativeTarget "speccyMacTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6FE514771F372CF1004F0751 /* Debug */,
+				6FE514781F372CF1004F0751 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		6FFB314B1F22379B00C15CD7 /* Build configuration list for PBXProject "speccyMac" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

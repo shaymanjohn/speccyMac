@@ -19,6 +19,18 @@ extension Z80 {
         case 0x00:  // rlc b
             b.rlc()
             
+        case 0x67: // bit 4, a
+            a.bit(4)
+            
+        case 0x7e: // bit 7, (hl)
+            memory.indexBit(7, baseAddress: hl.value, offset: first)
+            
+        case 0xae: // res 5, (hl)
+            memory.indexRes(5, baseAddress: hl.value, offset: first)
+            
+        case 0xc6: // set 0, (hl)
+            memory.indexSet(0, baseAddress: hl.value, offset: first)
+            
         default:
             throw NSError(domain: "z80+cb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
         }

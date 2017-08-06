@@ -15,6 +15,17 @@ class Accumulator : Register {
         Z80.f.value = (Z80.f.value & (Z80.cBit | Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & (Z80.threeBit | Z80.fiveBit)) | (Z80.nBit | Z80.hBit)
     }
     
+    final func add(_ amount: UInt8) {
+        let addtemp = UInt16(value) + UInt16(amount)
+        
+        let part1 = UInt16((value & 0x88) >> 3)
+        let part2 = UInt16((amount & 0x88) >> 2)
+        let part3 = (addtemp & 0x88) >> 1
+        let lookup = part1 | part2 | part3
+        value = UInt8(addtemp & 0xff)        
+        Z80.f.value = (addtemp & 0x100 > 0 ? Z80.cBit : 0 ) | Z80.halfCarryAdd[UInt8(lookup & 0xff) & 0x07] | Z80.overFlowAdd[UInt8(lookup & 0xff) >> 4] | Z80.sz53Table[value]
+    }
+    
     final func and(_ reg: Register) {
         value = value & reg.value
         Z80.f.value = Z80.hBit | Z80.sz53pvTable[value]
@@ -30,8 +41,18 @@ class Accumulator : Register {
         Z80.f.value = Z80.sz53pvTable[value]
     }
     
+    final func xor(_ amount: UInt8) {
+        value = value ^ amount
+        Z80.f.value = Z80.sz53pvTable[value]
+    }
+    
     final func or(_ reg: Register) {
         value = value | reg.value
+        Z80.f.value = Z80.sz53pvTable[value]
+    }
+    
+    final func or(_ amount: UInt8) {
+        value = value | amount
         Z80.f.value = Z80.sz53pvTable[value]
     }
     
@@ -84,7 +105,7 @@ class Accumulator : Register {
     }
     
     final func sub(_ amount: UInt8) {
-        let subTemp = UInt16(value) - UInt16(amount)
+        let subTemp = UInt16(value) &- UInt16(amount)
         
         let part1 = (value & 0x88) >> 3
         let part2 = (amount & 0x88) >> 2

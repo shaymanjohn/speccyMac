@@ -58,7 +58,7 @@ class Memory {
         let hi = get(Z80.sp)
         Z80.sp = Z80.sp &+ 1
         
-        return UInt16(hi << 8) | UInt16(lo)
+        return UInt16(hi) << 8 | UInt16(lo)
     }
     
     final func push(_ regPair: RegisterPair) {
@@ -81,5 +81,29 @@ class Memory {
         var byte = get(address)
         byte = byte | (1 << num)
         set(address, byte: byte)
+    }
+    
+    final func indexRes(_ num: Int, baseAddress: UInt16, offset: UInt8) {
+        let address = offset > 127 ? baseAddress  - (UInt16(256) - UInt16(offset)) : baseAddress + UInt16(offset)
+        
+        var byte = get(address)
+        byte = byte & ~(1 << num)
+        set(address, byte: byte)
+    }
+    
+    final func indexBit(_ num: Int, baseAddress: UInt16, offset: UInt8) {
+        let address = offset > 127 ? baseAddress  - (UInt16(256) - UInt16(offset)) : baseAddress + UInt16(offset)
+        
+        let value = get(address)
+        
+        Z80.f.value = (Z80.f.value & Z80.cBit ) | Z80.hBit | ((offset >> 8) & (Z80.threeBit | Z80.fiveBit))
+        
+        if (value & (0x01 << num) == 0) {
+            Z80.f.value |= Z80.pvBit | Z80.zBit
+        }
+        
+        if (num == 7 && (value & 0x80 > 0)) {
+            Z80.f.value |= Z80.sBit
+        }
     }
 }

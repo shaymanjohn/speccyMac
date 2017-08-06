@@ -16,6 +16,18 @@ extension Z80 {
                 
         switch opcode {
             
+        case 0x46:
+            memory.indexBit(0, baseAddress: ixy.value, offset: first)
+            
+        case 0x4e:
+            memory.indexBit(1, baseAddress: ixy.value, offset: first)
+            
+        case 0x86:
+            memory.indexRes(0, baseAddress: ixy.value, offset: first)
+            
+        case 0xc6:
+            memory.indexSet(0, baseAddress: ixy.value, offset: first)
+            
         case 0xce:
             memory.indexSet(1, baseAddress: ixy.value, offset: first)
             

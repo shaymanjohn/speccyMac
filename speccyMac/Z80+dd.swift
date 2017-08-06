@@ -29,6 +29,18 @@ extension Z80 {
             let paired = ixy.value + offset
             memory.set(paired, byte: memory.get(paired))
             
+        case 0x46:  // ld b, (ix+d)
+            b.value = memory.get(ixy.value &+ offset)
+            
+        case 0x56:  // ld b, (ix+d)
+            d.value = memory.get(ixy.value &+ offset)
+            
+        case 0x5e:  // ld e, (ix+d)
+            e.value = memory.get(ixy.value &+ offset)
+            
+        case 0x6e:  // ld l, (ix+d)
+            l.value = memory.get(ixy.value &+ offset)
+            
         default:
             throw NSError(domain: "z80+dd", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
         }

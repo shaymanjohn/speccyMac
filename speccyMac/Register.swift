@@ -27,4 +27,15 @@ class Register {
         value = (value << 1) | (value >> 7)
         Z80.f.value = (value & Z80.cBit) | Z80.sz53pvTable[value]
     }
+    
+    final func bit(_ number: UInt8) {
+        Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.hBit | ( value & ( Z80.threeBit | Z80.fiveBit))
+        if value & (0x01 << number) == 0 {
+            Z80.f.value |= Z80.pvBit | Z80.zBit
+        }
+        
+        if number == 7 && (value & 0x80) > 0 {
+            Z80.f.value |= Z80.sBit
+        }
+    }
 }
