@@ -12,7 +12,7 @@ extension Z80 {
     
     final func edprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
-        let word16 = (UInt16(second) << 8) + UInt16(first)
+        let word16 = (UInt16(second) << 8) | UInt16(first)
         let instruction = edprefixedOps[opcode]
 
         switch opcode {
@@ -24,16 +24,8 @@ extension Z80 {
         case 0x47:  // ld i, a
             i = a.value
             
-        case 0x52:  // sbc hl, de 
-            var result = Int(hl.value) - Int(de.value)
-            if Z80.f.value & Z80.cBit > 0 {
-                result = result - 1
-            }
-            if (result < 0) {
-                hl.value = UInt16(65536 + result)
-            } else {
-                hl.value = UInt16(result)
-            }
+        case 0x52:  // sbc hl, de
+            hl.sbc(de)
             
         case 0x53:  // ld (nnnn), de
             memory.set(word16, byte: e.value)
@@ -77,12 +69,10 @@ extension Z80 {
         
 //        print("\(pc) : \(instruction.opCode)")
         
-        pc = pc &+ instruction.length
+        pc = pc &+ instruction.length        
+        incCounters(amount: instruction.tStates)
         
-        let ts = instruction.tStates
-        incCounters(amount: ts)
-        
-        incR()
-        incR()
+        r.inc()
+        r.inc()
     }
 }

@@ -102,4 +102,15 @@ class Accumulator : Register {
         Z80.f.value = part4 | Z80.nBit | part5 | part6 | part7
     }
     
+    final func rlca() {
+        value = (value << 1) | (value >> 7)
+        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & (Z80.cBit | Z80.threeBit | Z80.fiveBit))
+    }
+    
+    final func rrca() {
+        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & Z80.cBit)
+        value = (value >> 1) | (value << 7)
+        Z80.f.value |= (value & (Z80.threeBit | Z80.fiveBit))
+    }
+    
 }

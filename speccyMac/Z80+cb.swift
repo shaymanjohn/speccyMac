@@ -25,12 +25,10 @@ extension Z80 {
         
 //        print("\(pc) : \(instruction.opCode)")
         
-        pc = pc &+ instruction.length
+        pc = pc &+ instruction.length        
+        incCounters(amount: instruction.tStates)
         
-        let ts = instruction.tStates
-        incCounters(amount: ts)
-        
-        incR()
-        incR()
+        r.inc()
+        r.inc()
     }
 }

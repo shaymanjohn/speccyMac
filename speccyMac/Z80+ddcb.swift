@@ -13,19 +13,11 @@ extension Z80 {
     final func ddcbprefix(opcode: UInt8, first: UInt8) throws {
         
         let instruction = cbprefixedOps[opcode]
-        
-        var offset = ixy.value
-        
-        if first > 127 {
-            offset = offset - (UInt16(256) - UInt16(first))
-        } else {
-            offset = offset + UInt16(first)
-        }
-        
+                
         switch opcode {
             
         case 0xce:
-            indexSet(1, offset: offset)
+            memory.indexSet(1, baseAddress: ixy.value, offset: first)
             
         default:
             throw NSError(domain: "z80+ddcb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
@@ -34,12 +26,10 @@ extension Z80 {
 //        print("\(pc) : \(instruction.opCode)")
         
         pc = pc &+ instruction.length
+        incCounters(amount: instruction.tStates)
         
-        let ts = instruction.tStates
-        incCounters(amount: ts)
-        
-        incR()
-        incR()
+        r.inc()
+        r.inc()
     }
 
 }

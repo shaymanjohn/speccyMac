@@ -51,4 +51,35 @@ class Memory {
             memory[Int(address)] = byte
         }
     }
+    
+    final func pop() -> UInt16 {
+        let lo = get(Z80.sp)
+        Z80.sp = Z80.sp &+ 1
+        let hi = get(Z80.sp)
+        Z80.sp = Z80.sp &+ 1
+        
+        return UInt16(hi << 8) | UInt16(lo)
+    }
+    
+    final func push(_ regPair: RegisterPair) {
+        Z80.sp = Z80.sp &- 1
+        set(Z80.sp, byte: regPair.hi.value)
+        Z80.sp = Z80.sp &- 1
+        set(Z80.sp, byte: regPair.lo.value)
+    }
+    
+    final func push(_ word: UInt16) {
+        Z80.sp = Z80.sp &- 1
+        set(Z80.sp, byte: UInt8((word & 0xff00) >> 8))
+        Z80.sp = Z80.sp &- 1
+        set(Z80.sp, byte: UInt8((word & 0x00ff)))
+    }
+    
+    final func indexSet(_ num: Int, baseAddress: UInt16, offset: UInt8) {
+        let address = offset > 127 ? baseAddress  - (UInt16(256) - UInt16(offset)) : baseAddress + UInt16(offset)
+        
+        var byte = get(address)
+        byte = byte | (1 << num)
+        set(address, byte: byte)
+    }
 }

@@ -34,10 +34,10 @@ class Z80 {
     var ix: UInt16 = 0
     var iy: UInt16 = 0
     
-    var sp: UInt16 = 0
+    static var sp: UInt16 = 0
     var pc: UInt16 = 0
     
-    var r: UInt8 = 0
+    var r = RefreshReg()
     var i: UInt8 = 0
     
     var iff1: UInt8 = 0
@@ -206,13 +206,13 @@ class Z80 {
             exbc = loader.exbc
             exde = loader.exde
             
-            sp = loader.sp
+            Z80.sp = loader.sp
             pc = loader.pc
             
             ix = loader.ix;
             iy = loader.iy;
             
-            r = loader.r;
+            r.value = loader.r;
             i = loader.i;
             
             interrupts = loader.interrupts;
@@ -353,8 +353,8 @@ class Z80 {
                 halted = false
             }
             
-            push(pc)
-            incR()
+            memory.push(pc)
+            r.inc()
             
             if interruptMode < 2 {
                 pc = 0x0038

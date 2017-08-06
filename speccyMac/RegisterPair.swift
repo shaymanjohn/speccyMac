@@ -15,7 +15,7 @@ class RegisterPair {
     
     var value: UInt16 {
         get {
-            return (UInt16(hi.value) << 8) + UInt16(lo.value)
+            return (UInt16(hi.value) << 8) | UInt16(lo.value)
         }
         
         set {
@@ -38,16 +38,26 @@ class RegisterPair {
     }
     
     final func add(_ amount: UInt16) {
-        let val: UInt32 = UInt32(value) + UInt32(amount)
+        let temp: UInt32 = UInt32(value) + UInt32(amount)
         let part1 = (value & 0x0800) >> 11
         let part2 = (amount & 0x0800) >> 10
-        let part3 = (val & 0x0800) >> 9
+        let part3 = (temp & 0x0800) >> 9
         
         let lookup = UInt8(part1) | UInt8(part2) | UInt8(part3)
         
-        value = UInt16(val & 0xffff)
+        value = UInt16(temp & 0xffff)
         
-        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (val & 0x10000 > 0 ? Z80.cBit : 0) | (UInt8((val >> 8)) & (Z80.threeBit | Z80.fiveBit)) | Z80.halfCarryAdd[lookup];
+        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (temp & 0x10000 > 0 ? Z80.cBit : 0) | (UInt8((temp & 0xff00 >> 8)) & (Z80.threeBit | Z80.fiveBit)) | Z80.halfCarryAdd[lookup];
     }
     
+    final func sbc(_ regPair: RegisterPair) {
+        let sub16temp: UInt32 = UInt32(value) &- UInt32(regPair.value) &- UInt32((Z80.f.value & Z80.cBit))
+        let lookup = ((value & 0x8800) >> 11) | ((regPair.value & 0x8800) >> 10) | ((UInt16(sub16temp & 0xffff) & 0x8800) >> 9)
+        value = UInt16(sub16temp & 0xffff)
+        
+        let part1 = (sub16temp & 0x10000 > 0 ? Z80.cBit : 0) | Z80.nBit
+        let part2 = Z80.overFlowSub[lookup >> 4]
+        let part3 = hi.value & (Z80.threeBit | Z80.fiveBit | Z80.sBit)
+        Z80.f.value = part1 | part2 | part3 | Z80.halfCarrySub[lookup&0x07] | (value > 0 ? 0 : Z80.zBit)
+    }
 }

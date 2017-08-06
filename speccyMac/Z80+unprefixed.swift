@@ -14,7 +14,7 @@ extension Z80 {
         
         let instruction = unprefixedOps[opcode]
         var normalFlow = true
-        let word16 = (UInt16(second) << 8) + UInt16(first)
+        let word16 = (UInt16(second) << 8) | UInt16(first)
         
         switch opcode {
             
@@ -40,7 +40,7 @@ extension Z80 {
             b.value = first
             
         case 0x07:  // rlca
-            rlca()
+            a.rlca()
             
         case 0x08:  // ex af, af'
             let temp = af.value
@@ -66,7 +66,7 @@ extension Z80 {
             c.value = first
             
         case 0x0f:  // rrca
-            rrca()
+            a.rrca()
             
         case 0x10:  // djnz nn
             b.value = b.value &- 1
@@ -149,6 +149,11 @@ extension Z80 {
         case 0x36:  // ld (hl), n
             memory.set(hl.value, byte: first)
             
+        case 0x37:  // scf
+            Z80.f.value &= Z80.zBit | Z80.sBit | Z80.pvBit
+            Z80.f.value |= (a.value & (Z80.threeBit | Z80.fiveBit))
+            Z80.f.value |= Z80.cBit
+            
         case 0x38:  // jr c, nn
             if Z80.f.value & Z80.cBit > 0 {
                 setRelativePC(first)
@@ -217,7 +222,7 @@ extension Z80 {
             if Z80.f.value & Z80.zBit > 0 {
                 normalFlow = false
             } else {
-                pc = pop()
+                pc = memory.pop()
                 pc = pc &- 1
             }
             
@@ -226,18 +231,22 @@ extension Z80 {
             pc = pc &- 3
             
         case 0xc5:  // push bc
-            push(bc)
+            memory.push(bc)
             
         case 0xc8:  // ret z
             if Z80.f.value & Z80.zBit > 0 {
-                pc = pop()
+                pc = memory.pop()
                 pc = pc &- 1
             } else {
                 normalFlow = false
             }
             
+        case 0xc9:  // ret
+            pc = memory.pop()
+            pc = pc &- 1
+            
         case 0xcd:  // call nnnn
-            push(pc &+ 3)
+            memory.push(pc &+ 3)
             pc = word16
             pc = pc &- 3
             
@@ -245,15 +254,15 @@ extension Z80 {
             if Z80.f.value & Z80.cBit > 0 {
                 normalFlow = false
             } else {
-                pc = pop()
+                pc = memory.pop()
                 pc = pc &- 1
             }
             
         case 0xd3:  // out (n), a
-            out(first, byte:a.value)
+            portOut(first, byte:a.value)
             
         case 0xd5:  // push de
-            push(de)
+            memory.push(de)
             
         case 0xd6:  // sub n
             a.sub(first)
@@ -275,7 +284,7 @@ extension Z80 {
             rst(0x0018)
             
         case 0xe5:  // push hl
-            push(hl)
+            memory.push(hl)
             
         case 0xe6:  // and n
             a.and(first)
@@ -295,10 +304,10 @@ extension Z80 {
             iff2 = 2
             
         case 0xf5:  // push af
-            push(af)
+            memory.push(af)
             
         case 0xf9:  // ld sp, hl
-            sp = hl.value
+            Z80.sp = hl.value
             
         case 0xfb:  // ei
             interrupts = true
@@ -320,6 +329,6 @@ extension Z80 {
         pc = pc &+ instruction.length
         
         incCounters(amount: normalFlow ? instruction.tStates : instruction.altTStates)        
-        incR()
+        r.inc()
     }
 }

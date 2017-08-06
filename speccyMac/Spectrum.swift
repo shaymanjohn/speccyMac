@@ -72,6 +72,8 @@ class Spectrum: NSViewController {
         
         spectrumScreen.wantsLayer = true
         spectrumScreen.layer?.backgroundColor = NSColor.black.cgColor
+        
+//        loadGame("manic.sna")
     }
     
     func loadGame(_ game: String) {

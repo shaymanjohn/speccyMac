@@ -12,7 +12,7 @@ extension Z80 {
     
     final func ddprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
-        let word16 = (UInt16(second) << 8) + UInt16(first)
+        let word16 = (UInt16(second) << 8) | UInt16(first)
         let instruction = ddprefixedOps[opcode]
         
         var offset = UInt16(first)
@@ -35,12 +35,10 @@ extension Z80 {
         
 //        print("\(pc) : \(instruction.opCode)")
         
-        pc = pc &+ instruction.length
+        pc = pc &+ instruction.length        
+        incCounters(amount: instruction.tStates)
         
-        let ts = instruction.tStates
-        incCounters(amount: ts)
-        
-        incR()
-        incR()
+        r.inc()
+        r.inc()
     }
 }
