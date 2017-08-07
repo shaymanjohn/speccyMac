@@ -128,9 +128,9 @@ class Z80 {
                 } else if !paused {
                     do {
                         opCode = memory.get(pc)
-                        byte1  = memory.get(pc + 1)
-                        byte2  = memory.get(pc + 2)
-                        byte3  = memory.get(pc + 3)
+                        byte1  = memory.get(pc &+ 1)
+                        byte2  = memory.get(pc &+ 2)
+                        byte3  = memory.get(pc &+ 3)
                         
 //                        print("insCount: \(insCount), pc: \(pc)")
 //                        insCount = insCount + 1
@@ -366,7 +366,7 @@ class Z80 {
                 incCounters(13)
             } else {
                 let vector = (UInt16(i) << 8) + 0xff
-                let loByte = memory.get(vector + 1)
+                let loByte = memory.get(vector &+ 1)
                 let hiByte = memory.get(vector)
                 pc = (UInt16(hiByte) << 8) + UInt16(loByte)
                 incCounters(19)

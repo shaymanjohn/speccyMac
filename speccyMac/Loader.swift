@@ -110,14 +110,14 @@ class Loader {
         }
         
         let lo = memory.get(sp);
-        sp = sp + 1;
+        sp = sp &+ 1;
         let hi = memory.get(sp);
-        sp = sp + 1;
+        sp = sp &+ 1;
         
         pc = (UInt16(hi) << 8) + UInt16(lo);
         
-        memory.set(sp - 1, byte: 0)
-        memory.set(sp - 2, byte: 0)
+        memory.set(sp &- 1, byte: 0)
+        memory.set(sp &- 2, byte: 0)
         
         print("game loaded!")
     }

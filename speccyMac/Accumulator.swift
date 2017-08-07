@@ -57,27 +57,7 @@ class Accumulator : Register {
     }
     
     final func cp(_ reg: Register) {
-        var cpTemp: UInt16 = 0
-        
-        if reg.value > value {
-            cpTemp = UInt16(reg.value) - UInt16(value)
-            cpTemp = (65535 - cpTemp) + 1
-        } else {
-            cpTemp = UInt16(value) - UInt16(reg.value)
-        }
-        
-        let part1 = (value & 0x88) >> 3
-        let part2 = (reg.value & 0x88) >> 2
-        let part3 = (cpTemp & 0x88) >> 1
-        
-        let lookup = part1 | part2 | UInt8(part3)
-        
-        let part4 = cpTemp & 0x100 > 0 ? Z80.cBit : (cpTemp > 0 ? 0 : Z80.zBit)
-        let part5 = Z80.halfCarrySub[lookup & 0x07]
-        let part6 = Z80.overFlowSub[lookup >> 4]
-        let part7 = reg.value & (Z80.threeBit | Z80.fiveBit) | (UInt8(cpTemp & 0xff) & Z80.sBit)
-        
-        Z80.f.value = part4 | Z80.nBit | part5 | part6 | part7
+        cp(reg.value)
     }
     
     final func cp(_ amount: UInt8) {
@@ -134,4 +114,15 @@ class Accumulator : Register {
         Z80.f.value |= (value & (Z80.threeBit | Z80.fiveBit))
     }
     
+    final func rra() {
+        let rratemp = value
+        value = (value >> 1) | (Z80.f.value << 7)
+        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & (Z80.threeBit | Z80.fiveBit)) | (rratemp & Z80.cBit)
+    }
+    
+    final func rla() {
+        let rlatemp = value
+        value = (value << 1) | (Z80.f.value & Z80.cBit)
+        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & (Z80.threeBit | Z80.fiveBit)) | (rlatemp >> 7)
+    }
 }

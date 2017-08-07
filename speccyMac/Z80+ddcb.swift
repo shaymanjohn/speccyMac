@@ -22,6 +22,9 @@ extension Z80 {
         case 0x4e:
             memory.indexBit(1, baseAddress: ixy.value, offset: first)
             
+        case 0x7e:
+            memory.indexBit(7, baseAddress: ixy.value, offset: first)
+            
         case 0x86:
             memory.indexRes(0, baseAddress: ixy.value, offset: first)
             

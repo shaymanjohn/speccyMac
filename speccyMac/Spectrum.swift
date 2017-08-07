@@ -32,14 +32,14 @@ class Spectrum: NSViewController {
     var clicksCount: UInt32 = 0
     
     let colourSpace = CGColorSpaceCreateDeviceRGB()
-    let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue).union(CGBitmapInfo())
+    let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
     
     // bmp pool to render image
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 24 * 8)
     
     // precalculated screen and attribute rows
     var screenRowAddress    = [UInt16](repeating: 0, count: 192)
-    var attributeRowAddress = [UInt16](repeating: 0, count: 192)
+    var attributeRowAddress = [UInt16](repeating: 0, count: 24)
     
     // Screen image and saved version
     var screenCopy = [UInt8](repeating: 0, count: 32 * 192)
@@ -65,23 +65,27 @@ class Spectrum: NSViewController {
         
         var colourIndex = 0
         for colour in colourTable {
-            let rComp = UInt32(colour.r) << 24
+            let rComp = UInt32(colour.r) << 8
             let gComp = UInt32(colour.g) << 16
-            let bComp = UInt32(colour.b) << 8
-            colours[colourIndex] = rComp + gComp + bComp + UInt32(0xff)
+            let bComp = UInt32(colour.b) << 24
+            colours[colourIndex] = rComp | gComp | bComp | UInt32(0xff)
             colourIndex = colourIndex + 1
         }
         
-        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 1024, releaseData: {
+        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
             (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
         })!
         
         z80 = Z80(memory: memory)
         z80.machine = self
         
-        DispatchQueue.global(qos: .default).async {
+        DispatchQueue.global().async {
             self.z80.start()
         }
+        
+//        DispatchQueue.global(qos: .default).async {
+//            self.z80.start()
+//        }
         
         var rowNum = 0
         for row in 0..<24 {
@@ -89,15 +93,19 @@ class Spectrum: NSViewController {
                 let dataByteHigh = 0x40 | (row & 0x18) | (pixelRow % 8);
                 let dataByteLow  = ((row & 0x7) << 5);
                 
-                let address:UInt16 = UInt16((dataByteHigh << 8)) + UInt16(dataByteLow);
+                let address:UInt16 = UInt16((dataByteHigh) << 8) + UInt16(dataByteLow);
                 screenRowAddress[rowNum] = address;
-                attributeRowAddress[rowNum] = UInt16(22580) + UInt16((32 * rowNum))
                 
                 rowNum = rowNum + 1
             }
+            
+            attributeRowAddress[row] = 22528 + (32 * UInt16(row))
         }
         
-//        loadGame("manic.sna")
+        let allGames = ["manic", "aticatac", "brucelee", "deathchase", "JetPac", "monty", "spacies", "thehobbit"]
+        
+        let gameIndex = 6
+        loadGame(allGames[gameIndex] + ".sna")
     }
     
     func loadGame(_ game: String) {
@@ -134,8 +142,8 @@ extension Spectrum : Machine {
     }
     
     final func captureRow(_ row: UInt16) {
-        var pixelAddress = screenRowAddress[row]
-        var colourAddress = attributeRowAddress[row]
+        var pixelAddress  = screenRowAddress[row]
+        var colourAddress = attributeRowAddress[row >> 3]
         
         var index = Int(row << 5)
         for _ in 0..<32 {
@@ -156,9 +164,9 @@ extension Spectrum : Machine {
             let byte   = screenCopy[index]
             let colour = colourCopy[index]
             
-//            if byte != screenCopySave[index] || colour != colourCopySave[index] {
-//                screenCopySave[index] = byte
-//                colourCopySave[index] = colour
+            if byte != screenCopySave[index] || colour != colourCopySave[index] {
+                screenCopySave[index] = byte
+                colourCopySave[index] = colour
             
                 let ink   = colours[colour & 0x07]
                 let paper = colours[(colour & 0x38) >> 3]                
@@ -171,12 +179,12 @@ extension Spectrum : Machine {
                 bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
                 bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
                 bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
-//            }
+            }
             
             bmpIndex = bmpIndex + 8
         }
         
-        if let image = CGImage(width: 256, height: 192, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 1024, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: true, intent: .defaultIntent) {
+        if let image = CGImage(width: 256, height: 192, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 1024, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) {
             spectrumScreen.image = NSImage(cgImage: image, size: .zero)
         }
     }

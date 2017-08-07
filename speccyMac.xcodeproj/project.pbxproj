@@ -8,8 +8,16 @@
 
 /* Begin PBXBuildFile section */
 		6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1792091F31B0D700A984F0 /* Array+extensions.swift */; };
+		6F33B9291F38F55D00B886CD /* aticatac.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9281F38F55200B886CD /* aticatac.sna */; };
+		6F33B92A1F38F56000B886CD /* brucelee.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9221F38F55200B886CD /* brucelee.sna */; };
+		6F33B92B1F38F56300B886CD /* deathchase.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9261F38F55200B886CD /* deathchase.sna */; };
+		6F33B92C1F38F56600B886CD /* JetPac.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9271F38F55200B886CD /* JetPac.sna */; };
+		6F33B92D1F38F56900B886CD /* monty.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9231F38F55200B886CD /* monty.sna */; };
+		6F33B92E1F38F56C00B886CD /* spacies.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9251F38F55200B886CD /* spacies.sna */; };
+		6F33B92F1F38F56E00B886CD /* thehobbit.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9241F38F55200B886CD /* thehobbit.sna */; };
 		6F7421E11F36FDFF00C056EA /* RefreshReg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7421E01F36FDFF00C056EA /* RefreshReg.swift */; };
 		6F8E10851F2259E10039C0BB /* Z80+core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8E10841F2259E10039C0BB /* Z80+core.swift */; };
+		6FCA5BA71F38B38200A22E92 /* accumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */; };
 		6FE5147A1F372D96004F0751 /* registerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE514791F372D96004F0751 /* registerTests.swift */; };
 		6FE5147C1F3732A3004F0751 /* registerPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE5147B1F3732A3004F0751 /* registerPairTests.swift */; };
 		6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90C1F2238A500F9AD93 /* Memory.swift */; };
@@ -45,9 +53,17 @@
 
 /* Begin PBXFileReference section */
 		6F1792091F31B0D700A984F0 /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
+		6F33B9221F38F55200B886CD /* brucelee.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = brucelee.sna; sourceTree = "<group>"; };
+		6F33B9231F38F55200B886CD /* monty.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = monty.sna; sourceTree = "<group>"; };
+		6F33B9241F38F55200B886CD /* thehobbit.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = thehobbit.sna; sourceTree = "<group>"; };
+		6F33B9251F38F55200B886CD /* spacies.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = spacies.sna; sourceTree = "<group>"; };
+		6F33B9261F38F55200B886CD /* deathchase.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = deathchase.sna; sourceTree = "<group>"; };
+		6F33B9271F38F55200B886CD /* JetPac.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = JetPac.sna; sourceTree = "<group>"; };
+		6F33B9281F38F55200B886CD /* aticatac.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = aticatac.sna; sourceTree = "<group>"; };
 		6F7421E01F36FDFF00C056EA /* RefreshReg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshReg.swift; sourceTree = "<group>"; };
 		6F8E10841F2259E10039C0BB /* Z80+core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+core.swift"; sourceTree = "<group>"; };
 		6F9ED15A1F325E47000BEFF9 /* z80defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = z80defines.h; sourceTree = "<group>"; };
+		6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = accumulatorTests.swift; sourceTree = "<group>"; };
 		6FE5146F1F372CF1004F0751 /* speccyMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = speccyMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FE514731F372CF1004F0751 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6FE514791F372D96004F0751 /* registerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = registerTests.swift; sourceTree = "<group>"; };
@@ -101,6 +117,7 @@
 				6FE514791F372D96004F0751 /* registerTests.swift */,
 				6FE5147B1F3732A3004F0751 /* registerPairTests.swift */,
 				6FFE6FC11F376BEF00EBCC3B /* memoryTests.swift */,
+				6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */,
 			);
 			path = speccyMacTests;
 			sourceTree = "<group>";
@@ -111,6 +128,13 @@
 				6F9ED15A1F325E47000BEFF9 /* z80defines.h */,
 				6FEFA91D1F223B3A00F9AD93 /* 48.rom */,
 				6FEFA91C1F223B3200F9AD93 /* manic.sna */,
+				6F33B9281F38F55200B886CD /* aticatac.sna */,
+				6F33B9221F38F55200B886CD /* brucelee.sna */,
+				6F33B9261F38F55200B886CD /* deathchase.sna */,
+				6F33B9271F38F55200B886CD /* JetPac.sna */,
+				6F33B9231F38F55200B886CD /* monty.sna */,
+				6F33B9251F38F55200B886CD /* spacies.sna */,
+				6F33B9241F38F55200B886CD /* thehobbit.sna */,
 			);
 			path = Roms;
 			sourceTree = "<group>";
@@ -250,11 +274,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F33B92B1F38F56300B886CD /* deathchase.sna in Resources */,
 				6FFB31581F22379B00C15CD7 /* Assets.xcassets in Resources */,
 				6FFB315B1F22379B00C15CD7 /* Main.storyboard in Resources */,
 				6FEFA91F1F223B5E00F9AD93 /* 48.rom in Resources */,
+				6F33B92D1F38F56900B886CD /* monty.sna in Resources */,
 				6FEFA91E1F223B5A00F9AD93 /* z80ops.json in Resources */,
+				6F33B9291F38F55D00B886CD /* aticatac.sna in Resources */,
+				6F33B92A1F38F56000B886CD /* brucelee.sna in Resources */,
 				6FEFA9201F223B6200F9AD93 /* manic.sna in Resources */,
+				6F33B92C1F38F56600B886CD /* JetPac.sna in Resources */,
+				6F33B92F1F38F56E00B886CD /* thehobbit.sna in Resources */,
+				6F33B92E1F38F56C00B886CD /* spacies.sna in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,6 +296,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FCA5BA71F38B38200A22E92 /* accumulatorTests.swift in Sources */,
 				6FE5147C1F3732A3004F0751 /* registerPairTests.swift in Sources */,
 				6FFE6FC21F376BEF00EBCC3B /* memoryTests.swift in Sources */,
 				6FE5147A1F372D96004F0751 /* registerTests.swift in Sources */,

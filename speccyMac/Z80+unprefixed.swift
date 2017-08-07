@@ -94,14 +94,32 @@ extension Z80 {
         case 0x16:  // ld d, n
             d.value = first
             
+        case 0x17:  // rla
+            a.rla()
+            
+        case 0x18:  // jr d
+            setRelativePC(first)
+            
         case 0x19:  // add hl, de
             hl.add(de.value)
             
         case 0x1a:  // ld a, (de)
             a.value = memory.get(de)
             
+        case 0x1b:  // dec de
+            de.dec()
+            
+        case 0x1c:  // inc e
+            e.inc()
+            
         case 0x1d:  // dec e
             e.dec()
+            
+        case 0x1e:  // ld e, n
+            e.value = first
+            
+        case 0x1f:  // rra
+            a.rra()
             
         case 0x20:  // jr nz, nn
             if Z80.f.value & Z80.zBit > 0 {
@@ -122,6 +140,9 @@ extension Z80 {
         case 0x24:  // inc h
             h.inc()
             
+        case 0x26:  // ld h, n
+            h.value = first
+            
         case 0x28:  // jr z, nn
             if Z80.f.value & Z80.zBit > 0 {
                 setRelativePC(first)
@@ -129,12 +150,18 @@ extension Z80 {
                 normalFlow = false
             }
             
+        case 0x29:  // add hl, hl
+            hl.add(hl.value)
+            
         case 0x2a:  // ld hl, (nnnn)
             l.value = memory.get(word16)
             h.value = memory.get(word16 &+ 1)
             
         case 0x2b:  // dec hl
             hl.dec()
+            
+        case 0x2c:  // inc l
+            l.inc()
             
         case 0x2d:  // dec l
             l.dec()
@@ -152,16 +179,17 @@ extension Z80 {
                 setRelativePC(first)
             }
             
+        case 0x31:  // ld sp, nn
+            Z80.sp = word16
+            
         case 0x32:  // ld (nnnn), a
             memory.set(word16, reg: a)
             
-        case 0x35:  // dec (hl)
-            let temp = a.value
-            a.value = memory.get(hl)
-            a.dec()
-            memory.set(hl.value, byte: a.value)
-            a.value = temp
+        case 0x34:  // inc (hl)
+            memory.inc(hl.value)
             
+        case 0x35:  // dec (hl)
+            memory.dec(hl.value)
             
         case 0x36:  // ld (hl), n
             memory.set(hl.value, byte: first)
@@ -196,8 +224,17 @@ extension Z80 {
         case 0x40:  // ld b, b
             break
             
+        case 0x41:  // ld b, c
+            b.value = c.value
+            
         case 0x42:  // ld b, d
             b.value = d.value
+            
+        case 0x44:  // ld b, h
+            b.value = h.value
+            
+        case 0x45:  // ld b, l
+            b.value = l.value
             
         case 0x46:  // ld b, (hl)
             b.value = memory.get(hl)
@@ -205,8 +242,29 @@ extension Z80 {
         case 0x47:  // ld b, a
             b.value = a.value
             
+        case 0x4a:  // ld c, d
+            c.value = d.value
+            
+        case 0x4b:  // ld c, e
+            c.value = e.value
+            
+        case 0x4c:  // ld c, h
+            c.value = h.value
+            
+        case 0x4d:  // ld c, l
+            c.value = l.value
+            
+        case 0x4e:  // ld c, (hl)
+            c.value = memory.get(hl)
+            
         case 0x4f:  // ld c, a
             c.value = a.value
+            
+        case 0x50:  // ld d, b
+            d.value = b.value
+            
+        case 0x53:  // ld d, e
+            d.value = e.value
             
         case 0x54:  // ld d, h
             d.value = h.value
@@ -216,6 +274,12 @@ extension Z80 {
             
         case 0x57:  // ld d, a
             d.value = a.value
+            
+        case 0x58:  // ld e, b
+            e.value = b.value
+            
+        case 0x59:  // ld e, c
+            e.value = c.value
             
         case 0x5c:  // ld e, h
             e.value = h.value
@@ -229,11 +293,20 @@ extension Z80 {
         case 0x5f:  // ld e, a
             e.value = a.value
             
+        case 0x61:  // ld h, c
+            h.value = c.value
+            
         case 0x62:  // ld h, d
             h.value = d.value
             
+        case 0x66:  // ld h, (hl)
+            h.value = memory.get(hl)
+            
         case 0x67:  // ld h, a
             h.value = a.value
+            
+        case 0x68:  // ld l, b
+            l.value = b.value
             
         case 0x6b:  // ld l, e
             l.value = e.value
@@ -241,11 +314,30 @@ extension Z80 {
         case 0x6f:  // ld l, a
             l.value = a.value
             
+        case 0x71:  // ld (hl), c
+            memory.set(hl.value, byte: c.value)
+            
+        case 0x72:  // ld (hl), d
+            memory.set(hl.value, byte: d.value)
+            
+        case 0x73:  // ld (hl), e
+            memory.set(hl.value, byte: e.value)
+            
+        case 0x75:  // ld (hl), a
+            memory.set(hl.value, byte: l.value)
+            
+        case 0x76:  // halt
+            halted = true
+            pc = pc &- 1
+            
         case 0x77:  // ld (hl), a
             memory.set(hl.value, byte: a.value)
             
         case 0x78:  // ld a, b
             a.value = b.value
+            
+        case 0x79:  // ld a, c
+            a.value = c.value
             
         case 0x7a:  // ld a, d
             a.value = d.value
@@ -262,8 +354,17 @@ extension Z80 {
         case 0x7e:  // ld a, (hl)
             a.value = memory.get(hl)
             
+        case 0x80:  // add a, b
+            a.add(b.value)
+            
+        case 0x81:  // add a, c
+            a.add(c.value)
+            
         case 0x86:  // add a, (hl)
             a.add(memory.get(hl))
+            
+        case 0x87:  // add a, a
+            a.add(a.value)
             
         case 0x90:  // sub b
             a.sub(b.value)
@@ -271,16 +372,35 @@ extension Z80 {
         case 0x91:  // sub c
             a.sub(c.value)
             
+        case 0xa3:  // and e
+            a.and(e)
+            
+        case 0xa6:  // and (hl)
+            a.and(memory.get(hl))
+            
         case 0xa7:  // and a
             a.and(a)
             
+        case 0xaa:  // xor d
+            a.xor(d)
+            
         case 0xae:  // xor (hl)
             a.xor(memory.get(hl))
+            
         case 0xaf:  // xor a
             a.xor(a)
             
+        case 0xb1:  // or c
+            a.or(c)
+            
+        case 0xb3:  // or e
+            a.or(e)
+            
         case 0xb5:  // or l
             a.or(l)
+            
+        case 0xb6:  // or (hl)
+            a.or(memory.get(hl))
             
         case 0xb7:  // or a
             a.or(a)
@@ -290,6 +410,9 @@ extension Z80 {
             
         case 0xbd:  // cp l
             a.cp(l)
+            
+        case 0xbe:  // cp (hl)
+            a.cp(memory.get(hl))
             
         case 0xc0:  // ret nz
             if Z80.f.value & Z80.zBit > 0 {
@@ -332,6 +455,23 @@ extension Z80 {
             pc = memory.pop()
             pc = pc &- 1
             
+        case 0xca:  // jp z, nn
+            if Z80.f.value & Z80.zBit > 0 {
+                pc = word16;
+                pc = pc &- 3;
+            } else {
+                normalFlow = false;
+            }
+            
+        case 0xcc:  // call z, nn
+            if Z80.f.value & Z80.zBit > 0 {
+                memory.push(pc &+ 3)
+                pc = word16
+                pc = pc &- 3
+            } else {
+                normalFlow = false;
+            }
+            
         case 0xcd:  // call nnnn
             memory.push(pc &+ 3)
             pc = word16
@@ -348,8 +488,25 @@ extension Z80 {
         case 0xd1:  // pop de
             de.value = memory.pop()
             
+        case 0xd2:  // jp nc, nn
+            if Z80.f.value & Z80.cBit > 0 {
+                normalFlow = false;
+            } else {
+                pc = word16;
+                pc = pc &- 3
+            }
+            
         case 0xd3:  // out (n), a
             portOut(first, byte:a.value)
+            
+        case 0xd4:  // call nc, nn
+            if Z80.f.value & Z80.cBit > 0 {
+                normalFlow = false;
+            } else {
+                memory.push(pc &+ 3)
+                pc = word16
+                pc = pc &- 3
+            }
             
         case 0xd5:  // push de
             memory.push(de)
@@ -371,7 +528,7 @@ extension Z80 {
             exhl = temp
             
         case 0xdb:
-            a.value = portIn(a.value, low: first)
+            a.portIn(a.value, low: first)
             
         case 0xdf:  // rst 18
             rst(0x0018)
@@ -410,6 +567,14 @@ extension Z80 {
             
         case 0xf6:  // or n
             a.or(first)
+            
+        case 0xf8:  // ret m
+            if Z80.f.value & Z80.sBit > 0 {
+                pc = memory.pop()
+                pc = pc &- 1
+            } else {
+                normalFlow = false;
+            }
             
         case 0xf9:  // ld sp, hl
             Z80.sp = hl.value

@@ -10,13 +10,13 @@ import XCTest
 @testable import speccyMac
 
 class registerTests: XCTestCase {
- 
-    let reg = Register()
+
+    var z80: Z80 = Z80(memory: Memory("48.rom"))
     
     override func setUp() {
         super.setUp()
         
-        let _ = Z80(memory: Memory("48.rom"))
+        z80 = Z80(memory: Memory("48.rom"))
     }
     
     override func tearDown() {
@@ -24,40 +24,40 @@ class registerTests: XCTestCase {
     }
 
     func testInc() {
-        reg.value = 100
-        reg.inc()
-        XCTAssert(reg.value == 101, "Value not incremented from 100 to 101")
+        z80.b.value = 100
+        z80.b.inc()
+        XCTAssert(z80.b.value == 101, "Value not incremented from 100 to 101")
     }
     
     func testIncWrap() {
-        reg.value = 255
-        reg.inc()
-        XCTAssert(reg.value == 0, "Value not incremented from 255 to 0")
+        z80.b.value = 255
+        z80.b.inc()
+        XCTAssert(z80.b.value == 0, "Value not incremented from 255 to 0")
     }
     
     func testDec() {
-        reg.value = 100
-        reg.dec()
+        z80.b.value = 100
+        z80.b.dec()
         
-        XCTAssert(reg.value == 99, "Value not deccremented from 100 to 99")
+        XCTAssert(z80.b.value == 99, "Value not deccremented from 100 to 99")
     }
     
     func testDecWrap() {
-        reg.value = 0
-        reg.dec()
-        XCTAssert(reg.value == 255, "Value not deccremented from 0 to 255")
+        z80.b.value = 0
+        z80.b.dec()
+        XCTAssert(z80.b.value == 255, "Value not deccremented from 0 to 255")
     }
     
     func testRlcNoCarry() {
-        reg.value = 0x40
-        reg.rlc()
-        XCTAssert(reg.value == 0x80, "Value after rlc not 0x80")
+        z80.b.value = 0x40
+        z80.b.rlc()
+        XCTAssert(z80.b.value == 0x80, "Value after rlc not 0x80")
     }
     
     func testRlcCarry() {
-        reg.value = 0xc0
-        reg.rlc()
-        XCTAssert(reg.value == 0x81, "Value after rlc not 0x81")
+        z80.b.value = 0xc0
+        z80.b.rlc()
+        XCTAssert(z80.b.value == 0x81, "Value after rlc not 0x81")
     }
     
     func testBit() {

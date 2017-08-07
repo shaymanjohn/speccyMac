@@ -61,6 +61,14 @@ class Memory {
         set(address &+ 1, byte: regPair.hi.value)
     }
     
+    final func inc(_ address: UInt16) {
+        var value = get(address)
+        value = value &+ 1
+        Z80.f.value = (Z80.f.value & Z80.cBit) | (value == 0x80 ? Z80.pvBit : 0) | (value & 0x0f > 0 ? 0 : Z80.hBit) | Z80.sz53Table[value]
+        
+        set(address, byte: value)
+    }
+    
     final func dec(_ address: UInt16) {
         var value = get(address)
         
@@ -124,5 +132,15 @@ class Memory {
         if num == 7 && (value & 0x80) > 0 {
             Z80.f.value |= Z80.sBit
         }
+    }
+    
+    final func rl(_ address: UInt16) {
+        var byte = get(address)
+        
+        let rltemp = byte
+        byte = (byte << 1) | (Z80.f.value & Z80.cBit)
+        Z80.f.value = (rltemp >> 7) | Z80.sz53pvTable[(byte)]
+        
+        set(address, byte: byte)
     }
 }

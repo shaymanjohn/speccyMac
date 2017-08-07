@@ -14,6 +14,8 @@ class memoryTests: XCTestCase {
     let memory = Memory("48.rom")
     
     override func setUp() {
+        let _ = Z80(memory: memory)
+        
         super.setUp()
     }
     
