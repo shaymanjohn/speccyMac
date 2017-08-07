@@ -18,8 +18,7 @@ extension Z80 {
         switch opcode {
             
         case 0x43:  // ld (nnnn), bc
-            memory.set(word16, byte: c.value)
-            memory.set(word16 &+ 1, byte: b.value)
+            memory.set(word16, regPair: bc)
             
         case 0x47:  // ld i, a
             i = a.value
@@ -28,8 +27,7 @@ extension Z80 {
             hl.sbc(de)
             
         case 0x53:  // ld (nnnn), de
-            memory.set(word16, byte: e.value)
-            memory.set(word16 &+ 1, byte: d.value)
+            memory.set(word16, regPair: de)
             
         case 0x56:  // im 1
             interruptMode = 1
@@ -38,26 +36,32 @@ extension Z80 {
             a.value = portIn(b.value, low: c.value)
             
         case 0xb0:  // ldir
-            let val = memory.get(hl)
+            var val = memory.get(hl)
             memory.set(de.value, byte: val)
             bc.value = bc.value &- 1
             
+            val = val &+ a.value
+            Z80.f.value = (Z80.f.value & (Z80.cBit | Z80.zBit | Z80.sBit)) | (bc.value > 0 ? Z80.pvBit : 0) | (val & Z80.threeBit) | ((val & 0x02) > 0 ? Z80.fiveBit : 0)
+            
             if bc.value > 0 {
                 pc = pc &- 2
-                incCounters(amount: 5)
+                incCounters(5)
             }
             
             hl.value = hl.value &+ 1
             de.value = de.value &+ 1
             
         case 0xb8:  // lddr
-            let val = memory.get(hl)
+            var val = memory.get(hl)
             memory.set(de.value, byte: val)
             bc.value = bc.value &- 1
             
+            val = val &+ a.value
+            Z80.f.value = (Z80.f.value & (Z80.cBit | Z80.zBit | Z80.sBit)) | (bc.value > 0 ? Z80.pvBit : 0) | (val & Z80.threeBit) | ((val & 0x02) > 0 ? Z80.fiveBit : 0)
+            
             if bc.value > 0 {
                 pc = pc &- 2
-                incCounters(amount: 5)
+                incCounters(5)
             }
             
             hl.value = hl.value &- 1
@@ -70,7 +74,7 @@ extension Z80 {
 //        print("\(pc) : \(instruction.opCode)")
         
         pc = pc &+ instruction.length        
-        incCounters(amount: instruction.tStates)
+        incCounters(instruction.tStates)
         
         r.inc()
         r.inc()

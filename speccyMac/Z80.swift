@@ -92,10 +92,10 @@ class Z80 {
         var opCode:     String
     }
     
-    var  unprefixedOps:  Array<Instruction> = []
-    var edprefixedOps:   Array<Instruction> = []
-    var ddprefixedOps:   Array<Instruction> = []
-    var cbprefixedOps:   Array<Instruction> = []
+    var unprefixedOps:  Array<Instruction> = []
+    var edprefixedOps:  Array<Instruction> = []
+    var ddprefixedOps:  Array<Instruction> = []
+    var cbprefixedOps:  Array<Instruction> = []
     
     init(memory: Memory) {
         af = RegisterPair(hi: a, lo: Z80.f)
@@ -257,7 +257,7 @@ class Z80 {
         paused = false
     }
     
-    final func incCounters(amount: UInt32) {
+    final func incCounters(_ amount: UInt32) {
         counter = counter + amount
         ula = ula + amount
     }
@@ -363,13 +363,13 @@ class Z80 {
             
             if interruptMode < 2 {
                 pc = 0x0038
-                incCounters(amount: 13)
+                incCounters(13)
             } else {
                 let vector = (UInt16(i) << 8) + 0xff
                 let loByte = memory.get(vector + 1)
                 let hiByte = memory.get(vector)
                 pc = (UInt16(hiByte) << 8) + UInt16(loByte)
-                incCounters(amount: 19)
+                incCounters(19)
             }
         }
     }

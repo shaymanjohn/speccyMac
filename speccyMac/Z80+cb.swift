@@ -23,13 +23,13 @@ extension Z80 {
             a.bit(4)
             
         case 0x7e: // bit 7, (hl)
-            memory.indexBit(7, baseAddress: hl.value, offset: first)
+            memory.indexBit(7, baseAddress: hl.value, offset: 0)
             
         case 0xae: // res 5, (hl)
-            memory.indexRes(5, baseAddress: hl.value, offset: first)
+            memory.indexRes(5, baseAddress: hl.value, offset: 0)
             
         case 0xc6: // set 0, (hl)
-            memory.indexSet(0, baseAddress: hl.value, offset: first)
+            memory.indexSet(0, baseAddress: hl.value, offset: 0)
             
         default:
             throw NSError(domain: "z80+cb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
@@ -38,7 +38,7 @@ extension Z80 {
 //        print("\(pc) : \(instruction.opCode)")
         
         pc = pc &+ instruction.length        
-        incCounters(amount: instruction.tStates)
+        incCounters(instruction.tStates)
         
         r.inc()
         r.inc()

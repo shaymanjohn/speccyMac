@@ -18,9 +18,9 @@ protocol Machine : class {
 }
 
 struct colour {
-    let r: UInt32
-    let g: UInt32
-    let b: UInt32
+    let r: UInt8
+    let g: UInt8
+    let b: UInt8
 }
 
 class Spectrum: NSViewController {
@@ -34,14 +34,18 @@ class Spectrum: NSViewController {
     let colourSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.last.rawValue).union(CGBitmapInfo())
     
+    // bmp pool to render image
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 24 * 8)
     
-    var screenAddress = [UInt16](repeating: 0, count: 192)
-    var attrAddress = [UInt16](repeating: 0, count: 192)
+    // precalculated screen and attribute rows
+    var screenRowAddress    = [UInt16](repeating: 0, count: 192)
+    var attributeRowAddress = [UInt16](repeating: 0, count: 192)
     
+    // Screen image and saved version
     var screenCopy = [UInt8](repeating: 0, count: 32 * 192)
     var screenCopySave = [UInt8](repeating: 255, count: 32 * 192)
     
+    // Attribute image and saved version
     var colourCopy = [UInt8](repeating: 0, count: 32 * 192)
     var colourCopySave = [UInt8](repeating: 255, count: 32 * 192)
     
@@ -61,18 +65,16 @@ class Spectrum: NSViewController {
         
         var colourIndex = 0
         for colour in colourTable {
-            let rComp = colour.r << 24
-            let gComp = colour.g << 16
-            let bComp = colour.b << 8
+            let rComp = UInt32(colour.r) << 24
+            let gComp = UInt32(colour.g) << 16
+            let bComp = UInt32(colour.b) << 8
             colours[colourIndex] = rComp + gComp + bComp + UInt32(0xff)
             colourIndex = colourIndex + 1
         }
         
-        let callback: CGDataProviderReleaseDataCallback = {
+        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 1024, releaseData: {
             (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
-        }
-        
-        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 1024, releaseData: callback)!
+        })!
         
         z80 = Z80(memory: memory)
         z80.machine = self
@@ -81,9 +83,6 @@ class Spectrum: NSViewController {
             self.z80.start()
         }
         
-        spectrumScreen.wantsLayer = true
-        spectrumScreen.layer?.backgroundColor = NSColor.black.cgColor
-        
         var rowNum = 0
         for row in 0..<24 {
             for pixelRow in 0..<8 {
@@ -91,8 +90,8 @@ class Spectrum: NSViewController {
                 let dataByteLow  = ((row & 0x7) << 5);
                 
                 let address:UInt16 = UInt16((dataByteHigh << 8)) + UInt16(dataByteLow);
-                screenAddress[rowNum] = address;
-                attrAddress[rowNum] = UInt16(22580) + UInt16((32 * rowNum))
+                screenRowAddress[rowNum] = address;
+                attributeRowAddress[rowNum] = UInt16(22580) + UInt16((32 * rowNum))
                 
                 rowNum = rowNum + 1
             }
@@ -135,10 +134,10 @@ extension Spectrum : Machine {
     }
     
     final func captureRow(_ row: UInt16) {
-        var pixelAddress = screenAddress[row]
-        var colourAddress = attrAddress[row]
+        var pixelAddress = screenRowAddress[row]
+        var colourAddress = attributeRowAddress[row]
         
-        var index = Int(row * 32)
+        var index = Int(row << 5)
         for _ in 0..<32 {
             screenCopy[index] = memory.get(pixelAddress)
             colourCopy[index] = memory.get(colourAddress)
@@ -154,16 +153,16 @@ extension Spectrum : Machine {
         var bmpIndex = 0
         
         for index in 0..<192 * 32 {
-            let byte = screenCopy[index]
+            let byte   = screenCopy[index]
             let colour = colourCopy[index]
             
-            if byte != screenCopySave[index] || colour != colourCopySave[index] {
-                screenCopySave[index] = byte
-                colourCopySave[index] = colour
-                
-                let ink = colours[colour & 0x07]
-                let paper = colours[(colour & 0x38) >> 3]
-                
+//            if byte != screenCopySave[index] || colour != colourCopySave[index] {
+//                screenCopySave[index] = byte
+//                colourCopySave[index] = colour
+            
+                let ink   = colours[colour & 0x07]
+                let paper = colours[(colour & 0x38) >> 3]                
+            
                 bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
                 bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
                 bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
@@ -172,7 +171,7 @@ extension Spectrum : Machine {
                 bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
                 bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
                 bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
-            }
+//            }
             
             bmpIndex = bmpIndex + 8
         }

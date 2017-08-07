@@ -59,5 +59,17 @@ class registerTests: XCTestCase {
         reg.rlc()
         XCTAssert(reg.value == 0x81, "Value after rlc not 0x81")
     }
+    
+    func testBit() {
+        let reg = Register()
+        reg.value = 0x01
+        
+        reg.bit(0)
+        XCTAssert(Z80.f.value & Z80.zBit == 0, "Bit test failed")
+        
+        reg.value = 0x00
+        reg.bit(0)
+        XCTAssert(Z80.f.value & Z80.zBit != 0, "Bit test failed")
+    }
 
 }

@@ -114,8 +114,7 @@ extension Z80 {
             hl.value = word16
             
         case 0x22:  // ld (nnnn), hl
-            memory.set(word16, byte: l.value)
-            memory.set(word16 &+ 1, byte: h.value)
+            memory.set(word16, regPair: hl)
             
         case 0x23:  // inc hl
             hl.inc()
@@ -154,7 +153,7 @@ extension Z80 {
             }
             
         case 0x32:  // ld (nnnn), a
-            memory.set(word16, byte: a.value)
+            memory.set(word16, reg: a)
             
         case 0x35:  // dec (hl)
             let temp = a.value
@@ -434,7 +433,7 @@ extension Z80 {
         
         pc = pc &+ instruction.length
         
-        incCounters(amount: normalFlow ? instruction.tStates : instruction.altTStates)        
+        incCounters(normalFlow ? instruction.tStates : instruction.altTStates)        
         r.inc()
     }
 }

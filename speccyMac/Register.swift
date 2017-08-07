@@ -30,7 +30,7 @@ class Register {
     
     final func bit(_ number: UInt8) {
         Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.hBit | ( value & ( Z80.threeBit | Z80.fiveBit))
-        if value & (0x01 << number) == 0 {
+        if value & (1 << number) == 0 {
             Z80.f.value |= Z80.pvBit | Z80.zBit
         }
         

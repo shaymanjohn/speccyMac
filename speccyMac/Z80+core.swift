@@ -37,7 +37,7 @@ extension Z80 {
     }
     
     final func portIn(_ high: UInt8, low: UInt8) -> UInt8 {
-        let byte = 0xff
+        let byte = 0x01
         Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[byte]
         return UInt8(byte)
     }

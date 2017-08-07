@@ -38,7 +38,7 @@ extension Z80 {
 //        print("\(pc) : \(instruction.opCode)")
         
         pc = pc &+ instruction.length
-        incCounters(amount: instruction.tStates)
+        incCounters(instruction.tStates)
         
         r.inc()
         r.inc()

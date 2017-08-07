@@ -26,8 +26,7 @@ extension Z80 {
             ixy.value = word16
             
         case 0x35:  // dec (ixy + d)
-            let paired = ixy.value + offset
-            memory.set(paired, byte: memory.get(paired))
+            memory.dec(ixy.value &+ offset)
             
         case 0x46:  // ld b, (ix+d)
             b.value = memory.get(ixy.value &+ offset)
@@ -48,7 +47,7 @@ extension Z80 {
 //        print("\(pc) : \(instruction.opCode)")
         
         pc = pc &+ instruction.length        
-        incCounters(amount: instruction.tStates)
+        incCounters(instruction.tStates)
         
         r.inc()
         r.inc()
