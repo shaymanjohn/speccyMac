@@ -19,17 +19,32 @@ extension Z80 {
         case 0x00:  // rlc b
             b.rlc()
             
+        case 0x01:  // rlc c
+            c.rlc()
+            
         case 0x07:  // rlc a
             a.rlc()
+            
+        case 0x08:  // rrc b
+            b.rrc()
             
         case 0x09:  // rrc c
             c.rrc()
             
+        case 0x0a:  // rrc d
+            d.rrc()
+            
         case 0x0b:  // rrc e
             e.rrc()
             
+        case 0x0f:  // rrc a
+            a.rrc()
+            
         case 0x16:  // rl (hl)
             memory.rl(hl.value)
+            
+        case 0x17:  // rl a
+            a.rl()
             
         case 0x1f:  // rr a
             a.rr()
@@ -58,11 +73,17 @@ extension Z80 {
         case 0x47:  // bit 0, a
             a.bit(0)
             
+        case 0x4b:  // bit 1, e
+            e.bit(1)
+            
         case 0x4e:  // bit 1, (hl)
             memory.indexBit(1, baseAddress: hl.value, offset: 0)
             
         case 0x4f:  // bit 1, a
             a.bit(1)
+            
+        case 0x63:  // bit 4, e
+            e.bit(4)
             
         case 0x67:  // bit 4, a
             a.bit(4)

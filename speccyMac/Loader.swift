@@ -103,18 +103,18 @@ class Loader {
         interruptMode = data[25]
         borderColour = data[26]
         
-        let start = memory.romSize;
+        let start = memory.romSize
         
         for jx in 0..<data.count - 27 {
             memory.set(start + UInt16(jx), byte: data[jx + 27])
         }
         
-        let lo = memory.get(sp);
-        sp = sp &+ 1;
-        let hi = memory.get(sp);
-        sp = sp &+ 1;
+        let lo = memory.get(sp)
+        sp = sp &+ 1
+        let hi = memory.get(sp)
+        sp = sp &+ 1
         
-        pc = (UInt16(hi) << 8) + UInt16(lo);
+        pc = (UInt16(hi) << 8) + UInt16(lo)
         
         memory.set(sp &- 1, byte: 0)
         memory.set(sp &- 2, byte: 0)

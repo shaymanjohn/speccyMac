@@ -63,6 +63,8 @@ class Spectrum: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.view.wantsLayer = true
+        
         var colourIndex = 0
         for colour in colourTable {
             let rComp = UInt32(colour.r) << 8
@@ -90,11 +92,11 @@ class Spectrum: NSViewController {
         var rowNum = 0
         for row in 0..<24 {
             for pixelRow in 0..<8 {
-                let dataByteHigh = 0x40 | (row & 0x18) | (pixelRow % 8);
-                let dataByteLow  = ((row & 0x7) << 5);
+                let dataByteHigh = 0x40 | (row & 0x18) | (pixelRow % 8)
+                let dataByteLow  = ((row & 0x7) << 5)
                 
-                let address:UInt16 = UInt16((dataByteHigh) << 8) + UInt16(dataByteLow);
-                screenRowAddress[rowNum] = address;
+                let address:UInt16 = UInt16((dataByteHigh) << 8) + UInt16(dataByteLow)
+                screenRowAddress[rowNum] = address
                 
                 rowNum = rowNum + 1
             }
@@ -138,6 +140,11 @@ extension Spectrum : Machine {
         
         set {
             border = newValue
+            let colour = colourTable[newValue & 0x07]
+            
+            DispatchQueue.main.async {
+                self.view.layer?.backgroundColor = CGColor(red: CGFloat(colour.r) / 255.0, green: CGFloat(colour.g) / 255.0, blue: CGFloat(colour.b) / 255.0, alpha: 1)
+            }
         }
     }
     

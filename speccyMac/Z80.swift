@@ -214,30 +214,30 @@ class Z80 {
             Z80.sp = loader.sp
             pc = loader.pc
             
-            ix = loader.ix;
-            iy = loader.iy;
+            ix = loader.ix
+            iy = loader.iy
             
-            r.value = loader.r;
-            i = loader.i;
+            r.value = loader.r
+            i = loader.i
             
-            interrupts = loader.interrupts;
-            interruptMode = loader.interruptMode;
+            interrupts = loader.interrupts
+            interruptMode = loader.interruptMode
             
             if (interrupts) {
-                iff1 = 1;
-                iff2 = 1;
+                iff1 = 1
+                iff2 = 1
             } else {
-                iff1 = 0;
-                iff2 = 0;
+                iff1 = 0
+                iff2 = 0
             }
             
-            machine?.borderColour = loader.borderColour;
+            machine?.borderColour = loader.borderColour
             
-            counter = 0;
-            lateFrames = 0;
-            halted = false;
-            ula = 0;
-            videoRow = 0;
+            counter = 0
+            lateFrames = 0
+            halted = false
+            ula = 0
+            videoRow = 0
             
             // Sound vars
 //            clicksCount = 0;

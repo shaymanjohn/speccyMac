@@ -299,6 +299,9 @@ extension Z80 {
         case 0x62:  // ld h, d
             h.value = d.value
             
+        case 0x63:  // ld h, e
+            h.value = e.value
+            
         case 0x66:  // ld h, (hl)
             h.value = memory.get(hl)
             
@@ -360,6 +363,9 @@ extension Z80 {
         case 0x81:  // add a, c
             a.add(c.value)
             
+        case 0x84:  // add a, h
+            a.add(h.value)
+            
         case 0x86:  // add a, (hl)
             a.add(memory.get(hl))
             
@@ -384,6 +390,12 @@ extension Z80 {
         case 0xaa:  // xor d
             a.xor(d)
             
+        case 0xac:  // xor h
+            a.xor(h)
+            
+        case 0xad:  // xor l
+            a.xor(l)
+            
         case 0xae:  // xor (hl)
             a.xor(memory.get(hl))
             
@@ -404,6 +416,15 @@ extension Z80 {
             
         case 0xb7:  // or a
             a.or(a)
+            
+        case 0xb8:  // cp b
+            a.cp(b)
+            
+        case 0xb9:  // cp c
+            a.cp(c)
+            
+        case 0xba:  // cp d
+            a.cp(d)
             
         case 0xbc:  // cp h
             a.cp(h)
@@ -457,10 +478,10 @@ extension Z80 {
             
         case 0xca:  // jp z, nn
             if Z80.f.value & Z80.zBit > 0 {
-                pc = word16;
-                pc = pc &- 3;
+                pc = word16
+                pc = pc &- 3
             } else {
-                normalFlow = false;
+                normalFlow = false
             }
             
         case 0xcc:  // call z, nn
@@ -469,7 +490,7 @@ extension Z80 {
                 pc = word16
                 pc = pc &- 3
             } else {
-                normalFlow = false;
+                normalFlow = false
             }
             
         case 0xcd:  // call nnnn
@@ -490,9 +511,9 @@ extension Z80 {
             
         case 0xd2:  // jp nc, nn
             if Z80.f.value & Z80.cBit > 0 {
-                normalFlow = false;
+                normalFlow = false
             } else {
-                pc = word16;
+                pc = word16
                 pc = pc &- 3
             }
             
@@ -501,7 +522,7 @@ extension Z80 {
             
         case 0xd4:  // call nc, nn
             if Z80.f.value & Z80.cBit > 0 {
-                normalFlow = false;
+                normalFlow = false
             } else {
                 memory.push(pc &+ 3)
                 pc = word16
@@ -527,8 +548,16 @@ extension Z80 {
             hl.value = exhl
             exhl = temp
             
+        case 0xda:  // jp c, nn
+            if Z80.f.value & Z80.cBit > 0 {
+                pc = word16
+                pc = pc &- 3
+            } else {
+                normalFlow = false;
+            }
+            
         case 0xdb:
-            a.portIn(a.value, low: first)
+            portIn(reg: a, high: a.value, low: first)
             
         case 0xdf:  // rst 18
             rst(0x0018)
@@ -573,7 +602,7 @@ extension Z80 {
                 pc = memory.pop()
                 pc = pc &- 1
             } else {
-                normalFlow = false;
+                normalFlow = false
             }
             
         case 0xf9:  // ld sp, hl

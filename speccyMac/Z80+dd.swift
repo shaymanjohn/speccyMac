@@ -22,6 +22,9 @@ extension Z80 {
         
         switch opcode {
             
+        case 0x09:  // add ix, bc
+            ixy.add(bc.value)
+            
         case 0x19:  // add ix, de
             ixy.add(de.value)
             
@@ -46,6 +49,9 @@ extension Z80 {
             
         case 0x35:  // dec (ixy + d)
             memory.dec(ixy.value &+ offset)
+            
+        case 0x36:  // ld (ix+d), n
+            memory.set(ixy.value &+ offset, byte: first)
             
         case 0x46:  // ld b, (ix+d)
             b.value = memory.get(ixy.value &+ offset)

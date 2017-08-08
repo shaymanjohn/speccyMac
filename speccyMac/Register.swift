@@ -45,12 +45,6 @@ class Register {
         Z80.f.value |= Z80.sz53pvTable[value]
     }
     
-    final func portIn(_ high: UInt8, low: UInt8) {
-        let byte: UInt8 = 0x01
-        Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[byte]
-        value = byte
-    }
-    
     final func sla() {
         Z80.f.value = value >> 7
         value = value << 1
@@ -61,6 +55,12 @@ class Register {
         let rrtemp = value
         value = (value >> 1) | (Z80.f.value << 7)
         Z80.f.value = (rrtemp & Z80.cBit) | Z80.sz53pvTable[value]
+    }
+    
+    final func rl() {
+        let rltemp = value
+        value = (value << 1) | (Z80.f.value & Z80.cBit)
+        Z80.f.value = (rltemp >> 7) | Z80.sz53pvTable[value]
     }
     
     final func set(_ bit: UInt8) {

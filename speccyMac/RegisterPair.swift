@@ -47,7 +47,7 @@ class RegisterPair {
         
         value = UInt16(temp & 0xffff)
         
-        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (temp & 0x10000 > 0 ? Z80.cBit : 0) | (UInt8((temp & 0xff00 >> 8)) & (Z80.threeBit | Z80.fiveBit)) | Z80.halfCarryAdd[lookup];
+        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (temp & 0x10000 > 0 ? Z80.cBit : 0) | (UInt8((temp & 0xff00 >> 8)) & (Z80.threeBit | Z80.fiveBit)) | Z80.halfCarryAdd[lookup]
     }
     
     final func sbc(_ regPair: RegisterPair) {
