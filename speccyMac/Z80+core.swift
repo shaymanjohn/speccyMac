@@ -38,12 +38,28 @@ extension Z80 {
         if low == 0xfe {            // keyboard
             byte = 0xbf
             
-            if let keyboard = machine?.keyboard {
-                byte = UInt8(keyboard.first! & 0xff)
-//                print("keys \(keyboard)")
-            }
+//            if let keyboard = machine?.keyboard {
+//                byte = UInt8(keyboard.first! & 0xff)
+//            }
         } else if low == 0x1f {     // kempston
-            
+            if let keyboard = machine?.keyboard {
+                byte = 0x00
+                if keyboard.contains(124) {
+                    byte |= 0x01
+                }
+                if keyboard.contains(123) {
+                    byte |= 0x02
+                }
+                if keyboard.contains(125) {
+                    byte |= 0x04
+                }
+                if keyboard.contains(126) {
+                    byte |= 0x08
+                }
+                if keyboard.contains(49) {
+                    byte |= 0x10
+                }
+            }
         } else if low == 0xff {     // video beam
             if (videoRow < 64) || (videoRow > 255) {
                 byte = 0xff

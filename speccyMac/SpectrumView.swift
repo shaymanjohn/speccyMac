@@ -8,6 +8,12 @@
 
 import Cocoa
 
+// up 126
+// down 125
+// left 123
+// right 124
+// space 49
+
 class SpectrumView: NSView {
     
     var keysDown: [UInt16 : Bool] = [:]
@@ -21,7 +27,7 @@ class SpectrumView: NSView {
     }
     
     override func keyDown(with event: NSEvent) {
-        keysDown[event.keyCode] = true        
+        keysDown[event.keyCode] = true
     }
     
     override func keyUp(with event: NSEvent) {

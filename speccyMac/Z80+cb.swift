@@ -72,7 +72,7 @@ extension Z80 {
             memory.rl(hl.value)
             
         case 0x17:  // rl a
-            a.rl()
+            a.rl()            
             
         case 0x1f:  // rr a
             a.rr()
@@ -223,6 +223,9 @@ extension Z80 {
             
         case 0xbd: // res 7, l
             l.res(7)
+            
+        case 0xb6: // res 6, (hl)
+            memory.indexRes(6, address: hl.value)
             
         case 0xbe: // res 7, (hl)
             memory.indexRes(7, address: hl.value)
