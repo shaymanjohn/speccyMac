@@ -28,6 +28,16 @@ class accumulatorTests: XCTestCase {
         z80.a.cpl()
         XCTAssert(z80.a.value == 155, "cpl failed with value \(z80.a.value)")
     }
+    
+    func testAnd() {
+        z80.a.value = 0x08
+        z80.a.and(0x01)
+        XCTAssert(z80.a.value == 0, "and failed")
+        
+        z80.a.value = 0xff
+        z80.a.and(0x0f)
+        XCTAssert(z80.a.value == 0x0f, "and failed")
+    }
 
     func testAddValueNoWrap() {
         z80.a.value = 100
@@ -45,6 +55,12 @@ class accumulatorTests: XCTestCase {
         z80.a.value = 200
         z80.a.add(255)
         XCTAssert(z80.a.value == 199, "add negative failed with value \(z80.a.value)")
+    }
+    
+    func testNeg() {
+        z80.a.value = 1
+        z80.a.neg()
+        XCTAssert(z80.a.value == 0xff, "neg failed")
     }
     
 }

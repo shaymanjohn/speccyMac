@@ -17,11 +17,25 @@ extension Z80 {
 
         switch opcode {
             
+        case 0x42:  // sbc hl, bc
+            hl.sbc(bc)
+            
         case 0x43:  // ld (nnnn), bc
             memory.set(word16, regPair: bc)
             
+        case 0x44:  // neg
+            a.neg()
+            
         case 0x47:  // ld i, a
             i = a.value
+            
+        case 0x4b:  // ld bc, (nnnn)
+            c.value = memory.get(word16)
+            b.value = memory.get(word16 &+ 1)
+            
+        case 0x4d:  // reti
+            pc = memory.pop()
+            pc = pc &- 2
             
         case 0x4f:  // ld r, a
             r.value = a.value
@@ -38,6 +52,9 @@ extension Z80 {
         case 0x56:  // im 1
             interruptMode = 1
             
+        case 0x57:  // ld a, i
+            a.value = i
+            
         case 0x58:  // in e, (c)
             portIn(reg: e, high: b.value, low: c.value)
             
@@ -47,6 +64,10 @@ extension Z80 {
             
         case 0x5e:  // im 2
             interruptMode = 2
+            
+        case 0x73:  // ld (nn), sp
+            memory.set(word16, byte: UInt8(Z80.sp & 0xff))
+            memory.set(word16 &+ 1, byte: UInt8(Z80.sp >> 8))
             
         case 0x78:  // in a, (c)
             portIn(reg: a, high: b.value, low: c.value)
@@ -66,7 +87,7 @@ extension Z80 {
         case 0xb0:  // ldir
             var val = memory.get(hl)
             memory.set(de.value, byte: val)
-            bc.value = bc.value &- 1
+            bc.dec()
             
             val = val &+ a.value
             Z80.f.value = (Z80.f.value & (Z80.cBit | Z80.zBit | Z80.sBit)) | (bc.value > 0 ? Z80.pvBit : 0) | (val & Z80.threeBit) | ((val & 0x02) > 0 ? Z80.fiveBit : 0)
@@ -76,15 +97,15 @@ extension Z80 {
                 incCounters(5)
             }
             
-            hl.value = hl.value &+ 1
-            de.value = de.value &+ 1
+            hl.inc()
+            de.inc()
             
         case 0xb1:  // cpir
             let val = memory.get(hl)
             var temp = a.value &- val
             let lookup = ((a.value & 0x08) >> 3) | ((val & 0x08) >> 2) | ((temp & 0x08) >> 1)
 
-            bc.value = bc.value &- 1
+            bc.dec()
             Z80.f.value = (Z80.f.value & Z80.cBit) | (bc.value > 0 ? (Z80.pvBit | Z80.nBit) : Z80.nBit) | Z80.halfCarrySub[lookup] | (temp > 0 ? 0 : Z80.zBit) | (temp & Z80.sBit)
             
             if Z80.f.value & Z80.hBit > 0 {
@@ -97,7 +118,7 @@ extension Z80 {
                 pc = pc &- 2
                 incCounters(5)
             }
-            hl.value = hl.value &+ 1
+            hl.inc()
             
         case 0xb8:  // lddr
             var val = memory.get(hl)
@@ -112,8 +133,8 @@ extension Z80 {
                 incCounters(5)
             }
             
-            hl.value = hl.value &- 1
-            de.value = de.value &- 1
+            hl.dec()
+            de.dec()
             
         default:
             throw NSError(domain: "z80+ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])

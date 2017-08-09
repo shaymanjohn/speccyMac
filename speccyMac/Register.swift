@@ -67,9 +67,19 @@ class Register {
         value |= (1 << bit)
     }
     
+    final func res(_ bit: UInt8) {
+        value &= ~(1 << bit)
+    }
+    
     final func rrc() {
         Z80.f.value = value & Z80.cBit
         value = (value >> 1) | (value << 7)
+        Z80.f.value |= Z80.sz53pvTable[value]
+    }
+    
+    final func sra() {
+        Z80.f.value = value & Z80.cBit
+        value = (value & 0x80) | (value >> 1)
         Z80.f.value |= Z80.sz53pvTable[value]
     }
 }

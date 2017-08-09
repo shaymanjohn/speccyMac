@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13168.3" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="13178.6" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13168.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="13178.6"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -707,7 +707,7 @@
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="Spectrum" customModule="speccyMac" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
+                    <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl" customClass="SpectrumView" customModule="speccyMac" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="720" height="540"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
@@ -718,14 +718,25 @@
                                 </constraints>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="dlD-Qb-5cS"/>
                             </imageView>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="aMG-Oy-uFV">
+                                <rect key="frame" x="675" y="10" width="37" height="17"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Label" id="A6E-pw-j6V">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                         <constraints>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="QA9-hk-KIl"/>
+                            <constraint firstAttribute="trailing" secondItem="aMG-Oy-uFV" secondAttribute="trailing" constant="10" id="Ui0-Y1-fwb"/>
+                            <constraint firstAttribute="bottom" secondItem="aMG-Oy-uFV" secondAttribute="bottom" constant="10" id="eVV-Rj-dfp"/>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="fwy-wg-1dG"/>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="height" secondItem="m2S-Jp-Qdl" secondAttribute="height" constant="-40" id="pSj-Tj-lcg"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="lateLabel" destination="aMG-Oy-uFV" id="x4I-Iv-UUO"/>
                         <outlet property="spectrumScreen" destination="UOb-xd-KSE" id="EYb-mz-9EF"/>
                     </connections>
                 </viewController>

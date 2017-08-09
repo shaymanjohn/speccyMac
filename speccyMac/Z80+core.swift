@@ -11,11 +11,7 @@ import Foundation
 extension Z80 {
     
     final func setRelativePC(_ byte: UInt8) {
-        if byte & 0x80 > 0 {
-            pc = pc - (256 - UInt16(byte))
-        } else {
-            pc = pc + UInt16(byte)
-        }
+        pc = byte > 127 ? pc &- (UInt16(256) - UInt16(byte)) : pc &+ UInt16(byte)
     }
     
     final func rst(_ address: UInt16) {
@@ -41,6 +37,11 @@ extension Z80 {
         
         if low == 0xfe {            // keyboard
             byte = 0xbf
+            
+            if let keyboard = machine?.keyboard {
+                byte = UInt8(keyboard.first! & 0xff)
+//                print("keys \(keyboard)")
+            }
         } else if low == 0x1f {     // kempston
             
         } else if low == 0xff {     // video beam
@@ -51,7 +52,7 @@ extension Z80 {
                     let rowNum = videoRow - 64
                     let attribAddress = 22528 + ((rowNum >> 3) << 5)
                     let col = UInt16((ula - 24) >> 2)
-                    byte = memory.get(attribAddress &+ col)
+                    byte = memory.get(attribAddress + col)
                 } else {
                     byte = 0xff
                 }

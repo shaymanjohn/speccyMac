@@ -15,6 +15,7 @@ protocol Machine : class {
     var borderColour:  UInt8  { get set }
     var ticksPerFrame: UInt32 { get }
     var clickCount:    UInt32 { get set }
+    var keyboard:      [UInt16]? { get }
 }
 
 struct colour {
@@ -26,6 +27,7 @@ struct colour {
 class Spectrum: NSViewController {
     
     @IBOutlet weak var spectrumScreen: NSImageView!
+    @IBOutlet weak var lateLabel: NSTextField!
     
     var z80: Z80!
     var border: UInt8 = 0
@@ -49,12 +51,22 @@ class Spectrum: NSViewController {
     var colourCopy = [UInt8](repeating: 0, count: 32 * 192)
     var colourCopySave = [UInt8](repeating: 255, count: 32 * 192)
     
+    var keysDown: [UInt16 : Bool] = [:]
+    
     var provider: CGDataProvider!
     
     let colourTable = [colour(r: 0x00, g: 0x00, b: 0x00), colour(r: 0x00, g: 0x00, b: 0xcd), colour(r: 0xcd, g: 0x00, b: 0x00), colour(r: 0xcd, g: 0x00, b: 0xcd),
                        colour(r: 0x00, g: 0xcd, b: 0x00), colour(r: 0x00, g: 0xcd, b: 0xcd), colour(r: 0xcd, g: 0xcd, b: 0x00), colour(r: 0xcd, g: 0xcd, b: 0xcd),
                        colour(r: 0x00, g: 0x00, b: 0x00), colour(r: 0x00, g: 0x00, b: 0xff), colour(r: 0xff, g: 0x00, b: 0x00), colour(r: 0xff, g: 0x00, b: 0xff),
                        colour(r: 0x00, g: 0xff, b: 0x00), colour(r: 0x00, g: 0xff, b: 0xff), colour(r: 0xff, g: 0xff, b: 0x00), colour(r: 0xff, g: 0xff, b: 0xff)]
+    
+//    const UInt16 keyTable[] = {
+//    0xf701, 0xf702, 0xf704, 0xf708, 0xf710, 0xef10, 0xef08, 0xef04, 0xef02, 0xef01,
+//    0xfb01, 0xfb02, 0xfb04, 0xfb08, 0xfb10, 0xdf10, 0xdf08, 0xdf04, 0xdf02, 0xdf01,
+//    0xfd01, 0xfd02, 0xfd04, 0xfd08, 0xfd10, 0xbf10, 0xbf08, 0xbf04, 0xbf02, 0xbf01,
+//    0xfe01, 0xfe02, 0xfe04, 0xfe08, 0xfe10, 0x7f10, 0x7f08, 0x7f04, 0x7f02, 0x7f01,
+//    0xff0a, 0xff08, 0xff09, 0xff02, 0xff01, 0xff06, 0xff04, 0xff05, 0xff10
+//    };
     
     var colours = [UInt32](repeating: 0, count: 16)
     
@@ -64,6 +76,7 @@ class Spectrum: NSViewController {
         super.viewDidLoad()
         
         self.view.wantsLayer = true
+        self.lateLabel.stringValue = ""
         
         var colourIndex = 0
         for colour in colourTable {
@@ -85,10 +98,6 @@ class Spectrum: NSViewController {
             self.z80.start()
         }
         
-//        DispatchQueue.global(qos: .default).async {
-//            self.z80.start()
-//        }
-        
         var rowNum = 0
         for row in 0..<24 {
             for pixelRow in 0..<8 {
@@ -104,10 +113,19 @@ class Spectrum: NSViewController {
             attributeRowAddress[row] = 22528 + (32 * UInt16(row))
         }
         
-        let allGames = ["manic", "aticatac", "brucelee", "deathchase", "JetPac", "monty", "spacies", "thehobbit"]
+        let allGames = ["manic", "aticatac", "brucelee",
+                        "deathchase", "JetPac", "monty",
+                        "spacies", "thehobbit", "testz80",
+                        "jetsetw", "techted", "uridium",
+                        "testz80"]
         
-        let gameIndex = 6
-        loadGame(allGames[gameIndex] + ".sna")
+        var gameIndex = Int(arc4random() % UInt32(allGames.count))
+        
+        gameIndex = 0
+        
+        let game = allGames[gameIndex]
+        loadGame(game + ".sna")
+        print("Game: \(game)")
     }
     
     func loadGame(_ game: String) {
@@ -115,7 +133,6 @@ class Spectrum: NSViewController {
         z80.loadGame(game)
         z80.unpause()
     }
-
 }
 
 extension Spectrum : Machine {
@@ -131,6 +148,17 @@ extension Spectrum : Machine {
     
     var ticksPerFrame: UInt32 {
         return 69888
+    }
+    
+    var keyboard: [UInt16]? {
+        get {
+            let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
+            if downKeys.count > 0 {
+                return downKeys         // first convert here into machine value
+            }
+            
+            return nil
+        }
     }
     
     var borderColour: UInt8 {
@@ -165,6 +193,7 @@ extension Spectrum : Machine {
     
     final func refreshScreen() {        
         
+        self.lateLabel.stringValue = "\(z80.lateFrames)"
         var bmpIndex = 0
         
         for index in 0..<192 * 32 {

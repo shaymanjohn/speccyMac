@@ -48,5 +48,11 @@ class memoryTests: XCTestCase {
         
         XCTAssert(value == 5678, "pop after push failed, value return \(value)")
     }
+    
+    func testInc() {
+        memory.set(32768, byte: 0xff)
+        memory.inc(32768)
+        XCTAssert(memory.get(32768) == 0, "memory inc failed")
+    }
 
 }

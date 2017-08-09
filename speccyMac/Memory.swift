@@ -102,27 +102,20 @@ class Memory {
         set(Z80.sp, byte: UInt8((word & 0x00ff)))
     }
     
-    final func indexSet(_ num: Int, baseAddress: UInt16, offset: UInt8) {
-        let address = offset > 127 ? baseAddress  - (UInt16(256) - UInt16(offset)) : baseAddress + UInt16(offset)
-        
+    final func indexSet(_ num: Int, address: UInt16) {
         var byte = get(address)
         byte = byte | (1 << num)
         set(address, byte: byte)
     }
     
-    final func indexRes(_ num: Int, baseAddress: UInt16, offset: UInt8) {
-        let address = offset > 127 ? baseAddress  - (UInt16(256) - UInt16(offset)) : baseAddress + UInt16(offset)
-        
+    final func indexRes(_ num: Int, address: UInt16) {
         var byte = get(address)
         byte = byte & ~(1 << num)
         set(address, byte: byte)
     }
     
-    final func indexBit(_ num: Int, baseAddress: UInt16, offset: UInt8) {
-        let address = offset > 127 ? baseAddress  - (UInt16(256) - UInt16(offset)) : baseAddress + UInt16(offset)
-        
+    final func indexBit(_ num: Int, address: UInt16) {
         let value = get(address)
-        
         Z80.f.value = (Z80.f.value & Z80.cBit ) | Z80.hBit | ((value >> 8) & (Z80.threeBit | Z80.fiveBit))
         
         if value & (1 << num) == 0 {
@@ -133,13 +126,13 @@ class Memory {
             Z80.f.value |= Z80.sBit
         }
     }
-    
+      
     final func rl(_ address: UInt16) {
         var byte = get(address)
         
         let rltemp = byte
         byte = (byte << 1) | (Z80.f.value & Z80.cBit)
-        Z80.f.value = (rltemp >> 7) | Z80.sz53pvTable[(byte)]
+        Z80.f.value = (rltemp >> 7) | Z80.sz53pvTable[byte]
         
         set(address, byte: byte)
     }

@@ -15,10 +15,7 @@ extension Z80 {
         let word16 = (UInt16(second) << 8) | UInt16(first)
         let instruction = ddprefixedOps[opcode]
         
-        var offset = UInt16(first)
-        if first > 127 {
-            offset = UInt16(256) - UInt16(first)
-        }
+        let offsetAddress = first > 127 ? ixy.value &- (UInt16(256) - UInt16(first)) : ixy.value &+ UInt16(first)
         
         switch opcode {
             
@@ -44,65 +41,77 @@ extension Z80 {
             ixy.lo.value = memory.get(word16)
             ixy.hi.value = memory.get(word16 &+ 1)
             
+        case 0x2b:  // dec ixy
+            ixy.dec()
+            
         case 0x34:  // inc (ix+d)
-            memory.inc(ixy.value &+ offset)
+            memory.inc(offsetAddress)
             
         case 0x35:  // dec (ixy + d)
-            memory.dec(ixy.value &+ offset)
+            memory.dec(offsetAddress)
             
         case 0x36:  // ld (ix+d), n
-            memory.set(ixy.value &+ offset, byte: first)
+            memory.set(offsetAddress, byte: second)
             
         case 0x46:  // ld b, (ix+d)
-            b.value = memory.get(ixy.value &+ offset)
+            b.value = memory.get(offsetAddress)
+            
+        case 0x4e:  // ld c, (ix+d)
+            c.value = memory.get(offsetAddress)
             
         case 0x54:  // ld d, ixh
             d.value = ixy.hi.value
             
-        case 0x56:  // ld b, (ix+d)
-            d.value = memory.get(ixy.value &+ offset)
+        case 0x56:  // ld d, (ix+d)
+            d.value = memory.get(offsetAddress)
             
         case 0x5d:  // ld e, ixl
             e.value = ixy.lo.value
             
         case 0x5e:  // ld e, (ix+d)
-            e.value = memory.get(ixy.value &+ offset)
+            e.value = memory.get(offsetAddress)
             
         case 0x66:  // ld h, (ix+d)
-            h.value = memory.get(ixy.value &+ offset)
+            h.value = memory.get(offsetAddress)
             
         case 0x6e:  // ld l, (ix+d)
-            l.value = memory.get(ixy.value &+ offset)
+            l.value = memory.get(offsetAddress)
             
         case 0x6f:  // ld ixlh, a
             ixy.lo.value = a.value
             
         case 0x70:  // ld (ix+d), b
-            memory.set(ixy.value &+ offset, reg: b)
+            memory.set(offsetAddress, reg: b)
             
         case 0x72:  // ld (ix+d), d
-            memory.set(ixy.value &+ offset, reg: d)
+            memory.set(offsetAddress, reg: d)
             
         case 0x73:  // ld (ix+d), e
-            memory.set(ixy.value &+ offset, reg: e)
+            memory.set(offsetAddress, reg: e)
             
         case 0x74:  // ld (ix+d), h
-            memory.set(ixy.value &+ offset, reg: h)
+            memory.set(offsetAddress, reg: h)
             
         case 0x75:  // ld (ix+d), l
-            memory.set(ixy.value &+ offset, reg: l)
+            memory.set(offsetAddress, reg: l)
             
         case 0x77:  // ld (ix+d), a
-            memory.set(ixy.value &+ offset, reg: a)
+            memory.set(offsetAddress, reg: a)
             
         case 0x7e:  // ld a, (ix+d)
-            a.value = memory.get(ixy.value &+ offset)
+            a.value = memory.get(offsetAddress)
+            
+        case 0x86:  // add a, (ix + d)
+            a.add(memory.get(offsetAddress))
             
         case 0xa6:  // and (ix+d)
-            a.and(memory.get(ixy.value &+ offset))
+            a.and(memory.get(offsetAddress))
+            
+        case 0xb6:  // or (ix+d)
+            a.or(memory.get(offsetAddress))
             
         case 0xbe:  // cp (ix + d)
-            a.cp(memory.get(ixy.value &+ offset))
+            a.cp(memory.get(offsetAddress))
             
         case 0xe1:  // pop ixy
             ixy.value = memory.pop()
