@@ -75,6 +75,12 @@ extension Z80 {
         case 0x5f:  // ld a, r
             a.value = r.value
             
+        case 0x6f:  // rld
+            let byte = memory.get(hl)
+            memory.set(hl.value, byte: (byte << 4) | (a.value & 0x0f))
+            a.value = (a.value & 0xf0) | (byte >> 4)
+            Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[a.value]
+            
         case 0x73:  // ld (nn), sp
             memory.set(word16, byte: UInt8(Z80.sp & 0xff))
             memory.set(word16 &+ 1, byte: UInt8(Z80.sp >> 8))

@@ -176,6 +176,9 @@ extension Z80 {
         case 0x69:  // bit 5, c
             c.bit(5)
             
+        case 0x6f:  // bit 5, a
+            a.bit(5)
+            
         case 0x72:  // bit 6, d
             d.bit(6)
             
@@ -203,6 +206,9 @@ extension Z80 {
         case 0x8e:  // res 1, (hl)
             memory.indexRes(1, address: hl.value)
             
+        case 0x9e:  // res 3, (hl)
+            memory.indexRes(3, address: hl.value)
+            
         case 0xae: // res 5, (hl)
             memory.indexRes(5, address: hl.value)
             
@@ -214,6 +220,9 @@ extension Z80 {
             
         case 0xbb: // res 7, e
             e.res(7)
+            
+        case 0xbd: // res 7, l
+            l.res(7)
             
         case 0xbe: // res 7, (hl)
             memory.indexRes(7, address: hl.value)
@@ -232,6 +241,9 @@ extension Z80 {
             
         case 0xd9:  // set 3, c
             c.set(3)
+            
+        case 0xde:  // set 3, (hl)
+            memory.indexSet(3, address: hl.value)
             
         case 0xf4: // set 6, h
             h.set(6)

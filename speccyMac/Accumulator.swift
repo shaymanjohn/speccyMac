@@ -185,5 +185,5 @@ class Accumulator : Register {
         }
         
         Z80.f.value = (Z80.f.value & ~(Z80.cBit | Z80.pvBit | Z80.hBit)) | rmemh | Z80.parityBit[value]
-    }
+    }    
 }

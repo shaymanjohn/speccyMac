@@ -121,7 +121,7 @@ class Spectrum: NSViewController {
         
         var gameIndex = Int(arc4random() % UInt32(allGames.count))
         
-        gameIndex = 3
+        gameIndex = 0
         
         let game = allGames[gameIndex]
         loadGame(game + ".sna")
@@ -200,9 +200,9 @@ extension Spectrum : Machine {
             let byte   = screenCopy[index]
             let colour = colourCopy[index]
             
-            if byte != screenCopySave[index] || colour != colourCopySave[index] {
-                screenCopySave[index] = byte
-                colourCopySave[index] = colour
+//            if byte != screenCopySave[index] || colour != colourCopySave[index] {
+//                screenCopySave[index] = byte
+//                colourCopySave[index] = colour
             
                 let ink   = colours[colour & 0x07]
                 let paper = colours[(colour & 0x38) >> 3]                
@@ -215,7 +215,7 @@ extension Spectrum : Machine {
                 bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
                 bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
                 bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
-            }
+//            }
             
             bmpIndex = bmpIndex + 8
         }
