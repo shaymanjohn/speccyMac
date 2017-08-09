@@ -14,6 +14,10 @@ extension Z80 {
         
         let instruction = cbprefixedOps[opcode]
         
+//        if pc >= 0x1219 && pc <= 0x12a2 {
+//            print("pc: ", String(pc, radix: 16, uppercase: true), instruction.opCode)
+//        }
+        
         switch opcode {
             
         case 0x00:  // rlc b
@@ -24,6 +28,9 @@ extension Z80 {
             
         case 0x03:  // rlc e
             e.rlc()
+            
+        case 0x05:  // rlc l
+            l.rlc()
             
         case 0x07:  // rlc a
             a.rlc()
@@ -40,14 +47,23 @@ extension Z80 {
         case 0x0b:  // rrc e
             e.rrc()
             
+        case 0x0d:  // rrc l
+            l.rrc()
+            
         case 0x0f:  // rrc a
             a.rrc()
+            
+        case 0x10:  // rl b
+            b.rl()
             
         case 0x11:  // rl c
             c.rl()
             
         case 0x13:  // rl e
             e.rl()
+            
+        case 0x14:  // rl h
+            h.rl()
             
         case 0x15:  // rl l
             l.rl()
@@ -61,6 +77,12 @@ extension Z80 {
         case 0x1f:  // rr a
             a.rr()
             
+        case 0x20:  // sla b
+            b.sla()
+            
+        case 0x21:  // sla c
+            c.sla()
+            
         case 0x25:  // sla l
             l.sla()
             
@@ -72,6 +94,12 @@ extension Z80 {
             
         case 0x29:  // sra c
             c.sra()
+            
+        case 0x2f:  // sra a
+            a.sra()
+
+        case 0x38:  // srl b
+            b.srl()
             
         case 0x39:  // srl c
             c.srl()
@@ -114,6 +142,9 @@ extension Z80 {
             
         case 0x4f:  // bit 1, a
             a.bit(1)
+
+        case 0x51:  // bit 2, c
+            c.bit(2)
             
         case 0x53:  // bit 2, e
             e.bit(2)
@@ -121,14 +152,20 @@ extension Z80 {
         case 0x57:  // bit 2, a
             a.bit(2)
             
+        case 0x59:  // bit 3, c
+            c.bit(3)
+            
         case 0x5b:  // bit 3, e
             e.bit(3)
             
         case 0x5f:  // bit 3, a
             a.bit(3)
             
-        case 0x61:  // bit 4,c
+        case 0x61:  // bit 4, c
             c.bit(4)
+            
+        case 0x62:  // bit 4, d
+            d.bit(4)
             
         case 0x63:  // bit 4, e
             e.bit(4)
@@ -136,7 +173,16 @@ extension Z80 {
         case 0x67:  // bit 4, a
             a.bit(4)
             
+        case 0x69:  // bit 5, c
+            c.bit(5)
+            
+        case 0x72:  // bit 6, d
+            d.bit(6)
+            
         case 0x78:  // bit 7, b
+            b.bit(7)
+            
+        case 0x7a:  // bit 7, d
             b.bit(7)
             
         case 0x7c:  // bit 7, h
@@ -151,20 +197,38 @@ extension Z80 {
         case 0x86:  // res 0, (hl)
             memory.indexRes(0, address: hl.value)
             
+        case 0x87:  // res 0, a
+            a.res(0)
+            
         case 0x8e:  // res 1, (hl)
             memory.indexRes(1, address: hl.value)
             
         case 0xae: // res 5, (hl)
             memory.indexRes(5, address: hl.value)
             
+        case 0xaf: // res 5, a
+            a.res(5)
+            
         case 0xb9: // res 7, c
             c.res(7)
+            
+        case 0xbb: // res 7, e
+            e.res(7)
             
         case 0xbe: // res 7, (hl)
             memory.indexRes(7, address: hl.value)
             
+        case 0xc1:  // set 0, c
+            c.set(0)
+            
         case 0xc6: // set 0, (hl)
             memory.indexSet(0, address: hl.value)
+            
+        case 0xc9:  // set 1, c
+            c.set(1)
+            
+        case 0xce:  // set 1, (hl)
+            memory.indexSet(1, address: hl.value)
             
         case 0xd9:  // set 3, c
             c.set(3)

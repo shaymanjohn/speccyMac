@@ -38,25 +38,25 @@ class Memory {
         }
     }
     
-    final func get(_ address: UInt16) -> UInt8 {
+    @inline(__always) final func get(_ address: UInt16) -> UInt8 {
         return memory[address]
     }
     
-    final func get(_ regPair: RegisterPair) -> UInt8 {
+    @inline(__always) final func get(_ regPair: RegisterPair) -> UInt8 {
         return memory[regPair.value]
     }
     
-    final func set(_ address: UInt16, byte: UInt8) {
+    @inline(__always) final func set(_ address: UInt16, byte: UInt8) {
         if address >= romSize {
             memory[Int(address)] = byte
         }
     }
     
-    final func set(_ address: UInt16, reg: Register) {
+    @inline(__always) final func set(_ address: UInt16, reg: Register) {
         set(address, byte: reg.value)
     }
     
-    final func set(_ address: UInt16, regPair: RegisterPair) {
+    @inline(__always) final func set(_ address: UInt16, regPair: RegisterPair) {
         set(address, byte: regPair.lo.value)
         set(address &+ 1, byte: regPair.hi.value)
     }
@@ -74,7 +74,7 @@ class Memory {
         
         Z80.f.value = (Z80.f.value & Z80.cBit) | (value & 0x0f > 0 ? 0 : Z80.hBit ) | Z80.nBit
         value = value &- 1
-        Z80.f.value |= (value == 0x7f ? Z80.pvBit : 0) | Z80.sz53Table[value]
+        Z80.f.value = Z80.f.value | (value == 0x7f ? Z80.pvBit : 0) | Z80.sz53Table[value]
         
         set(address, byte: value)
     }
@@ -135,5 +135,13 @@ class Memory {
         Z80.f.value = (rltemp >> 7) | Z80.sz53pvTable[byte]
         
         set(address, byte: byte)
+    }
+    
+    final func sra(_ address: UInt16) {
+        var value = get(address)
+        Z80.f.value = value & Z80.cBit
+        value = (value & 0x80) | (value >> 1)
+        Z80.f.value |= Z80.sz53pvTable[value]
+        set(address, byte: value)
     }
 }

@@ -121,7 +121,7 @@ class Spectrum: NSViewController {
         
         var gameIndex = Int(arc4random() % UInt32(allGames.count))
         
-        gameIndex = 0
+        gameIndex = 3
         
         let game = allGames[gameIndex]
         loadGame(game + ".sna")

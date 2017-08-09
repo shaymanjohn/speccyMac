@@ -16,6 +16,10 @@ extension Z80 {
         var normalFlow = true
         let word16 = (UInt16(second) << 8) | UInt16(first)
         
+//        if pc >= 0x1219 && pc <= 0x12a2 {
+//            print("pc: ", String(pc, radix: 16, uppercase: true), instruction.opCode)
+//        }
+        
         switch opcode {
             
         case 0x00:  // nop
@@ -810,7 +814,12 @@ extension Z80 {
             }
             
         case 0xe3:  // ex (sp), hl
-            print("stub 0xe3")
+            let byte1 = h.value
+            let byte2 = l.value
+            l.value = memory.get(Z80.sp)
+            h.value = memory.get(Z80.sp &+ 1)
+            memory.set(Z80.sp, byte: byte2)
+            memory.set(Z80.sp &+ 1, byte: byte1)
             
         case 0xe4:  // call po, nn
             print("stub 0xe4")
@@ -894,7 +903,12 @@ extension Z80 {
             Z80.sp = hl.value
             
         case 0xfa:  // jp m, nn
-            print("stub 0xfa")
+            if Z80.f.value & Z80.sBit > 0 {
+                pc = word16;
+                pc = pc &- 3
+            } else {
+                normalFlow = false;
+            }
             
         case 0xfb:  // ei
             interrupts = true
@@ -915,9 +929,7 @@ extension Z80 {
             
         default:
             throw NSError(domain: "z80 unprefixed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
-        }
-        
-//        print("\(pc) : \(instruction.opCode)")        
+        }                
         
         pc = pc &+ instruction.length
         

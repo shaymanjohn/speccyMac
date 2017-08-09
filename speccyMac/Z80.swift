@@ -117,9 +117,7 @@ class Z80 {
         var byte2:  UInt8
         var byte3:  UInt8
         
-        running = true
-        
-//        var insCount = 0
+        running = true        
         
         while running {
             do {
@@ -131,10 +129,6 @@ class Z80 {
                         byte1  = memory.get(pc &+ 1)
                         byte2  = memory.get(pc &+ 2)
                         byte3  = memory.get(pc &+ 3)
-                        
-//                        print("insCount: \(insCount), pc: \(pc)")
-//                        insCount = insCount + 1
-//                        print("pc: \(pc)")
                         
                         switch opCode {
                         case 0xcb:

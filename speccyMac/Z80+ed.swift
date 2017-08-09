@@ -14,6 +14,10 @@ extension Z80 {
         
         let word16 = (UInt16(second) << 8) | UInt16(first)
         let instruction = edprefixedOps[opcode]
+        
+//        if pc >= 0x1219 && pc <= 0x12a2 {
+//            print("pc: ", String(pc, radix: 16, uppercase: true), instruction.opCode)
+//        }
 
         switch opcode {
             
@@ -58,12 +62,18 @@ extension Z80 {
         case 0x58:  // in e, (c)
             portIn(reg: e, high: b.value, low: c.value)
             
+        case 0x5a:  // adc hl, de
+            hl.adc(de.value)
+            
         case 0x5b:  // le de, (nnnn)
             e.value = memory.get(word16)
             d.value = memory.get(word16 &+ 1)
             
         case 0x5e:  // im 2
             interruptMode = 2
+            
+        case 0x5f:  // ld a, r
+            a.value = r.value
             
         case 0x73:  // ld (nn), sp
             memory.set(word16, byte: UInt8(Z80.sp & 0xff))

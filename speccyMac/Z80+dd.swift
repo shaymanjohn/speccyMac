@@ -15,6 +15,10 @@ extension Z80 {
         let word16 = (UInt16(second) << 8) | UInt16(first)
         let instruction = ddprefixedOps[opcode]
         
+//        if pc >= 0x1219 && pc <= 0x12a2 {
+//            print("pc: ", String(pc, radix: 16, uppercase: true), instruction.opCode)
+//        }
+        
         let offsetAddress = first > 127 ? ixy.value &- (UInt16(256) - UInt16(first)) : ixy.value &+ UInt16(first)
         
         switch opcode {
@@ -83,6 +87,9 @@ extension Z80 {
         case 0x70:  // ld (ix+d), b
             memory.set(offsetAddress, reg: b)
             
+        case 0x71:  // ld (ix+d), c
+            memory.set(offsetAddress, reg: c)
+            
         case 0x72:  // ld (ix+d), d
             memory.set(offsetAddress, reg: d)
             
@@ -104,8 +111,17 @@ extension Z80 {
         case 0x86:  // add a, (ix + d)
             a.add(memory.get(offsetAddress))
             
+        case 0x8e:  // adc a, (ix + d)
+            a.adc(memory.get(offsetAddress))
+            
+        case 0x96:  // sub a, (ix + d)
+            a.sub(memory.get(offsetAddress))
+            
         case 0xa6:  // and (ix+d)
             a.and(memory.get(offsetAddress))
+            
+        case 0xae:  // xor (ix+d)
+            a.xor(memory.get(offsetAddress))
             
         case 0xb6:  // or (ix+d)
             a.or(memory.get(offsetAddress))
@@ -118,6 +134,10 @@ extension Z80 {
             
         case 0xe5:  // push ixy
             memory.push(ixy)
+            
+        case 0xe9:  // jp (ix)
+            pc = ixy.value
+            pc = pc &- 2
             
         default:
             throw NSError(domain: "z80+dd", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])

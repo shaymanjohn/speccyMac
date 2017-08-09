@@ -157,6 +157,33 @@ class Accumulator : Register {
     }
     
     func daa() {
-        print("stub daa")
+        var rmeml: UInt8 = 0
+        var rmemh = Z80.f.value & Z80.cBit
+        
+        if (Z80.f.value & Z80.hBit > 0) || (value & 0x0f > 9) {
+            rmeml = 6
+        }
+        
+        if (rmemh > 0) || (value > 0x99) {
+            rmeml |= 0x60
+        }
+        
+        if value > 0x99 {
+            rmemh = 1
+        }
+        
+        if Z80.f.value & Z80.nBit > 0 {
+            if ((Z80.f.value & Z80.hBit) > 0) && ((value & 0x0f) < 6) {
+                rmemh |= Z80.hBit
+            }
+            sub(rmeml)
+        } else {
+            if ((value & 0x0f) > 9) {
+                rmemh |= Z80.hBit
+            }
+            add(rmeml)
+        }
+        
+        Z80.f.value = (Z80.f.value & ~(Z80.cBit | Z80.pvBit | Z80.hBit)) | rmemh | Z80.parityBit[value]
     }
 }
