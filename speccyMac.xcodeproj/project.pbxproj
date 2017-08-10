@@ -58,6 +58,7 @@
 
 /* Begin PBXFileReference section */
 		6F1792091F31B0D700A984F0 /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
+		6F2D00F91F3CA62000343F28 /* todo.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = todo.txt; sourceTree = "<group>"; };
 		6F33B9221F38F55200B886CD /* brucelee.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = brucelee.sna; sourceTree = "<group>"; };
 		6F33B9231F38F55200B886CD /* monty.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = monty.sna; sourceTree = "<group>"; };
 		6F33B9241F38F55200B886CD /* thehobbit.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = thehobbit.sna; sourceTree = "<group>"; };
@@ -174,6 +175,7 @@
 		6FFB31521F22379B00C15CD7 /* speccyMac */ = {
 			isa = PBXGroup;
 			children = (
+				6F2D00F91F3CA62000343F28 /* todo.txt */,
 				6FFB31531F22379B00C15CD7 /* AppDelegate.swift */,
 				6FFB31551F22379B00C15CD7 /* Spectrum.swift */,
 				6FA3852D1F39BCEF006CC865 /* SpectrumView.swift */,

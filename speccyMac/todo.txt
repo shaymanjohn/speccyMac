@@ -1,0 +1,24 @@
+
+To Do
+-----
+
+Bright attribute
+Flash attribute
+Keyboard
+Joypad support
+Sound
+Hi-res border
+Check timings
+Contention
+Zip support
+Z80
+TZX
+SZX
+128K
+AY sounds
+Other Z80 machines
+All instructions
+
+Done
+----
+
