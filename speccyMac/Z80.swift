@@ -192,65 +192,6 @@ class Z80 {
         }
     }
     
-    func loadGame(_ game: String) {
-        
-        if let loader = Loader(game, memory: memory) {
-            af.value = loader.af
-            hl.value = loader.hl
-            bc.value = loader.bc
-            de.value = loader.de
-            
-            exaf = loader.exaf
-            exhl = loader.exhl
-            exbc = loader.exbc
-            exde = loader.exde
-            
-            Z80.sp = loader.sp
-            pc = loader.pc
-            
-            ix = loader.ix
-            iy = loader.iy
-            
-            r.value = loader.r
-            i = loader.i
-            
-            interrupts = loader.interrupts
-            interruptMode = loader.interruptMode
-            
-            if (interrupts) {
-                iff1 = 1
-                iff2 = 1
-            } else {
-                iff1 = 0
-                iff2 = 0
-            }
-            
-            machine?.borderColour = loader.borderColour
-            
-            counter = 0
-            lateFrames = 0
-            halted = false
-            ula = 0
-            videoRow = 0
-            
-            // Sound vars
-//            clicksCount = 0;
-            //            beep = false;
-            //            soundCounter = 0;
-            //            bufferIndex = 0;
-            
-            //            kempston = 0;
-        }
-    }
-    
-    func pause() {
-        paused = true
-    }
-    
-    func unpause() {
-        paused = false
-    }
-    
     final func incCounters(_ amount: UInt32) {
         counter = counter + amount
         ula = ula + amount

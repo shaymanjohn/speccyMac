@@ -75,9 +75,10 @@ class Spectrum: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // allows us to use NSView for border colour
         self.view.wantsLayer = true
-        self.lateLabel.stringValue = ""
         
+        // Spectrum colour pallette
         var colourIndex = 0
         for colour in colourTable {
             let rComp = UInt32(colour.r) << 8
@@ -87,17 +88,7 @@ class Spectrum: NSViewController {
             colourIndex = colourIndex + 1
         }
         
-        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
-            (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
-        })!
-        
-        z80 = Z80(memory: memory)
-        z80.machine = self
-        
-        DispatchQueue.global().async {
-            self.z80.start()
-        }
-        
+        // Precalculate screen and colour rows
         var rowNum = 0
         for row in 0..<24 {
             for pixelRow in 0..<8 {
@@ -113,26 +104,43 @@ class Spectrum: NSViewController {
             attributeRowAddress[row] = 22528 + (32 * UInt16(row))
         }
         
-        let allGames = ["manic", "aticatac", "brucelee",
-                        "deathchase", "JetPac", "monty",
-                        "spacies", "thehobbit", "testz80",
-                        "jetsetw", "techted", "uridium",
-                        "testz80"]
+        // Used in bitmap generator
+        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
+            (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
+        })!
+        
+        z80 = Z80(memory: memory)
+        z80.machine = self
+        
+        DispatchQueue.global().async {
+            self.z80.start()
+        }
+        
+        let allGames = ["manic.sna", "aticatac.sna", "brucelee.sna",
+                        "deathchase.sna", "JetPac.sna", "monty.sna",
+                        "spacies.sna", "thehobbit.sna", "testz80.sna",
+                        "jetsetw.sna", "techted.sna", "uridium.sna",
+                        "testz80.sna"]
         
         var gameIndex = Int(arc4random() % UInt32(allGames.count))
-        
         gameIndex = 0
         
-        let game = allGames[gameIndex]
-        loadGame(game + ".sna")
-        print("Game: \(game)")
+        loadGame(allGames[gameIndex], z80: z80)
+    }
+}
+
+func loadGame(_ game: String, z80: Z80) {
+    z80.paused = true
+    
+    Thread.sleep(forTimeInterval: 0.01)
+    
+    if let _ = Loader(game, z80: z80) {
+        print("loaded \(game)")
+    } else {
+        print("couldnt load \(game)")
     }
     
-    func loadGame(_ game: String) {
-        z80.pause()
-        z80.loadGame(game)
-        z80.unpause()
-    }
+    z80.paused = false
 }
 
 extension Spectrum : Machine {
