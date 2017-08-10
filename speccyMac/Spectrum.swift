@@ -13,17 +13,22 @@ protocol Machine : class {
     func refreshScreen()
     func captureRow(_ row: UInt16)
     
-    var borderColour:  UInt8     { get set }
-    var ticksPerFrame: UInt32    { get }
-    var clickCount:    UInt32    { get set }
-    var keysDown:      [UInt16]? { get }
-    var padDown:       UInt8     { get }
+    var borderColour:  UInt8    { get set }
+    var ticksPerFrame: UInt32   { get }
+    var clickCount:    UInt32   { get set }
+    var keysDown:      [UInt16] { get }
+    var padDown:       UInt8    { get }
 }
 
 struct colour {
     let r: UInt8
     let g: UInt8
     let b: UInt8
+}
+
+struct keyboardMap {
+    let macKeycode: UInt16
+    let spectrumCode: UInt16
 }
 
 class Spectrum: NSViewController {
@@ -63,13 +68,14 @@ class Spectrum: NSViewController {
                        colour(r: 0x00, g: 0x00, b: 0x00), colour(r: 0x00, g: 0x00, b: 0xff), colour(r: 0xff, g: 0x00, b: 0x00), colour(r: 0xff, g: 0x00, b: 0xff),
                        colour(r: 0x00, g: 0xff, b: 0x00), colour(r: 0x00, g: 0xff, b: 0xff), colour(r: 0xff, g: 0xff, b: 0x00), colour(r: 0xff, g: 0xff, b: 0xff)]
     
-//    const UInt16 keyTable[] = {
-//    0xf701, 0xf702, 0xf704, 0xf708, 0xf710, 0xef10, 0xef08, 0xef04, 0xef02, 0xef01,
-//    0xfb01, 0xfb02, 0xfb04, 0xfb08, 0xfb10, 0xdf10, 0xdf08, 0xdf04, 0xdf02, 0xdf01,
-//    0xfd01, 0xfd02, 0xfd04, 0xfd08, 0xfd10, 0xbf10, 0xbf08, 0xbf04, 0xbf02, 0xbf01,
-//    0xfe01, 0xfe02, 0xfe04, 0xfe08, 0xfe10, 0x7f10, 0x7f08, 0x7f04, 0x7f02, 0x7f01,
-//    0xff0a, 0xff08, 0xff09, 0xff02, 0xff01, 0xff06, 0xff04, 0xff05, 0xff10
-//    };
+    let keyMap = [0xfd01, 0xfd02, 0xfd04, 0xfd08, 0xbf10, 0xfd10, 0xfe02, 0xfe04, 0xfe08, 0xfe10,
+                  0x0000, 0x7f10, 0xfb01, 0xfb02, 0xfb04, 0xfb08, 0xdf10, 0xfb10, 0xf701, 0xf702,
+                  0xf704, 0xf708, 0xef10, 0xf710, 0x0000, 0xef02, 0xef08, 0x0000, 0xef04, 0xef01,
+                  0x0000, 0xdf02, 0xdf08, 0x0000, 0xdf04, 0xdf01, 0xbf01, 0xbf02, 0xbf08, 0x0000,
+                  0xbf04, 0x0000, 0x0000, 0x0000, 0x0000, 0x7f08, 0x7f04, 0x0000, 0x0000, 0x0000,
+                  0x0000, 0x0000, 0x0000, 0x0000, 0x7f02, 0x0000, 0xfe01, 0x0000, 0x0000, 0x0000,
+                  0xfe01]
+                          
     
     var colours = [UInt32](repeating: 0, count: 16)
     
@@ -162,13 +168,18 @@ extension Spectrum : Machine {
         return 69888
     }
     
-    var keysDown: [UInt16]? {
+    var keysDown: [UInt16] {
         get {
             let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
             
+            var keys: [UInt16] = []
+            for key in downKeys {
+                if keyMap[key] > 0 {
+                    keys.append(UInt16(keyMap[key]))
+                }
+            }
             
-            
-            return downKeys
+            return keys
         }
     }
     
@@ -176,7 +187,7 @@ extension Spectrum : Machine {
         get {
             let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
             
-            let padKeys = [124, 123, 125, 126, 49]
+            let padKeys = [124, 123, 125, 126, 49]  // cursor keys and space bar
             var byte: UInt8 = 0x00
             var bit:  UInt8 = 0x01
             

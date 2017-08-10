@@ -57,6 +57,9 @@ extension Z80 {
         case 0x96:
             memory.indexRes(2, address: offsetAddress)
             
+        case 0x9e:
+            memory.indexRes(3, address: offsetAddress)
+            
         case 0xa6:
             memory.indexRes(4, address: offsetAddress)
             
@@ -66,11 +69,17 @@ extension Z80 {
         case 0xb6:
             memory.indexSet(6, address: offsetAddress)
             
+        case 0xbe:
+            memory.indexRes(7, address: offsetAddress)
+            
         case 0xc6:
             memory.indexSet(0, address: offsetAddress)
             
         case 0xce:
             memory.indexSet(1, address: offsetAddress)
+            
+        case 0xde:
+            memory.indexSet(3, address: offsetAddress)
             
         case 0xe6:
             memory.indexSet(4, address: offsetAddress)

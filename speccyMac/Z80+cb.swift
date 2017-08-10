@@ -110,6 +110,9 @@ extension Z80 {
         case 0x3c:  // srl h
             h.srl()
             
+        case 0x3d:  // srl l
+            l.srl()
+            
         case 0x3f:  // srl a
             a.srl()
             
@@ -149,6 +152,9 @@ extension Z80 {
         case 0x53:  // bit 2, e
             e.bit(2)
             
+        case 0x56:  // bit 2, (hl)
+            memory.indexBit(2, address: hl.value)
+            
         case 0x57:  // bit 2, a
             a.bit(2)
             
@@ -185,6 +191,9 @@ extension Z80 {
         case 0x78:  // bit 7, b
             b.bit(7)
             
+        case 0x79:  // bit 7, c
+            c.bit(7)
+            
         case 0x7a:  // bit 7, d
             b.bit(7)
             
@@ -206,6 +215,9 @@ extension Z80 {
         case 0x8e:  // res 1, (hl)
             memory.indexRes(1, address: hl.value)
             
+        case 0x96:  // res 2, (hl)
+            memory.indexRes(2, address: hl.value)
+            
         case 0x9e:  // res 3, (hl)
             memory.indexRes(3, address: hl.value)
             
@@ -220,6 +232,9 @@ extension Z80 {
             
         case 0xbb: // res 7, e
             e.res(7)
+            
+        case 0xbc: // res 7, h
+            h.res(7)
             
         case 0xbd: // res 7, l
             l.res(7)

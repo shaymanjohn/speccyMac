@@ -36,7 +36,53 @@ extension Z80 {
         var byte: UInt8 = 0x00
         
         if low == 0xfe {            // keyboard
-            byte = 0xbf            
+//            if let keysDown = machine?.keysDown, keysDown.count > 0 {
+//                for key in keysDown {
+//                    let row: UInt8 = UInt8(key >> 8)
+//                    let val: UInt8 = UInt8(key & 0xff)
+//
+//                    if let keyNum = [0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f].index(of: row) {
+//                        var thisKey: UInt8 = keys[keyNum]
+//                        thisKey &= ~val
+//                        keys[keyNum] = thisKey
+//                    }
+//                }
+//            }
+//
+//            switch high {
+//            case 0xfe:
+//                byte = keys[0]
+//            case 0xfd:
+//                byte = keys[1]
+//            case 0xfb:
+//                byte = keys[2]
+//            case 0xf7:
+//                byte = keys[3]
+//            case 0xef:
+//                byte = keys[4]
+//            case 0xdf:
+//                byte = keys[5]
+//            case 0xbf:
+//                byte = keys[6]
+//            case 0x7f:
+//                byte = keys[7]
+//            case 0x7e:
+//                byte = keys[0] & keys[7]
+//            case 0x00:
+//                byte = keys[0] & keys[1] & keys[2] & keys[3] & keys[4] & keys[5] & keys[6] & keys[7]
+//            default:
+//                byte = 0xbf
+//                let value = high ^ 0xff
+//                var bit:UInt8 = 0x01
+//                for loop in 0..<8 {
+//                    if value & bit > 0 {
+//                        byte = byte & keys[loop]
+//                    }
+//                    bit = bit << 1
+//                }
+//            }
+        
+            byte = 0xbf
         } else if low == 0x1f {     // kempston
             byte = machine?.padDown ?? 0x00
         } else if low == 0xff {     // video beam

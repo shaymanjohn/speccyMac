@@ -15,6 +15,7 @@
 		6F33B92D1F38F56900B886CD /* monty.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9231F38F55200B886CD /* monty.sna */; };
 		6F33B92E1F38F56C00B886CD /* spacies.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9251F38F55200B886CD /* spacies.sna */; };
 		6F33B92F1F38F56E00B886CD /* thehobbit.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9241F38F55200B886CD /* thehobbit.sna */; };
+		6F4D8F381F3CE357001E7C66 /* KeyMap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F4D8F371F3CE357001E7C66 /* KeyMap.swift */; };
 		6F7421E11F36FDFF00C056EA /* RefreshReg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7421E01F36FDFF00C056EA /* RefreshReg.swift */; };
 		6F8E10851F2259E10039C0BB /* Z80+core.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F8E10841F2259E10039C0BB /* Z80+core.swift */; };
 		6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */; };
@@ -66,6 +67,7 @@
 		6F33B9261F38F55200B886CD /* deathchase.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = deathchase.sna; sourceTree = "<group>"; };
 		6F33B9271F38F55200B886CD /* JetPac.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = JetPac.sna; sourceTree = "<group>"; };
 		6F33B9281F38F55200B886CD /* aticatac.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = aticatac.sna; sourceTree = "<group>"; };
+		6F4D8F371F3CE357001E7C66 /* KeyMap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyMap.swift; sourceTree = "<group>"; };
 		6F7421E01F36FDFF00C056EA /* RefreshReg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshReg.swift; sourceTree = "<group>"; };
 		6F8E10841F2259E10039C0BB /* Z80+core.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+core.swift"; sourceTree = "<group>"; };
 		6F8E15381F3B14E100A34AB4 /* testz80.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = testz80.sna; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 				6FEFA92D1F2250B200F9AD93 /* Z80+ddcb.swift */,
 				6FEFA9211F223FCE00F9AD93 /* Loader.swift */,
 				6F1792091F31B0D700A984F0 /* Array+extensions.swift */,
+				6F4D8F371F3CE357001E7C66 /* KeyMap.swift */,
 				6FEFA9101F2239AD00F9AD93 /* Roms */,
 				6FFB31571F22379B00C15CD7 /* Assets.xcassets */,
 				6FEFA91B1F223AA400F9AD93 /* z80ops.json */,
@@ -344,6 +347,7 @@
 				6FFB31541F22379B00C15CD7 /* AppDelegate.swift in Sources */,
 				6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */,
 				6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */,
+				6F4D8F381F3CE357001E7C66 /* KeyMap.swift in Sources */,
 				6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
