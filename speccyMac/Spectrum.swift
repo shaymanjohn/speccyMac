@@ -9,13 +9,15 @@
 import Cocoa
 
 protocol Machine : class {
+    
     func refreshScreen()
     func captureRow(_ row: UInt16)
     
-    var borderColour:  UInt8  { get set }
-    var ticksPerFrame: UInt32 { get }
-    var clickCount:    UInt32 { get set }
-    var keyboard:      [UInt16]? { get }
+    var borderColour:  UInt8     { get set }
+    var ticksPerFrame: UInt32    { get }
+    var clickCount:    UInt32    { get set }
+    var keysDown:      [UInt16]? { get }
+    var padDown:       UInt8     { get }
 }
 
 struct colour {
@@ -32,6 +34,9 @@ class Spectrum: NSViewController {
     var z80: Z80!
     var border: UInt8 = 0
     var clicksCount: UInt32 = 0
+    
+    var flashCount = 0
+    var invertColours = false
     
     let colourSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
@@ -50,8 +55,6 @@ class Spectrum: NSViewController {
     // Attribute image and saved version
     var colourCopy = [UInt8](repeating: 0, count: 32 * 192)
     var colourCopySave = [UInt8](repeating: 255, count: 32 * 192)
-    
-    var keysDown: [UInt16 : Bool] = [:]
     
     var provider: CGDataProvider!
     
@@ -127,20 +130,21 @@ class Spectrum: NSViewController {
         
         loadGame(allGames[gameIndex], z80: z80)
     }
-}
-
-func loadGame(_ game: String, z80: Z80) {
-    z80.paused = true
     
-    Thread.sleep(forTimeInterval: 0.01)
-    
-    if let _ = Loader(game, z80: z80) {
-        print("loaded \(game)")
-    } else {
-        print("couldnt load \(game)")
+    func loadGame(_ game: String, z80: Z80) {
+        z80.paused = true
+        
+        // Wait until background thread is paused...
+        Thread.sleep(forTimeInterval: 0.01)
+        
+        if let _ = Loader(game, z80: z80) {
+            print("loaded \(game)")
+        } else {
+            print("couldnt load \(game)")
+        }
+        
+        z80.paused = false
     }
-    
-    z80.paused = false
 }
 
 extension Spectrum : Machine {
@@ -158,14 +162,32 @@ extension Spectrum : Machine {
         return 69888
     }
     
-    var keyboard: [UInt16]? {
+    var keysDown: [UInt16]? {
         get {
             let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
-            if downKeys.count > 0 {
-                return downKeys         // first convert here into machine value
+            
+            
+            
+            return downKeys
+        }
+    }
+    
+    var padDown: UInt8 {
+        get {
+            let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
+            
+            let padKeys = [124, 123, 125, 126, 49]
+            var byte: UInt8 = 0x00
+            var bit:  UInt8 = 0x01
+            
+            for key in padKeys {
+                if downKeys.contains(UInt16(key)) {
+                    byte |= bit
+                }
+                bit = bit << 1
             }
             
-            return nil
+            return byte
         }
     }
     
@@ -202,6 +224,13 @@ extension Spectrum : Machine {
     final func refreshScreen() {        
         
         self.lateLabel.stringValue = "\(z80.lateFrames)"
+        
+        flashCount = flashCount + 1
+        if flashCount == 16 {
+            invertColours = !invertColours
+            flashCount = 0
+        }
+        
         var bmpIndex = 0
         
         for index in 0..<192 * 32 {
@@ -212,8 +241,15 @@ extension Spectrum : Machine {
 //                screenCopySave[index] = byte
 //                colourCopySave[index] = colour
             
-                let ink   = colours[colour & 0x07]
-                let paper = colours[(colour & 0x38) >> 3]                
+            let offset:UInt8 = colour & 0x40 > 0 ? 8 : 0
+
+            var ink   = colours[(colour & 0x07) + offset]
+            var paper = colours[((colour & 0x38) >> 3) + offset]
+            
+            if colour & 0x80 > 0 && invertColours {
+                paper = colours[(colour & 0x07) + offset]
+                ink   = colours[((colour & 0x38) >> 3) + offset]
+            }
             
                 bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
                 bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper

@@ -2,8 +2,6 @@
 To Do
 -----
 
-Bright attribute
-Flash attribute
 Keyboard
 Joypad support
 Sound
@@ -19,6 +17,10 @@ AY sounds
 Other Z80 machines
 All instructions
 
+
+
 Done
 ----
 
+Bright attribute
+Flash attribute
