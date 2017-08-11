@@ -132,7 +132,7 @@ class Spectrum: NSViewController {
                         "testz80.sna"]
         
         var gameIndex = Int(arc4random() % UInt32(allGames.count))
-        gameIndex = 0
+        gameIndex = 1
         
         loadGame(allGames[gameIndex], z80: z80)
     }
@@ -174,8 +174,10 @@ extension Spectrum : Machine {
             
             var keys: [UInt16] = []
             for key in downKeys {
-                if keyMap[key] > 0 {
-                    keys.append(UInt16(keyMap[key]))
+                if key < keyMap.count {
+                    if keyMap[key] > 0 {
+                        keys.append(UInt16(keyMap[key]))
+                    }
                 }
             }
             
