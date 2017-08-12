@@ -362,6 +362,9 @@ extension Z80 {
         case 0xb0: // res 6, b
             b.res(6)
             
+        case 0xb6: // res 6, (hl)
+            memory.indexRes(6, address: hl.value)
+            
         case 0xb9: // res 7, c
             c.res(7)
             
@@ -376,9 +379,6 @@ extension Z80 {
             
         case 0xbf: // res 7, a
             a.res(7)
-            
-        case 0xb6: // res 6, (hl)
-            memory.indexRes(6, address: hl.value)
             
         case 0xbe: // res 7, (hl)
             memory.indexRes(7, address: hl.value)

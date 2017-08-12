@@ -93,9 +93,9 @@ class Z80 {
         var opCode:     String
         
         func log(_ pc: UInt16) {
-//            if pc >= 0x1219 && pc <= 0x12a2 {
-//                print("pc: ", String(pc, radix: 16, uppercase: true), self.opCode)
-//            }
+            if pc >= 0x4000 {
+                print("pc: ", String(pc, radix: 16, uppercase: true), self.opCode)
+            }
         }
     }
     
@@ -104,7 +104,7 @@ class Z80 {
     var ddprefixedOps:  Array<Instruction> = []
     var cbprefixedOps:  Array<Instruction> = []
     
-    var log = false
+    var log = true
     
     init(memory: Memory) {
         af = RegisterPair(hi: a, lo: Z80.f)

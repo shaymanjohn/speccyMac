@@ -21,6 +21,9 @@ extension Z80 {
         case 0x2e:
             memory.sra(offsetAddress)
             
+//        case 0x46, 0x4e, 0x56, 0x5e, 0x66, 0x6e, 0x76, 0x7e:
+//            memory.indexBit(n, address: offsetAddress)
+            
         case 0x46:
             memory.indexBit(0, address: offsetAddress)
             
