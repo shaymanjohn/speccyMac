@@ -127,12 +127,15 @@ class Spectrum: NSViewController {
         
         let allGames = ["manic.sna", "aticatac.sna", "brucelee.sna",
                         "deathchase.sna", "JetPac.sna", "monty.sna",
-                        "spacies.sna", "thehobbit.sna", "testz80.sna",
-                        "jetsetw.sna", "techted.sna", "uridium.sna",
-                        "testz80.sna"]
+                        "spacies.sna", "thehobbit.sna", "jetsetw.sna",
+                        "techted.sna", "uridium.sna", "testz80.sna",
+                        "cobra.sna", "cybernoid1.sna", "cybernoid2.sna",
+                        "dynadan.sna", "greenberet.sna", "headoverheels.sna",
+                        "hypersports.sna", "JetMan.sna", "ninjaman.sna",
+                        "sabre.sna", "starquake.sna"]
         
         var gameIndex = Int(arc4random() % UInt32(allGames.count))
-        gameIndex = 1
+        gameIndex = 21
         
         loadGame(allGames[gameIndex], z80: z80)
     }

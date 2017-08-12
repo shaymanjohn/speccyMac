@@ -84,18 +84,27 @@ class Z80 {
     static let overFlowSub:   Array<UInt8> = [0, 1 << 2, 0, 0, 0, 0, 1 << 2, 0]
     
 //    var clicksCount:   UInt32 = 0
+    var usedInstructions: [String] = []
     
     struct Instruction {
         var length:     UInt16
         var tStates:    UInt32
         var altTStates: UInt32
         var opCode:     String
+        
+        func log(_ pc: UInt16) {
+//            if pc >= 0x1219 && pc <= 0x12a2 {
+//                print("pc: ", String(pc, radix: 16, uppercase: true), self.opCode)
+//            }
+        }
     }
     
     var unprefixedOps:  Array<Instruction> = []
     var edprefixedOps:  Array<Instruction> = []
     var ddprefixedOps:  Array<Instruction> = []
     var cbprefixedOps:  Array<Instruction> = []
+    
+    var log = false
     
     init(memory: Memory) {
         af = RegisterPair(hi: a, lo: Z80.f)
@@ -109,6 +118,15 @@ class Z80 {
         
         parseInstructions()
         calculateTables()
+    }
+    
+    func log(_ instruction: Instruction) {
+        if log {
+            instruction.log(pc)
+            if !usedInstructions.contains(instruction.opCode) {
+                usedInstructions.append(instruction.opCode)
+            }
+        }
     }
     
     func start() {

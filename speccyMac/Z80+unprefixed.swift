@@ -14,12 +14,9 @@ extension Z80 {
         
         let instruction = unprefixedOps[opcode]
         var normalFlow = true
-        let word16 = (UInt16(second) << 8) | UInt16(first)
-        
-//        if pc >= 0x1219 && pc <= 0x12a2 {
-//            print("pc: ", String(pc, radix: 16, uppercase: true), instruction.opCode)
-//        }
-        
+        let word16 = (UInt16(second) << 8) | UInt16(first)        
+        log(instruction)
+
         switch opcode {
             
         case 0x00:  // nop
@@ -238,7 +235,7 @@ extension Z80 {
             a.value = first
             
         case 0x3f:  // ccf
-            Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))
+            Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))            
             
         case 0x40:  // ld b, b
             b.value = b.value
@@ -814,15 +811,22 @@ extension Z80 {
             }
             
         case 0xe3:  // ex (sp), hl
+            let savesp = Z80.sp &+ 1
             let byte1 = h.value
             let byte2 = l.value
             l.value = memory.get(Z80.sp)
-            h.value = memory.get(Z80.sp &+ 1)
+            h.value = memory.get(savesp)
             memory.set(Z80.sp, byte: byte2)
-            memory.set(Z80.sp &+ 1, byte: byte1)
+            memory.set(savesp, byte: byte1)
             
         case 0xe4:  // call po, nn
-            print("stub 0xe4")
+            if Z80.f.value & Z80.pvBit > 0 {
+                memory.push(pc &+ 3)
+                pc = word16
+                pc = pc &- 3
+            } else {
+                normalFlow = false
+            }
             
         case 0xe5:  // push hl
             memory.push(hl)
@@ -834,14 +838,24 @@ extension Z80 {
             rst(0x0020)
             
         case 0xe8:  // ret pe
-            print("stub 0xe8")
+            if Z80.f.value & Z80.pvBit > 0 {
+                pc = memory.pop()
+                pc = pc &- 1
+            } else {
+                normalFlow = false
+            }
             
         case 0xe9:  // jp (hl)
             pc = hl.value
             pc = pc &- 1
             
         case 0xea:  // jp pe, nn
-            print("stub 0xea")
+            if Z80.f.value & Z80.pvBit > 0 {
+                pc = word16
+                pc = pc &- 3
+            } else {
+                normalFlow = false
+            }        
             
         case 0xeb:  // ex de, hl
             let temp = de.value
@@ -904,10 +918,10 @@ extension Z80 {
             
         case 0xfa:  // jp m, nn
             if Z80.f.value & Z80.sBit > 0 {
-                pc = word16;
+                pc = word16
                 pc = pc &- 3
             } else {
-                normalFlow = false;
+                normalFlow = false
             }
             
         case 0xfb:  // ei

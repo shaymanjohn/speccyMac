@@ -14,12 +14,12 @@ extension Z80 {
         
         let word16 = (UInt16(second) << 8) | UInt16(first)
         let instruction = edprefixedOps[opcode]
-        
-//        if pc >= 0x1219 && pc <= 0x12a2 {
-//            print("pc: ", String(pc, radix: 16, uppercase: true), instruction.opCode)
-//        }
+        log(instruction)
 
         switch opcode {
+            
+        case 0x00:  // nop
+            break
             
         case 0x42:  // sbc hl, bc
             hl.sbc(bc)
@@ -75,6 +75,9 @@ extension Z80 {
         case 0x5f:  // ld a, r
             a.value = r.value
             
+        case 0x6a:  // adc hl, hl
+            hl.adc(hl.value)
+            
         case 0x6f:  // rld
             let byte = memory.get(hl)
             memory.set(hl.value, byte: (byte << 4) | (a.value & 0x0f))
@@ -93,6 +96,11 @@ extension Z80 {
             
         case 0x79:  // out (c), a
             portOut(c.value, byte:a.value)
+            
+        case 0x7b:  // ld sp, (nn)
+            let lo = memory.get(word16)
+            let hi = memory.get(word16 &+ 1)
+            Z80.sp = UInt16(hi << 8) | UInt16(lo)
             
         case 0xa0:  // ldi
             var temp = memory.get(hl)
@@ -157,9 +165,7 @@ extension Z80 {
             
         default:
             throw NSError(domain: "z80+ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
-        }
-        
-//        print("\(pc) : \(instruction.opCode)")
+        }        
         
         pc = pc &+ instruction.length        
         incCounters(instruction.tStates)

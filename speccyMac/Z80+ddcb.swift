@@ -14,10 +14,7 @@ extension Z80 {
         
         let instruction = cbprefixedOps[opcode]
         let offsetAddress = first > 127 ? ixy.value &- (UInt16(256) - UInt16(first)) : ixy.value &+ UInt16(first)
-        
-//        if pc >= 0x1219 && pc <= 0x12a2 {
-//            print("pc: ", String(pc, radix: 16, uppercase: true), instruction.opCode)
-//        }
+        log(instruction)
         
         switch opcode {
             
@@ -67,7 +64,7 @@ extension Z80 {
             memory.indexRes(5, address: offsetAddress)
             
         case 0xb6:
-            memory.indexSet(6, address: offsetAddress)
+            memory.indexRes(6, address: offsetAddress)
             
         case 0xbe:
             memory.indexRes(7, address: offsetAddress)
@@ -93,11 +90,12 @@ extension Z80 {
         case 0xf6:
             memory.indexSet(6, address: offsetAddress)
             
+        case 0xfe:
+            memory.indexSet(7, address: offsetAddress)
+            
         default:
             throw NSError(domain: "z80+ddcb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
         }
-        
-//        print("\(pc) : \(instruction.opCode)")
         
         pc = pc &+ instruction.length + 2
         incCounters(instruction.tStates + 8)

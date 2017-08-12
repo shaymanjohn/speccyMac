@@ -127,14 +127,24 @@ class Memory {
         }
     }
       
-    final func rl(_ address: UInt16) {
-        var byte = get(address)
+    final func rl(_ regPair: RegisterPair) {
+        var byte = get(regPair.value)
         
         let rltemp = byte
         byte = (byte << 1) | (Z80.f.value & Z80.cBit)
         Z80.f.value = (rltemp >> 7) | Z80.sz53pvTable[byte]
         
-        set(address, byte: byte)
+        set(regPair.value, byte: byte)
+    }
+    
+    final func rr(_ regPair: RegisterPair) {
+        var byte = get(regPair.value)
+        
+        let rrtemp = byte
+        byte = (byte >> 1) | (Z80.f.value << 7)
+        Z80.f.value = (rrtemp & Z80.cBit) | Z80.sz53pvTable[byte]
+        
+        set(regPair.value, byte: byte)
     }
     
     final func sra(_ address: UInt16) {
@@ -143,5 +153,13 @@ class Memory {
         value = (value & 0x80) | (value >> 1)
         Z80.f.value |= Z80.sz53pvTable[value]
         set(address, byte: value)
+    }
+    
+    final func srl(_ regPair: RegisterPair) {
+        var value = get(regPair.value)
+        Z80.f.value = value & Z80.cBit
+        value = value >> 1
+        Z80.f.value |= Z80.sz53pvTable[value]
+        set(regPair.value, byte: value)
     }
 }

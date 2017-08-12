@@ -83,6 +83,9 @@ extension Z80 {
                     bit = bit << 1
                 }
             }
+//            if byte != 0xbf {
+//                log = true
+//            }
         } else if low == 0x1f {     // kempston
             byte = machine?.padDown ?? 0x00
         } else if low == 0xff {     // video beam

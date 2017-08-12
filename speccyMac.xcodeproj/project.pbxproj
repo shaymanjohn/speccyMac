@@ -24,6 +24,18 @@
 		6F8E15441F3B2FB800A34AB4 /* testz80.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E15381F3B14E100A34AB4 /* testz80.sna */; };
 		6FA3852E1F39BCEF006CC865 /* SpectrumView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3852D1F39BCEF006CC865 /* SpectrumView.swift */; };
 		6FCA5BA71F38B38200A22E92 /* accumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */; };
+		6FCC17D21F3EDDF900B867E1 /* batman.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CA1F3EDDEE00B867E1 /* batman.sna */; };
+		6FCC17D31F3EDDFC00B867E1 /* cobra.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17C91F3EDDEE00B867E1 /* cobra.sna */; };
+		6FCC17D41F3EDDFF00B867E1 /* cybernoid1.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17C81F3EDDEE00B867E1 /* cybernoid1.sna */; };
+		6FCC17D51F3EDE0300B867E1 /* cybernoid2.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CE1F3EDDEF00B867E1 /* cybernoid2.sna */; };
+		6FCC17D61F3EDE0700B867E1 /* dynadan.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17D11F3EDDF000B867E1 /* dynadan.sna */; };
+		6FCC17D71F3EDE0A00B867E1 /* greenberet.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17C71F3EDDEE00B867E1 /* greenberet.sna */; };
+		6FCC17D81F3EDE0D00B867E1 /* headoverheels.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CB1F3EDDEF00B867E1 /* headoverheels.sna */; };
+		6FCC17D91F3EDE1100B867E1 /* hypersports.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17C61F3EDDED00B867E1 /* hypersports.sna */; };
+		6FCC17DA1F3EDE1400B867E1 /* JetMan.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CF1F3EDDEF00B867E1 /* JetMan.sna */; };
+		6FCC17DB1F3EDE1800B867E1 /* ninjaman.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CC1F3EDDEF00B867E1 /* ninjaman.sna */; };
+		6FCC17DC1F3EDE1C00B867E1 /* sabre.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CD1F3EDDEF00B867E1 /* sabre.sna */; };
+		6FCC17DD1F3EDE1F00B867E1 /* starquake.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17D01F3EDDEF00B867E1 /* starquake.sna */; };
 		6FE5147A1F372D96004F0751 /* registerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE514791F372D96004F0751 /* registerTests.swift */; };
 		6FE5147C1F3732A3004F0751 /* registerPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE5147B1F3732A3004F0751 /* registerPairTests.swift */; };
 		6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90C1F2238A500F9AD93 /* Memory.swift */; };
@@ -77,6 +89,18 @@
 		6F9ED15A1F325E47000BEFF9 /* z80defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = z80defines.h; sourceTree = "<group>"; };
 		6FA3852D1F39BCEF006CC865 /* SpectrumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpectrumView.swift; sourceTree = "<group>"; };
 		6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = accumulatorTests.swift; sourceTree = "<group>"; };
+		6FCC17C61F3EDDED00B867E1 /* hypersports.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = hypersports.sna; sourceTree = "<group>"; };
+		6FCC17C71F3EDDEE00B867E1 /* greenberet.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = greenberet.sna; sourceTree = "<group>"; };
+		6FCC17C81F3EDDEE00B867E1 /* cybernoid1.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = cybernoid1.sna; sourceTree = "<group>"; };
+		6FCC17C91F3EDDEE00B867E1 /* cobra.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = cobra.sna; sourceTree = "<group>"; };
+		6FCC17CA1F3EDDEE00B867E1 /* batman.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = batman.sna; sourceTree = "<group>"; };
+		6FCC17CB1F3EDDEF00B867E1 /* headoverheels.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = headoverheels.sna; sourceTree = "<group>"; };
+		6FCC17CC1F3EDDEF00B867E1 /* ninjaman.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = ninjaman.sna; sourceTree = "<group>"; };
+		6FCC17CD1F3EDDEF00B867E1 /* sabre.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = sabre.sna; sourceTree = "<group>"; };
+		6FCC17CE1F3EDDEF00B867E1 /* cybernoid2.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = cybernoid2.sna; sourceTree = "<group>"; };
+		6FCC17CF1F3EDDEF00B867E1 /* JetMan.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = JetMan.sna; sourceTree = "<group>"; };
+		6FCC17D01F3EDDEF00B867E1 /* starquake.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = starquake.sna; sourceTree = "<group>"; };
+		6FCC17D11F3EDDF000B867E1 /* dynadan.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = dynadan.sna; sourceTree = "<group>"; };
 		6FE5146F1F372CF1004F0751 /* speccyMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = speccyMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FE514731F372CF1004F0751 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6FE514791F372D96004F0751 /* registerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = registerTests.swift; sourceTree = "<group>"; };
@@ -152,6 +176,18 @@
 				6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */,
 				6F8E153F1F3B2ED800A34AB4 /* techted.sna */,
 				6F8E15401F3B2F1600A34AB4 /* jetsetw.sna */,
+				6FCC17CA1F3EDDEE00B867E1 /* batman.sna */,
+				6FCC17C91F3EDDEE00B867E1 /* cobra.sna */,
+				6FCC17C81F3EDDEE00B867E1 /* cybernoid1.sna */,
+				6FCC17CE1F3EDDEF00B867E1 /* cybernoid2.sna */,
+				6FCC17D11F3EDDF000B867E1 /* dynadan.sna */,
+				6FCC17C71F3EDDEE00B867E1 /* greenberet.sna */,
+				6FCC17CB1F3EDDEF00B867E1 /* headoverheels.sna */,
+				6FCC17C61F3EDDED00B867E1 /* hypersports.sna */,
+				6FCC17CF1F3EDDEF00B867E1 /* JetMan.sna */,
+				6FCC17CC1F3EDDEF00B867E1 /* ninjaman.sna */,
+				6FCC17CD1F3EDDEF00B867E1 /* sabre.sna */,
+				6FCC17D01F3EDDEF00B867E1 /* starquake.sna */,
 			);
 			path = Roms;
 			sourceTree = "<group>";
@@ -294,21 +330,33 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FCC17D31F3EDDFC00B867E1 /* cobra.sna in Resources */,
+				6FCC17D71F3EDE0A00B867E1 /* greenberet.sna in Resources */,
+				6FCC17D91F3EDE1100B867E1 /* hypersports.sna in Resources */,
 				6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */,
+				6FCC17DA1F3EDE1400B867E1 /* JetMan.sna in Resources */,
+				6FCC17D61F3EDE0700B867E1 /* dynadan.sna in Resources */,
 				6F33B92B1F38F56300B886CD /* deathchase.sna in Resources */,
 				6FFB31581F22379B00C15CD7 /* Assets.xcassets in Resources */,
 				6FFB315B1F22379B00C15CD7 /* Main.storyboard in Resources */,
 				6FEFA91F1F223B5E00F9AD93 /* 48.rom in Resources */,
+				6FCC17D81F3EDE0D00B867E1 /* headoverheels.sna in Resources */,
 				6F33B92D1F38F56900B886CD /* monty.sna in Resources */,
+				6FCC17D51F3EDE0300B867E1 /* cybernoid2.sna in Resources */,
+				6FCC17D21F3EDDF900B867E1 /* batman.sna in Resources */,
+				6FCC17DD1F3EDE1F00B867E1 /* starquake.sna in Resources */,
 				6FEFA91E1F223B5A00F9AD93 /* z80ops.json in Resources */,
 				6F33B9291F38F55D00B886CD /* aticatac.sna in Resources */,
 				6F8E15421F3B2F9900A34AB4 /* techted.sna in Resources */,
+				6FCC17DC1F3EDE1C00B867E1 /* sabre.sna in Resources */,
 				6F33B92A1F38F56000B886CD /* brucelee.sna in Resources */,
 				6FEFA9201F223B6200F9AD93 /* manic.sna in Resources */,
 				6F33B92C1F38F56600B886CD /* JetPac.sna in Resources */,
 				6F33B92F1F38F56E00B886CD /* thehobbit.sna in Resources */,
+				6FCC17D41F3EDDFF00B867E1 /* cybernoid1.sna in Resources */,
 				6F8E15441F3B2FB800A34AB4 /* testz80.sna in Resources */,
 				6F8E15431F3B2F9C00A34AB4 /* jetsetw.sna in Resources */,
+				6FCC17DB1F3EDE1800B867E1 /* ninjaman.sna in Resources */,
 				6F33B92E1F38F56C00B886CD /* spacies.sna in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -14,20 +14,26 @@ extension Z80 {
         
         let word16 = (UInt16(second) << 8) | UInt16(first)
         let instruction = ddprefixedOps[opcode]
-        
-//        if pc >= 0x1219 && pc <= 0x12a2 {
-//            print("pc: ", String(pc, radix: 16, uppercase: true), instruction.opCode)
-//        }
+        log(instruction)
         
         let offsetAddress = first > 127 ? ixy.value &- (UInt16(256) - UInt16(first)) : ixy.value &+ UInt16(first)
         
         switch opcode {
             
+        case 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08:
+            break
+            
         case 0x09:  // add ix, bc
             ixy.add(bc.value)
             
+        case 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18:
+            break
+            
         case 0x19:  // add ix, de
             ixy.add(de.value)
+            
+        case 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20:
+            break
             
         case 0x21:  // ld ixy, nnnn
             ixy.value = word16
@@ -38,6 +44,12 @@ extension Z80 {
         case 0x23:  // inc ixy
             ixy.inc()
             
+        case 0x24:  // inc ixh
+            ixy.hi.inc()
+            
+        case 0x25:  // dec ixh
+            ixy.hi.dec()
+            
         case 0x26:  // ld ixh, n
             ixy.hi.value = first
             
@@ -47,6 +59,9 @@ extension Z80 {
             
         case 0x2b:  // dec ixy
             ixy.dec()
+            
+        case 0x2d:  // dec ixl
+            ixy.lo.dec()
             
         case 0x34:  // inc (ix+d)
             memory.inc(offsetAddress)
@@ -77,6 +92,9 @@ extension Z80 {
             
         case 0x66:  // ld h, (ix+d)
             h.value = memory.get(offsetAddress)
+            
+        case 0x67:  // ld ixh, a
+            ixy.hi.value = a.value
             
         case 0x6e:  // ld l, (ix+d)
             l.value = memory.get(offsetAddress)
@@ -139,11 +157,12 @@ extension Z80 {
             pc = ixy.value
             pc = pc &- 2
             
+        case 0xf9:  // ld sp, ix
+            Z80.sp = ixy.value
+            
         default:
             throw NSError(domain: "z80+dd", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
-        }
-        
-//        print("\(pc) : \(instruction.opCode)")
+        }        
         
         pc = pc &+ instruction.length        
         incCounters(instruction.tStates)

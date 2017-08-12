@@ -1,8 +1,6 @@
 
 To Do
 -----
-
-Keyboard
 Joypad support
 Sound
 Hi-res border
@@ -18,9 +16,21 @@ Other Z80 machines
 All instructions
 
 
-
 Done
 ----
-
 Bright attribute
 Flash attribute
+Keyboard (?)
+
+
+Known Bugs
+----------
+Technician ted first screen
+testZ80 crashes
+Cobra crashes
+Cybernoid 1 & 2 - top of screen clears when selecting joystick
+Green Beret hangs after starting game
+
+Fixed bugs
+----------
+Jetpac man doesn't face right way (right)
