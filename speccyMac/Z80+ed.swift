@@ -104,17 +104,17 @@ extension Z80 {
             
         case 0xa0:  // ldi
             var temp = memory.get(hl)
-            bc.dec()
+            bc.value = bc.value &- 1
             memory.set(de.value, byte: temp)
-            de.inc()
-            hl.inc()
+            de.value = de.value &+ 1
+            hl.value = hl.value &+ 1
             temp = temp &+ a.value
             Z80.f.value = (Z80.f.value & (Z80.cBit | Z80.zBit | Z80.sBit)) | (bc.value > 0 ? Z80.pvBit : 0) | (temp & Z80.threeBit) | ((temp & 0x02) > 0 ? Z80.fiveBit : 0)
             
         case 0xb0:  // ldir
             var val = memory.get(hl)
             memory.set(de.value, byte: val)
-            bc.dec()
+            bc.value = bc.value &- 1
             
             val = val &+ a.value
             Z80.f.value = (Z80.f.value & (Z80.cBit | Z80.zBit | Z80.sBit)) | (bc.value > 0 ? Z80.pvBit : 0) | (val & Z80.threeBit) | ((val & 0x02) > 0 ? Z80.fiveBit : 0)
@@ -124,15 +124,15 @@ extension Z80 {
                 incCounters(5)
             }
             
-            hl.inc()
-            de.inc()
+            de.value = de.value &+ 1
+            hl.value = hl.value &+ 1
             
         case 0xb1:  // cpir
             let val = memory.get(hl)
             var temp = a.value &- val
             let lookup = ((a.value & 0x08) >> 3) | ((val & 0x08) >> 2) | ((temp & 0x08) >> 1)
 
-            bc.dec()
+            bc.value = bc.value &- 1
             Z80.f.value = (Z80.f.value & Z80.cBit) | (bc.value > 0 ? (Z80.pvBit | Z80.nBit) : Z80.nBit) | Z80.halfCarrySub[lookup] | (temp > 0 ? 0 : Z80.zBit) | (temp & Z80.sBit)
             
             if Z80.f.value & Z80.hBit > 0 {
@@ -145,7 +145,7 @@ extension Z80 {
                 pc = pc &- 2
                 incCounters(5)
             }
-            hl.inc()
+            hl.value = hl.value &+ 1
             
         case 0xb8:  // lddr
             var val = memory.get(hl)
@@ -160,8 +160,8 @@ extension Z80 {
                 incCounters(5)
             }
             
-            hl.dec()
-            de.dec()
+            hl.value = hl.value &- 1
+            de.value = de.value &- 1
             
         default:
             throw NSError(domain: "z80+ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])

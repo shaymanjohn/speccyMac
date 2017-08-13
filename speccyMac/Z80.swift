@@ -105,6 +105,7 @@ class Z80 {
     var cbprefixedOps:  Array<Instruction> = []
     
     var log = false
+//    var log = true
     
     init(memory: Memory) {
         af = RegisterPair(hi: a, lo: Z80.f)
@@ -123,9 +124,9 @@ class Z80 {
     func log(_ instruction: Instruction) {
         if log {
             instruction.log(pc)
-            if !usedInstructions.contains(instruction.opCode) {
-                usedInstructions.append(instruction.opCode)
-            }
+//            if !usedInstructions.contains(instruction.opCode) {
+//                usedInstructions.append(instruction.opCode)
+//            }
         }
     }
     
@@ -307,7 +308,7 @@ class Z80 {
             interrupts = false
             
             if halted == true {
-                pc = pc + 1
+                pc = pc &+ 1
                 halted = false
             }
             
@@ -318,10 +319,10 @@ class Z80 {
                 pc = 0x0038
                 incCounters(13)
             } else {
-                let vector = (UInt16(i) << 8) + 0xff
-                let loByte = memory.get(vector &+ 1)
-                let hiByte = memory.get(vector)
-                pc = (UInt16(hiByte) << 8) + UInt16(loByte)
+                let vector = (UInt16(i) << 8) | 0xff
+                let loByte = memory.get(vector)
+                let hiByte = memory.get(vector &+ 1)
+                pc = (UInt16(hiByte) << 8) | UInt16(loByte)
                 incCounters(19)
             }
         }

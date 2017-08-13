@@ -14,7 +14,7 @@ extension Z80 {
         
         let instruction = unprefixedOps[opcode]
         var normalFlow = true
-        let word16 = (UInt16(second) << 8) | UInt16(first)        
+        let word16 = (UInt16(second) << 8) | UInt16(first)
         log(instruction)
 
         switch opcode {
@@ -29,7 +29,7 @@ extension Z80 {
             memory.set(bc.value, byte: a.value)
             
         case 0x03:  // inc bc
-            bc.inc()
+            bc.value = bc.value &+ 1
             
         case 0x04:  // inc b
             b.inc()
@@ -55,7 +55,7 @@ extension Z80 {
             a.value = memory.get(bc)
             
         case 0x0b:  // dec bc
-            bc.dec()
+            bc.value = bc.value &- 1
             
         case 0x0c:  // inc c
             c.inc()
@@ -84,7 +84,7 @@ extension Z80 {
             memory.set(de.value, byte: a.value)
             
         case 0x13:  // inc de
-            de.inc()
+            de.value = de.value &+ 1
             
         case 0x14:  // inc d
             d.inc()
@@ -108,7 +108,7 @@ extension Z80 {
             a.value = memory.get(de)
             
         case 0x1b:  // dec de
-            de.dec()
+            de.value = de.value &- 1
             
         case 0x1c:  // inc e
             e.inc()
@@ -136,7 +136,7 @@ extension Z80 {
             memory.set(word16, regPair: hl)
             
         case 0x23:  // inc hl
-            hl.inc()
+            hl.value = hl.value &+ 1
             
         case 0x24:  // inc h
             h.inc()
@@ -165,7 +165,7 @@ extension Z80 {
             h.value = memory.get(word16 &+ 1)
             
         case 0x2b:  // dec hl
-            hl.dec()
+            hl.value = hl.value &- 1
             
         case 0x2c:  // inc l
             l.inc()
@@ -797,7 +797,12 @@ extension Z80 {
             rst(0x0018)
             
         case 0xe0:  // ret po
-            print("stub 0xe0")
+            if Z80.f.value & Z80.pvBit > 0 {
+                normalFlow = false
+            } else {
+                pc = memory.pop()
+                pc = pc &- 1
+            }
             
         case 0xe1:  // pop hl
             hl.value = memory.pop()
@@ -875,7 +880,12 @@ extension Z80 {
             rst(0x0028)
             
         case 0xf0:  // ret p
-            print("stub 0xf0")
+            if Z80.f.value & Z80.sBit > 0 {
+                normalFlow = false
+            } else {
+                pc = memory.pop()
+                pc = pc &- 1
+            }
             
         case 0xf1:  // pop af
             af.value = memory.pop()
@@ -894,7 +904,13 @@ extension Z80 {
             iff2 = 2
             
         case 0xf4:  // call p, nn
-            print("stub 0xf4")
+            if Z80.f.value & Z80.sBit > 0 {
+                normalFlow = false
+            } else {
+                memory.push(pc &+ 3)
+                pc = word16
+                pc = pc &- 3
+            }
             
         case 0xf5:  // push af
             memory.push(af)
@@ -930,7 +946,13 @@ extension Z80 {
             iff2 = 1
             
         case 0xfc:  // call m, nn
-            print("stub 0xfc")
+            if Z80.f.value & Z80.sBit > 0 {
+                memory.push(pc &+ 3)
+                pc = word16
+                pc = pc &- 3
+            } else {
+                normalFlow = false
+            }
             
         case 0xfd:  // shouldn't happen
             break

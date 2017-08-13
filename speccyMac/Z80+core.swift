@@ -35,7 +35,7 @@ extension Z80 {
     final func portIn(reg: Register, high: UInt8, low: UInt8) {
         var byte: UInt8 = 0x00
         
-        if low == 0xfe{            // keyboard
+        if low == 0xfe {            // keyboard
             var keys: Array<UInt8> = [0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf]
             
             if let keysDown = machine?.keysDown, keysDown.count > 0 {
@@ -83,9 +83,9 @@ extension Z80 {
                     bit = bit << 1
                 }
             }
-            if byte != 0xbf {
+//            if byte != 0xbf {
 //                log = true
-            }
+//            }
         } else if low == 0x1f {     // kempston
             byte = machine?.padDown ?? 0x00
         } else if low == 0xff {     // video beam

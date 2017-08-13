@@ -42,7 +42,7 @@ extension Z80 {
             memory.set(word16, regPair: ixy)
             
         case 0x23:  // inc ixy
-            ixy.inc()
+            ixy.value = ixy.value &+ 1
             
         case 0x24:  // inc ixh
             ixy.hi.inc()
@@ -58,7 +58,7 @@ extension Z80 {
             ixy.hi.value = memory.get(word16 &+ 1)
             
         case 0x2b:  // dec ixy
-            ixy.dec()
+            ixy.value = ixy.value &- 1
             
         case 0x2d:  // dec ixl
             ixy.lo.dec()
@@ -71,6 +71,9 @@ extension Z80 {
             
         case 0x36:  // ld (ix+d), n
             memory.set(offsetAddress, byte: second)
+            
+        case 0x3f:  //
+            Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))
             
         case 0x46:  // ld b, (ix+d)
             b.value = memory.get(offsetAddress)

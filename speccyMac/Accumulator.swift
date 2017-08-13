@@ -60,21 +60,18 @@ class Accumulator : Register {
         cp(reg.value)
     }
     
+//    UInt16 cptemp = _a - byte;\
+//    UInt8 lookup = ((_a & 0x88) >> 3) | ((byte & 0x88) >> 2) | ((cptemp & 0x88) >> 1);\
+//    _f = (cptemp & 0x100 ? C_BIT : (cptemp ? 0 : Z_BIT)) | N_BIT | halfcarry_sub_table[lookup & 0x07] | overflow_sub_table[lookup >> 4] | (byte & ( THREE_BIT | FIVE_BIT)) | (cptemp & S_BIT);\
+    
     final func cp(_ amount: UInt8) {
-        var cpTemp: UInt16 = 0
-        
-        if amount > value {
-            cpTemp = UInt16(amount) - UInt16(value)
-            cpTemp = (65535 - cpTemp) &+ 1
-        } else {
-            cpTemp = UInt16(value) - UInt16(amount)
-        }
+        let cpTemp: UInt16 = UInt16(value) &- UInt16(amount)
         
         let part1 = (value & 0x88) >> 3
         let part2 = (amount & 0x88) >> 2
-        let part3 = (cpTemp & 0x88) >> 1
+        let part3 = UInt8((cpTemp & 0x88) >> 1)
         
-        let lookup = part1 | part2 | UInt8(part3)
+        let lookup = part1 | part2 | part3
         
         let part4 = cpTemp & 0x100 > 0 ? Z80.cBit : (cpTemp > 0 ? 0 : Z80.zBit)
         let part5 = Z80.halfCarrySub[lookup & 0x07]
@@ -135,7 +132,7 @@ class Accumulator : Register {
         
         value = UInt8(adctemp & 0xff)
         
-        Z80.f.value = part1 | Z80.halfCarryAdd[lookup & 0x07] | Z80.overFlowAdd[lookup >> 4] | Z80.sz53Table[value]
+        Z80.f.value = (adctemp & 0x100 > 0 ? Z80.cBit : 0) | Z80.halfCarryAdd[lookup & 0x07] | Z80.overFlowAdd[lookup >> 4] | Z80.sz53Table[value]
     }
     
     final func sbc(_ amount: UInt8) {

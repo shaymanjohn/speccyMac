@@ -74,32 +74,29 @@ class Memory {
         
         Z80.f.value = (Z80.f.value & Z80.cBit) | (value & 0x0f > 0 ? 0 : Z80.hBit ) | Z80.nBit
         value = value &- 1
-        Z80.f.value = Z80.f.value | (value == 0x7f ? Z80.pvBit : 0) | Z80.sz53Table[value]
+        Z80.f.value |= (value == 0x7f ? Z80.pvBit : 0) | Z80.sz53Table[value]
         
         set(address, byte: value)
-    }
+    }    
     
     final func pop() -> UInt16 {
         let lo = get(Z80.sp)
-        Z80.sp = Z80.sp &+ 1
-        let hi = get(Z80.sp)
-        Z80.sp = Z80.sp &+ 1
+        let hi = get(Z80.sp + 1)
+        Z80.sp = Z80.sp &+ 2
         
-        return UInt16(hi) << 8 | UInt16(lo)
+        return (UInt16(hi) << 8) | UInt16(lo)
     }
     
     final func push(_ regPair: RegisterPair) {
-        Z80.sp = Z80.sp &- 1
-        set(Z80.sp, byte: regPair.hi.value)
-        Z80.sp = Z80.sp &- 1
-        set(Z80.sp, byte: regPair.lo.value)
+        set(Z80.sp &- 1, byte: regPair.hi.value)
+        set(Z80.sp &- 2, byte: regPair.lo.value)
+        Z80.sp = Z80.sp &- 2
     }
     
     final func push(_ word: UInt16) {
-        Z80.sp = Z80.sp &- 1
-        set(Z80.sp, byte: UInt8((word & 0xff00) >> 8))
-        Z80.sp = Z80.sp &- 1
-        set(Z80.sp, byte: UInt8((word & 0x00ff)))
+        set(Z80.sp &- 1, byte: UInt8((word & 0xff00) >> 8))
+        set(Z80.sp &- 2, byte: UInt8((word & 0x00ff)))
+        Z80.sp = Z80.sp &- 2
     }
     
     final func indexSet(_ num: UInt8, address: UInt16) {
