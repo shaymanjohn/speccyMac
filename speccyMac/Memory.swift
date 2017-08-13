@@ -102,19 +102,19 @@ class Memory {
         set(Z80.sp, byte: UInt8((word & 0x00ff)))
     }
     
-    final func indexSet(_ num: Int, address: UInt16) {
+    final func indexSet(_ num: UInt8, address: UInt16) {
         var byte = get(address)
         byte = byte | (1 << num)
         set(address, byte: byte)
     }
     
-    final func indexRes(_ num: Int, address: UInt16) {
+    final func indexRes(_ num: UInt8, address: UInt16) {
         var byte = get(address)
         byte = byte & ~(1 << num)
         set(address, byte: byte)
     }
     
-    final func indexBit(_ num: Int, address: UInt16) {
+    final func indexBit(_ num: UInt8, address: UInt16) {
         let value = get(address)
         Z80.f.value = (Z80.f.value & Z80.cBit ) | Z80.hBit | ((value >> 8) & (Z80.threeBit | Z80.fiveBit))
         

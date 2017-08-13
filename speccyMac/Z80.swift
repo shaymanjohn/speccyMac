@@ -104,7 +104,7 @@ class Z80 {
     var ddprefixedOps:  Array<Instruction> = []
     var cbprefixedOps:  Array<Instruction> = []
     
-    var log = true
+    var log = false
     
     init(memory: Memory) {
         af = RegisterPair(hi: a, lo: Z80.f)
