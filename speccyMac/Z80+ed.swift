@@ -83,6 +83,12 @@ extension Z80 {
         case 0x62:  // sbc hl, hl
             hl.sbc(hl.value)
             
+        case 0x67:  // rrd
+            let byte = memory.get(hl)
+            memory.set(hl.value, byte: (a.value << 4) | (byte >> 4))
+            a.value = (a.value & 0xf0) | (byte & 0x0f)
+            Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[a.value]                        
+            
         case 0x6a:  // adc hl, hl
             hl.adc(hl.value)
             

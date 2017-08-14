@@ -25,12 +25,13 @@ Keyboard (?)
 
 Known Bugs
 ----------
-testZ80 crashes
-Cobra crashes
-Green Beret hangs after starting game
-Starquake - hangs
+testZ80 - missing opcodes
+
 
 Fixed bugs
 ----------
 Jetpac man doesn't face right way (right)
 Technician ted first screen (adc!)
+Cobra crashes
+Green Beret hangs after starting game
+Starquake - hangs

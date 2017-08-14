@@ -128,14 +128,16 @@ class Spectrum: NSViewController {
         let allGames = ["manic.sna", "aticatac.sna", "brucelee.sna",
                         "deathchase.sna", "JetPac.sna", "monty.sna",
                         "spacies.sna", "thehobbit.sna", "jetsetw.sna",
-                        "techted.sna", "uridium.sna", "testz80.sna",
+                        "techted.sna", "uridium.sna",
                         "cobra.sna", "cybernoid1.sna", "cybernoid2.sna",
                         "dynadan.sna", "greenberet.sna", "headoverheels.sna",
                         "hypersports.sna", "JetMan.sna", "ninjaman.sna",
                         "sabre.sna", "starquake.sna"]
         
+                        // "testz80.sna"
+        
         var gameIndex = Int(arc4random() % UInt32(allGames.count))
-        gameIndex = 16
+        gameIndex = 17
         
         loadGame(allGames[gameIndex], z80: z80)
     }

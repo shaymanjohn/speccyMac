@@ -75,6 +75,9 @@ extension Z80 {
         case 0x3f:  //
             Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))
             
+        case 0x44:  // ld b, ixh
+            b.value = ixy.hi.value
+            
         case 0x46:  // ld b, (ix+d)
             b.value = memory.get(offsetAddress)
             
@@ -128,6 +131,9 @@ extension Z80 {
             
         case 0x77:  // ld (ix+d), a
             memory.set(offsetAddress, reg: a)
+            
+        case 0x7d:  // ld a, ixl
+            a.value = ixy.lo.value
             
         case 0x7e:  // ld a, (ix+d)
             a.value = memory.get(offsetAddress)
