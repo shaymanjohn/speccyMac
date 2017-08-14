@@ -135,7 +135,7 @@ class Spectrum: NSViewController {
                         "sabre.sna", "starquake.sna"]
         
         var gameIndex = Int(arc4random() % UInt32(allGames.count))
-        gameIndex = 9
+        gameIndex = 16
         
         loadGame(allGames[gameIndex], z80: z80)
     }

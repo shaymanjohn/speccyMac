@@ -95,7 +95,7 @@ class Memory {
     
     final func push(_ word: UInt16) {
         set(Z80.sp &- 1, byte: UInt8((word & 0xff00) >> 8))
-        set(Z80.sp &- 2, byte: UInt8((word & 0x00ff)))
+        set(Z80.sp &- 2, byte: UInt8(word & 0x00ff))
         Z80.sp = Z80.sp &- 2
     }
     

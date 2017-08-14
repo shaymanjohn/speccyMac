@@ -78,6 +78,9 @@ extension Z80 {
         case 0x46:  // ld b, (ix+d)
             b.value = memory.get(offsetAddress)
             
+        case 0x4d:  // ld c, ixl
+            c.value = ixy.lo.value
+            
         case 0x4e:  // ld c, (ix+d)
             c.value = memory.get(offsetAddress)
             

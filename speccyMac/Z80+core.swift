@@ -89,14 +89,14 @@ extension Z80 {
         } else if low == 0x1f {     // kempston
             byte = machine?.padDown ?? 0x00
         } else if low == 0xff {     // video beam
-            if (videoRow < 64) || (videoRow > 255) {
+            if videoRow < 64 || videoRow > 255 {
                 byte = 0xff
             } else {
-                if (ula >= 24) && (ula <= 152) {
+                if ula >= 24 && ula <= 152 {
                     let rowNum = videoRow - 64
                     let attribAddress = 22528 + ((rowNum >> 3) << 5)
-                    let col = UInt16((ula - 24) >> 2)
-                    byte = memory.get(attribAddress + col)
+                    let col = (ula - 24) >> 2
+                    byte = memory.get(attribAddress + UInt16(col & 0xffff))                    
                 } else {
                     byte = 0xff
                 }

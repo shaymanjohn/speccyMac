@@ -28,6 +28,7 @@ Known Bugs
 testZ80 crashes
 Cobra crashes
 Green Beret hangs after starting game
+Starquake - hangs
 
 Fixed bugs
 ----------

@@ -73,7 +73,15 @@ extension Z80 {
             interruptMode = 2
             
         case 0x5f:  // ld a, r
+            let rval = r.value
+            r.inc()
+            r.inc()
             a.value = r.value
+            r.value = rval
+            Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53Table[a.value] | (iff2 > 0 ? Z80.pvBit : 0)            
+            
+        case 0x62:  // sbc hl, hl
+            hl.sbc(hl.value)
             
         case 0x6a:  // adc hl, hl
             hl.adc(hl.value)
@@ -100,7 +108,7 @@ extension Z80 {
         case 0x7b:  // ld sp, (nn)
             let lo = memory.get(word16)
             let hi = memory.get(word16 &+ 1)
-            Z80.sp = UInt16(hi << 8) | UInt16(lo)
+            Z80.sp = (UInt16(hi) << 8) | UInt16(lo)
             
         case 0xa0:  // ldi
             var temp = memory.get(hl)
@@ -110,6 +118,15 @@ extension Z80 {
             hl.value = hl.value &+ 1
             temp = temp &+ a.value
             Z80.f.value = (Z80.f.value & (Z80.cBit | Z80.zBit | Z80.sBit)) | (bc.value > 0 ? Z80.pvBit : 0) | (temp & Z80.threeBit) | ((temp & 0x02) > 0 ? Z80.fiveBit : 0)
+            
+        case 0xa8:  // ldd
+            var temp = memory.get(hl)
+            bc.value = bc.value &- 1
+            memory.set(de.value, byte: temp)
+            de.value = de.value &- 1
+            hl.value = hl.value &- 1
+            temp = temp &+ a.value
+            Z80.f.value = (Z80.f.value & (Z80.cBit | Z80.zBit | Z80.sBit)) | (bc.value > 0 ? Z80.pvBit : 0) | (temp & Z80.threeBit) | ((temp & 0x02) > 0 ? Z80.fiveBit : 0)            
             
         case 0xb0:  // ldir
             var val = memory.get(hl)

@@ -50,7 +50,7 @@ class Loader {
                 z80.ula = 0
                 z80.videoRow = 0
                 
-                if (z80.interrupts) {
+                if z80.interrupts {
                     z80.iff1 = 1
                     z80.iff2 = 1
                 } else {

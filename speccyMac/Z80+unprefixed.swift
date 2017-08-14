@@ -238,7 +238,7 @@ extension Z80 {
             Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))            
             
         case 0x40:  // ld b, b
-            b.value = b.value
+            break
             
         case 0x41:  // ld b, c
             b.value = c.value
@@ -265,7 +265,7 @@ extension Z80 {
             c.value = b.value
             
         case 0x49:  // ld c, c
-            c.value = c.value
+            break
             
         case 0x4a:  // ld c, d
             c.value = d.value
@@ -292,7 +292,7 @@ extension Z80 {
             d.value = c.value
             
         case 0x52:  // ld d, d
-            d.value = d.value
+            break
             
         case 0x53:  // ld d, e
             d.value = e.value
@@ -319,7 +319,7 @@ extension Z80 {
             e.value = d.value
             
         case 0x5b:  // ld e, e
-            e.value = e.value
+            break
             
         case 0x5c:  // ld e, h
             e.value = h.value
@@ -428,7 +428,7 @@ extension Z80 {
             a.value = memory.get(hl)
             
         case 0x7f:  // ld a, a
-            a.value = a.value
+            break
             
         case 0x80:  // add a, b
             a.add(b.value)

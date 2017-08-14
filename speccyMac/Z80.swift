@@ -93,9 +93,9 @@ class Z80 {
         var opCode:     String
         
         func log(_ pc: UInt16) {
-            if pc >= 0x4000 {
+//            if pc >= 0x4000 {
                 print("pc: ", String(pc, radix: 16, uppercase: true), self.opCode)
-            }
+//            }
         }
     }
     
@@ -128,6 +128,16 @@ class Z80 {
 //                usedInstructions.append(instruction.opCode)
 //            }
         }
+    }
+    
+    func dumpReg() {
+        print("af: ", String(af.value, radix: 16, uppercase: true))
+        print("bc: ", String(bc.value, radix: 16, uppercase: true))
+        print("de: ", String(de.value, radix: 16, uppercase: true))
+        print("hl: ", String(hl.value, radix: 16, uppercase: true))
+        print("ix: ", String(ix, radix: 16, uppercase: true))
+        print("iy: ", String(iy, radix: 16, uppercase: true))
+        print("sp: ", String(Z80.sp, radix: 16, uppercase: true))
     }
     
     func start() {
@@ -305,12 +315,19 @@ class Z80 {
         videoRow = 0
         
         if interrupts == true {
+//            print("Interrupts disabled - interrupt handler, mode \(interruptMode)")
             interrupts = false
             
             if halted == true {
                 pc = pc &+ 1
                 halted = false
             }
+            
+//            print("saving pc \(pc)")
+//            if pc == 57296 {
+//                log = true
+//                dumpReg()
+//            }
             
             memory.push(pc)
             r.inc()
