@@ -13,11 +13,10 @@ protocol Machine : class {
     func refreshScreen()
     func captureRow(_ row: UInt16)
     
-    var borderColour:  UInt8    { get set }
-    var ticksPerFrame: UInt32   { get }
-    var clickCount:    UInt32   { get set }
-    var keysDown:      [UInt16] { get }
-    var padDown:       UInt8    { get }
+    func input(_ reg: Register, high: UInt8, low: UInt8)
+    func output(_ port: UInt8, byte: UInt8)
+    
+    var ticksPerFrame: UInt32 { get }
 }
 
 struct colour {
@@ -37,8 +36,7 @@ class Spectrum: NSViewController {
     @IBOutlet weak var lateLabel: NSTextField!
     
     var z80: Z80!
-    var border: UInt8 = 0
-    var clicksCount: UInt32 = 0
+    var clickCount: UInt32 = 0
     
     var flashCount = 0
     var invertColours = false
@@ -75,7 +73,7 @@ class Spectrum: NSViewController {
                   0xbf04, 0x0000, 0x0000, 0x0000, 0x0000, 0x7f08, 0x7f04, 0x0000, 0x0000, 0x0000,
                   0x0000, 0x0000, 0x0000, 0x0000, 0x7f02, 0x0000, 0xfe01, 0x0000, 0x0000, 0x0000,
                   0xfe01]
-                          
+    
     
     var colours = [UInt32](repeating: 0, count: 16)
     
@@ -134,10 +132,10 @@ class Spectrum: NSViewController {
                         "hypersports.sna", "JetMan.sna", "ninjaman.sna",
                         "sabre.sna", "starquake.sna"]
         
-                        // "testz80.sna"
+        // "testz80.sna"
         
         var gameIndex = Int(arc4random() % UInt32(allGames.count))
-        gameIndex = 17
+        gameIndex = 0
         
         loadGame(allGames[gameIndex], z80: z80)
     }
@@ -160,38 +158,69 @@ class Spectrum: NSViewController {
 
 extension Spectrum : Machine {
     
-    var clickCount: UInt32 {
-        get {
-            return clicksCount
+    final func input(_ reg: Register, high: UInt8, low: UInt8) {
+        let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
+        
+        var keysDown: [UInt16] = []
+        for key in downKeys {
+            if key < keyMap.count  {
+                if keyMap[key] > 0 {
+                    keysDown.append(UInt16(keyMap[key]))
+                }
+            }
         }
-        set {
-            clicksCount = newValue
-        }
-    }
-    
-    var ticksPerFrame: UInt32 {
-        return 69888
-    }
-    
-    var keysDown: [UInt16] {
-        get {
-            let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
+        
+        var byte: UInt8 = 0x00
+        
+        if low == 0xfe {            // keyboard
+            var keys: Array<UInt8> = [0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf]
             
-            var keys: [UInt16] = []
-            for key in downKeys {
-                if key < keyMap.count {
-                    if keyMap[key] > 0 {
-                        keys.append(UInt16(keyMap[key]))
+            if keysDown.count > 0 {
+                for key in keysDown {
+                    let row: UInt8 = UInt8(key >> 8)
+                    let val: UInt8 = UInt8(key & 0xff)
+                    
+                    if let keyNum = [0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f].index(of: row) {
+                        var thisKey: UInt8 = keys[keyNum]
+                        thisKey &= ~val
+                        keys[keyNum] = thisKey
                     }
                 }
             }
             
-            return keys
-        }
-    }
-    
-    var padDown: UInt8 {
-        get {
+            switch high {
+            case 0xfe:
+                byte = keys[0]
+            case 0xfd:
+                byte = keys[1]
+            case 0xfb:
+                byte = keys[2]
+            case 0xf7:
+                byte = keys[3]
+            case 0xef:
+                byte = keys[4]
+            case 0xdf:
+                byte = keys[5]
+            case 0xbf:
+                byte = keys[6]
+            case 0x7f:
+                byte = keys[7]
+            case 0x7e:
+                byte = keys[0] & keys[7]
+            case 0x00:
+                byte = keys[0] & keys[1] & keys[2] & keys[3] & keys[4] & keys[5] & keys[6] & keys[7]
+            default:
+                byte = 0xbf
+                let value = high ^ 0xff
+                var bit:UInt8 = 0x01
+                for loop in 0..<8 {
+                    if value & bit > 0 {
+                        byte = byte & keys[loop]
+                    }
+                    bit = bit << 1
+                }
+            }
+        } else if low == 0x1f {     // kempston
             let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
             
             let padKeys = [124, 123, 125, 126, 49]  // cursor keys and space bar
@@ -204,24 +233,43 @@ extension Spectrum : Machine {
                 }
                 bit = bit << 1
             }
-            
-            return byte
-        }
-    }
-    
-    var borderColour: UInt8 {
-        get {
-            return border
+        } else if low == 0xff {     // video beam
+            if z80.videoRow < 64 || z80.videoRow > 255 {
+                byte = 0xff
+            } else {
+                if z80.ula >= 24 && z80.ula <= 152 {
+                    let rowNum = z80.videoRow - 64
+                    let attribAddress = 22528 + ((rowNum >> 3) << 5)
+                    let col = (z80.ula - 24) >> 2
+                    byte = memory.get(attribAddress + UInt16(col & 0xffff))
+                } else {
+                    byte = 0xff
+                }
+            }
+        } else {
+            byte = 0xff
         }
         
-        set {
-            border = newValue
-            let colour = colourTable[newValue & 0x07]
+        Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[byte]
+        reg.value = byte
+    }
+    
+    final func output(_ port: UInt8, byte: UInt8) {
+        if port == 0xfe {
+            let colour = colourTable[byte & 0x07]
             
             DispatchQueue.main.async {
                 self.view.layer?.backgroundColor = CGColor(red: CGFloat(colour.r) / 255.0, green: CGFloat(colour.g) / 255.0, blue: CGFloat(colour.b) / 255.0, alpha: 1)
             }
+            
+            if byte & 0x10 > 0 {
+                self.clickCount = self.clickCount + 1
+            }
         }
+    }
+    
+    var ticksPerFrame: UInt32 {
+        return 69888
     }
     
     final func captureRow(_ row: UInt16) {
@@ -255,12 +303,12 @@ extension Spectrum : Machine {
             let byte   = screenCopy[index]
             let colour = colourCopy[index]
             
-//            if byte != screenCopySave[index] || colour != colourCopySave[index] {
-//                screenCopySave[index] = byte
-//                colourCopySave[index] = colour
+            //            if byte != screenCopySave[index] || colour != colourCopySave[index] {
+            //                screenCopySave[index] = byte
+            //                colourCopySave[index] = colour
             
             let offset:UInt8 = colour & 0x40 > 0 ? 8 : 0
-
+            
             var ink   = colours[(colour & 0x07) + offset]
             var paper = colours[((colour & 0x38) >> 3) + offset]
             
@@ -269,15 +317,15 @@ extension Spectrum : Machine {
                 ink   = colours[((colour & 0x38) >> 3) + offset]
             }
             
-                bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
-                bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
-                bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
-                bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
-                bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
-                bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
-                bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
-                bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
-//            }
+            bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
+            bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
+            bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
+            bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
+            bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
+            bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
+            bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
+            bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
+            //            }
             
             bmpIndex = bmpIndex + 8
         }

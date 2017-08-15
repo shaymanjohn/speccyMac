@@ -1,8 +1,8 @@
 
 To Do
 -----
-Joypad support
 Sound
+Joypad support
 Hi-res border
 Check timings
 Contention

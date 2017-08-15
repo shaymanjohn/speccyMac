@@ -45,7 +45,7 @@ extension Z80 {
             r.value = a.value
             
         case 0x50:  // in d, (c)
-            portIn(reg: d, high: b.value, low: c.value)
+            machine?.input(d, high: b.value, low: c.value)
             
         case 0x52:  // sbc hl, de
             hl.sbc(de)
@@ -60,7 +60,7 @@ extension Z80 {
             a.value = i
             
         case 0x58:  // in e, (c)
-            portIn(reg: e, high: b.value, low: c.value)
+            machine?.input(e, high: b.value, low: c.value)
             
         case 0x5a:  // adc hl, de
             hl.adc(de.value)
@@ -106,10 +106,10 @@ extension Z80 {
             memory.set(word16 &+ 1, byte: UInt8(Z80.sp >> 8))
             
         case 0x78:  // in a, (c)
-            portIn(reg: a, high: b.value, low: c.value)
+            machine?.input(a, high: b.value, low: c.value)
             
         case 0x79:  // out (c), a
-            portOut(c.value, byte:a.value)
+            machine?.output(c.value, byte: a.value)
             
         case 0x7b:  // ld sp, (nn)
             let lo = memory.get(word16)

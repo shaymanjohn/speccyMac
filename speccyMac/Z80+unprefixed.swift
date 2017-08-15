@@ -726,7 +726,7 @@ extension Z80 {
             }
             
         case 0xd3:  // out (n), a
-            portOut(first, byte:a.value)
+            machine?.output(first, byte: a.value)
             
         case 0xd4:  // call nc, nn
             if Z80.f.value & Z80.cBit > 0 {
@@ -776,7 +776,7 @@ extension Z80 {
             }
             
         case 0xdb:  // in a, (n)
-            portIn(reg: a, high: a.value, low: first)
+            machine?.input(a, high: a.value, low: first)
             
         case 0xdc:  // call c, nn
             if Z80.f.value & Z80.cBit > 0 {
@@ -971,5 +971,15 @@ extension Z80 {
         
         incCounters(normalFlow ? instruction.tStates : instruction.altTStates)        
         r.inc()
+    }
+    
+    final func setRelativePC(_ byte: UInt8) {
+        pc = byte > 127 ? pc &- (UInt16(256) - UInt16(byte)) : pc &+ UInt16(byte)
+    }
+    
+    final func rst(_ address: UInt16) {
+        memory.push(pc &+ 1)
+        pc = address
+        pc = pc &- 1
     }
 }

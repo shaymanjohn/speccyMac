@@ -83,7 +83,6 @@ class Z80 {
     static let overFlowAdd:   Array<UInt8> = [0, 0, 0, 1 << 2, 1 << 2, 0, 0, 0]
     static let overFlowSub:   Array<UInt8> = [0, 1 << 2, 0, 0, 0, 0, 1 << 2, 0]
     
-//    var clicksCount:   UInt32 = 0
     var usedInstructions: [String] = []
     
     struct Instruction {
