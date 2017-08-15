@@ -16,7 +16,10 @@ protocol Machine : class {
     func input(_ reg: Register, high: UInt8, low: UInt8)
     func output(_ port: UInt8, byte: UInt8)
     
+    func beep()
+    
     var ticksPerFrame: UInt32 { get }
+    var audioPacketSize: UInt32 { get }
 }
 
 struct colour {
@@ -40,6 +43,8 @@ class Spectrum: NSViewController {
     
     var flashCount = 0
     var invertColours = false
+    
+    var gameIndex = 0
     
     let colourSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
@@ -70,10 +75,18 @@ class Spectrum: NSViewController {
                   0x0000, 0x7f10, 0xfb01, 0xfb02, 0xfb04, 0xfb08, 0xdf10, 0xfb10, 0xf701, 0xf702,
                   0xf704, 0xf708, 0xef10, 0xf710, 0x0000, 0xef02, 0xef08, 0x0000, 0xef04, 0xef01,
                   0x0000, 0xdf02, 0xdf08, 0x0000, 0xdf04, 0xdf01, 0xbf01, 0xbf02, 0xbf08, 0x0000,
-                  0xbf04, 0x0000, 0x0000, 0x0000, 0x0000, 0x7f08, 0x7f04, 0x0000, 0x0000, 0x0000,
-                  0x0000, 0x0000, 0x0000, 0x0000, 0x7f02, 0x0000, 0xfe01, 0x0000, 0x0000, 0x0000,
+                  0xbf04, 0x0000, 0x0000, 0x7f02, 0x0000, 0x7f08, 0x7f04, 0x0000, 0x0000, 0x7f01,
+                  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xfe01, 0x0000, 0x0000, 0x0000,
                   0xfe01]
     
+    let allGames = ["manic.sna", "aticatac.sna", "brucelee.sna",
+                    "deathchase.sna", "JetPac.sna", "monty.sna",
+                    "spacies.sna", "thehobbit.sna", "jetsetw.sna",
+                    "techted.sna", "uridium.sna",
+                    "cobra.sna", "cybernoid1.sna", "cybernoid2.sna",
+                    "dynadan.sna", "greenberet.sna", "headoverheels.sna",
+                    "hypersports.sna", "JetMan.sna", //"ninjaman.sna",
+                    "sabre.sna", "starquake.sna"] //, "testz80.sna"]
     
     var colours = [UInt32](repeating: 0, count: 16)
     
@@ -123,19 +136,14 @@ class Spectrum: NSViewController {
             self.z80.start()
         }
         
-        let allGames = ["manic.sna", "aticatac.sna", "brucelee.sna",
-                        "deathchase.sna", "JetPac.sna", "monty.sna",
-                        "spacies.sna", "thehobbit.sna", "jetsetw.sna",
-                        "techted.sna", "uridium.sna",
-                        "cobra.sna", "cybernoid1.sna", "cybernoid2.sna",
-                        "dynadan.sna", "greenberet.sna", "headoverheels.sna",
-                        "hypersports.sna", "JetMan.sna", "ninjaman.sna",
-                        "sabre.sna", "starquake.sna"]
-        
-        // "testz80.sna"
-        
-        var gameIndex = Int(arc4random() % UInt32(allGames.count))
-        gameIndex = 0
+        gameIndex = allGames.count  // start at 0
+    }
+    
+    @IBAction func loadNextGame(_ sender: NSButton) {
+        gameIndex = gameIndex + 1
+        if gameIndex > allGames.count - 1 {
+            gameIndex = 0
+        }
         
         loadGame(allGames[gameIndex], z80: z80)
     }
@@ -268,8 +276,20 @@ extension Spectrum : Machine {
         }
     }
     
+    final func beep() {
+        if clickCount > 0 {
+            print("beep click count \(clickCount)")
+        }
+
+        clickCount = 0
+    }
+    
     var ticksPerFrame: UInt32 {
         return 69888
+    }
+    
+    var audioPacketSize: UInt32 {
+        return 79
     }
     
     final func captureRow(_ row: UInt16) {
@@ -303,29 +323,29 @@ extension Spectrum : Machine {
             let byte   = screenCopy[index]
             let colour = colourCopy[index]
             
-            //            if byte != screenCopySave[index] || colour != colourCopySave[index] {
-            //                screenCopySave[index] = byte
-            //                colourCopySave[index] = colour
+//            if byte != screenCopySave[index] || colour != colourCopySave[index] {
+//                screenCopySave[index] = byte
+//                colourCopySave[index] = colour
             
-            let offset:UInt8 = colour & 0x40 > 0 ? 8 : 0
-            
-            var ink   = colours[(colour & 0x07) + offset]
-            var paper = colours[((colour & 0x38) >> 3) + offset]
-            
-            if colour & 0x80 > 0 && invertColours {
-                paper = colours[(colour & 0x07) + offset]
-                ink   = colours[((colour & 0x38) >> 3) + offset]
-            }
-            
-            bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
-            bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
-            bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
-            bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
-            bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
-            bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
-            bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
-            bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
-            //            }
+                let offset:UInt8 = colour & 0x40 > 0 ? 8 : 0
+                
+                var ink   = colours[(colour & 0x07) + offset]
+                var paper = colours[((colour & 0x38) >> 3) + offset]
+                
+                if colour & 0x80 > 0 && invertColours {
+                    paper = colours[(colour & 0x07) + offset]
+                    ink   = colours[((colour & 0x38) >> 3) + offset]
+                }
+                
+                bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
+                bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
+                bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
+                bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
+                bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
+                bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
+                bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
+                bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
+//            }
             
             bmpIndex = bmpIndex + 8
         }

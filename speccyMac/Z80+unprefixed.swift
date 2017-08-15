@@ -726,7 +726,7 @@ extension Z80 {
             }
             
         case 0xd3:  // out (n), a
-            machine?.output(first, byte: a.value)
+            machine.output(first, byte: a.value)
             
         case 0xd4:  // call nc, nn
             if Z80.f.value & Z80.cBit > 0 {
@@ -776,7 +776,7 @@ extension Z80 {
             }
             
         case 0xdb:  // in a, (n)
-            machine?.input(a, high: a.value, low: first)
+            machine.input(a, high: a.value, low: first)
             
         case 0xdc:  // call c, nn
             if Z80.f.value & Z80.cBit > 0 {

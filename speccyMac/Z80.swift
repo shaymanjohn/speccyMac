@@ -43,7 +43,7 @@ class Z80 {
     var iff1: UInt8 = 0
     var iff2: UInt8 = 0
     
-    weak var machine: Machine?
+    weak var machine: Machine!
     
     var memory: Memory
     
@@ -64,6 +64,7 @@ class Z80 {
     var halted:        Bool = false
     var interruptMode: UInt8 = 0
     var running:       Bool = false
+    var soundCounter:  UInt32 = 0
     
     static let cBit:     UInt8 = 1 << 0
     static let nBit:     UInt8 = 1 << 1
@@ -142,7 +143,7 @@ class Z80 {
         
         while running {
             do {
-                if counter >= machine?.ticksPerFrame ?? 0 {
+                if counter >= machine.ticksPerFrame {
                     serviceInterrupts()
                 } else if !paused {
                     do {
@@ -182,16 +183,14 @@ class Z80 {
                     }
                 }
                 
-                // machine specifics here...
-                
                 if ula >= 224 {
                     switch videoRow {
                     case 64...255:
-                        self.machine?.captureRow(videoRow - 64)
+                        self.machine.captureRow(videoRow - 64)
                         
                     case 311:
                         DispatchQueue.main.async {
-                            self.machine?.refreshScreen()
+                            self.machine.refreshScreen()
                         }
                         
                     default:
@@ -201,6 +200,14 @@ class Z80 {
                     ula = ula - 224
                     videoRow = videoRow + 1
                 }
+                
+                if soundCounter >= machine.audioPacketSize {
+                    soundCounter = soundCounter - machine.audioPacketSize
+                    DispatchQueue.main.async {
+                        self.machine.beep()
+                    }
+                }
+                
             } catch {
                 let err = error as NSError
                 print("Unknown opcode error, \(err.domain), \(err.userInfo)")
@@ -216,6 +223,7 @@ class Z80 {
     final func incCounters(_ amount: UInt32) {
         counter = counter + amount
         ula = ula + amount
+        soundCounter = soundCounter + amount
     }
     
     final func parseInstructions() {
@@ -302,7 +310,7 @@ class Z80 {
             lastFrame = lastFrame + frameTime
         }
         
-        counter = counter - (machine?.ticksPerFrame ?? 0)
+        counter = counter - machine.ticksPerFrame
         ula = counter
         videoRow = 0
         

@@ -31,7 +31,7 @@ testZ80 - missing opcodes
 Fixed bugs
 ----------
 Jetpac man doesn't face right way (right)
-Technician ted first screen (adc!)
+Technician ted first screen
 Cobra crashes
 Green Beret hangs after starting game
 Starquake - hangs
