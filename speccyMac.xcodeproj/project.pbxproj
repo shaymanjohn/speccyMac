@@ -84,7 +84,6 @@
 		6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = uridium.sna; sourceTree = "<group>"; };
 		6F8E153F1F3B2ED800A34AB4 /* techted.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = techted.sna; sourceTree = "<group>"; };
 		6F8E15401F3B2F1600A34AB4 /* jetsetw.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = jetsetw.sna; sourceTree = "<group>"; };
-		6F9ED15A1F325E47000BEFF9 /* z80defines.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = z80defines.h; sourceTree = "<group>"; };
 		6FA3852D1F39BCEF006CC865 /* SpectrumView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpectrumView.swift; sourceTree = "<group>"; };
 		6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = accumulatorTests.swift; sourceTree = "<group>"; };
 		6FCC17C61F3EDDED00B867E1 /* hypersports.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = hypersports.sna; sourceTree = "<group>"; };
@@ -160,7 +159,6 @@
 		6FEFA9101F2239AD00F9AD93 /* Roms */ = {
 			isa = PBXGroup;
 			children = (
-				6F9ED15A1F325E47000BEFF9 /* z80defines.h */,
 				6FEFA91D1F223B3A00F9AD93 /* 48.rom */,
 				6FEFA91C1F223B3200F9AD93 /* manic.sna */,
 				6F33B9281F38F55200B886CD /* aticatac.sna */,

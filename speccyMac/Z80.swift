@@ -58,7 +58,7 @@ class Z80 {
     var ula:           UInt32 = 0
     var videoRow:      UInt16 = 0
     var lastFrame:     TimeInterval = 0
-    let frameTime:     TimeInterval = 0.02      // 50 Fps
+    let frameTime:     TimeInterval = 0.02      // pal refresh rate = 50Hz
     var lateFrames:    UInt16 = 0
     var interrupts:    Bool = false
     var halted:        Bool = false
@@ -83,8 +83,6 @@ class Z80 {
     static let overFlowAdd:   Array<UInt8> = [0, 0, 0, 1 << 2, 1 << 2, 0, 0, 0]
     static let overFlowSub:   Array<UInt8> = [0, 1 << 2, 0, 0, 0, 0, 1 << 2, 0]
     
-    var usedInstructions: [String] = []
-    
     struct Instruction {
         var length:     UInt16
         var tStates:    UInt32
@@ -104,14 +102,12 @@ class Z80 {
     var cbprefixedOps:  Array<Instruction> = []
     
     var log = false
-//    var log = true
     
     init(memory: Memory) {
-        af = RegisterPair(hi: a, lo: Z80.f)
-        hl = RegisterPair(hi: h, lo: l)
-        bc = RegisterPair(hi: b, lo: c)
-        de = RegisterPair(hi: d, lo: e)
-        
+        af  = RegisterPair(hi: a, lo: Z80.f)
+        hl  = RegisterPair(hi: h, lo: l)
+        bc  = RegisterPair(hi: b, lo: c)
+        de  = RegisterPair(hi: d, lo: e)
         ixy = RegisterPair(hi: ixyh, lo: ixyl)
         
         self.memory = memory
@@ -123,9 +119,6 @@ class Z80 {
     func log(_ instruction: Instruction) {
         if log {
             instruction.log(pc)
-//            if !usedInstructions.contains(instruction.opCode) {
-//                usedInstructions.append(instruction.opCode)
-//            }
         }
     }
     
@@ -314,19 +307,12 @@ class Z80 {
         videoRow = 0
         
         if interrupts == true {
-//            print("Interrupts disabled - interrupt handler, mode \(interruptMode)")
             interrupts = false
             
             if halted == true {
                 pc = pc &+ 1
                 halted = false
             }
-            
-//            print("saving pc \(pc)")
-//            if pc == 57296 {
-//                log = true
-//                dumpReg()
-//            }
             
             memory.push(pc)
             r.inc()

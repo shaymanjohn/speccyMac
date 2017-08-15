@@ -14,7 +14,7 @@ extension Z80 {
         
         let word16 = (UInt16(second) << 8) | UInt16(first)
         let instruction = edprefixedOps[opcode]
-        log(instruction)
+//        log(instruction)
 
         switch opcode {
             

@@ -159,20 +159,21 @@ class Spectrum: NSViewController {
 extension Spectrum : Machine {
     
     final func input(_ reg: Register, high: UInt8, low: UInt8) {
-        let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
-        
-        var keysDown: [UInt16] = []
-        for key in downKeys {
-            if key < keyMap.count  {
-                if keyMap[key] > 0 {
-                    keysDown.append(UInt16(keyMap[key]))
-                }
-            }
-        }
         
         var byte: UInt8 = 0x00
         
         if low == 0xfe {            // keyboard
+            let downKeys = (view as! SpectrumView).keysDown
+            
+            var keysDown: [UInt16] = []
+            for key in downKeys {
+                if key < keyMap.count  {
+                    if keyMap[key] > 0 {
+                        keysDown.append(UInt16(keyMap[key]))
+                    }
+                }
+            }
+            
             var keys: Array<UInt8> = [0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf]
             
             if keysDown.count > 0 {
@@ -221,10 +222,9 @@ extension Spectrum : Machine {
                 }
             }
         } else if low == 0x1f {     // kempston
-            let downKeys = Array((view as! SpectrumView).keysDown.filter{key in key.value == true}.keys)
+            let downKeys = (view as! SpectrumView).keysDown
             
             let padKeys = [124, 123, 125, 126, 49]  // cursor keys and space bar
-            var byte: UInt8 = 0x00
             var bit:  UInt8 = 0x01
             
             for key in padKeys {

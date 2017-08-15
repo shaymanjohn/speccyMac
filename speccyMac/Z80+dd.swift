@@ -14,7 +14,7 @@ extension Z80 {
         
         let word16 = (UInt16(second) << 8) | UInt16(first)
         let instruction = ddprefixedOps[opcode]
-        log(instruction)
+//        log(instruction)
         
         let offsetAddress = first > 127 ? ixy.value &- (UInt16(256) - UInt16(first)) : ixy.value &+ UInt16(first)
         

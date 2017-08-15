@@ -15,7 +15,7 @@ extension Z80 {
         let instruction = unprefixedOps[opcode]
         var normalFlow = true
         let word16 = (UInt16(second) << 8) | UInt16(first)
-        log(instruction)
+//        log(instruction)
 
         switch opcode {
             
@@ -826,11 +826,11 @@ extension Z80 {
             
         case 0xe4:  // call po, nn
             if Z80.f.value & Z80.pvBit > 0 {
+                normalFlow = false
+            } else {
                 memory.push(pc &+ 3)
                 pc = word16
                 pc = pc &- 3
-            } else {
-                normalFlow = false
             }
             
         case 0xe5:  // push hl
@@ -868,7 +868,13 @@ extension Z80 {
             hl.value = temp
             
         case 0xec:  // call pe, nn
-            print("stub 0xec")
+            if Z80.f.value & Z80.pvBit > 0 {
+                memory.push(pc &+ 3)
+                pc = word16
+                pc = pc &- 3
+            } else {
+                normalFlow = false
+            }
             
         case 0xed:  // shouldn't happen
             break

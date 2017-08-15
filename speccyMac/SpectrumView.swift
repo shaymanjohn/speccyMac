@@ -8,15 +8,15 @@
 
 import Cocoa
 
-// up 126
-// down 125
-// left 123
-// right 124
-// space 49
-
 class SpectrumView: NSView {
     
-    var keysDown: [UInt16 : Bool] = [:]
+    var keysDown: [UInt16] = []
+    
+    private var keyStates: [UInt16 : Bool] = [:] {
+        didSet {
+            keysDown = Array(keyStates.filter{key in key.value == true}.keys)
+        }
+    }
 
     override func draw(_ dirtyRect: NSRect) {
         super.draw(dirtyRect)
@@ -27,18 +27,18 @@ class SpectrumView: NSView {
     }
     
     override func keyDown(with event: NSEvent) {
-        keysDown[event.keyCode] = true
+        keyStates[event.keyCode] = true
     }
     
     override func keyUp(with event: NSEvent) {
-        keysDown[event.keyCode] = false
+        keyStates[event.keyCode] = false
     }
     
     override func flagsChanged(with event: NSEvent) {
-        if let state = keysDown[event.keyCode] {
-            keysDown[event.keyCode] = !state
+        if let state = keyStates[event.keyCode] {
+            keyStates[event.keyCode] = !state
         } else {
-            keysDown[event.keyCode] = true
+            keyStates[event.keyCode] = true
         }
     }
     

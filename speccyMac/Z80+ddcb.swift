@@ -14,7 +14,7 @@ extension Z80 {
         
         let instruction = cbprefixedOps[opcode]
         let offsetAddress = first > 127 ? ixy.value &- (UInt16(256) - UInt16(first)) : ixy.value &+ UInt16(first)
-        log(instruction)
+//        log(instruction)
         
         switch opcode {
             
