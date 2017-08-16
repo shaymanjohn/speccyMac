@@ -31,14 +31,16 @@ protocol Machine : class {
     
     weak var emulatorScreen: NSImageView? { get set }
     weak var emulatorView: EmulatorView? { get set }
+    weak var lateLabel: NSTextField? { get set }
 }
 
 class Spectrum: Machine {
     var processor: Processor
-    var memory: Memory
+    var memory:    Memory
     
-    weak var emulatorView: EmulatorView?
+    weak var emulatorView:   EmulatorView?
     weak var emulatorScreen: NSImageView?
+    weak var lateLabel: NSTextField?
     
     var clickCount: UInt32 = 0
     
@@ -155,6 +157,7 @@ class Spectrum: Machine {
     }
     
     final func refreshScreen() {
+        self.lateLabel?.stringValue = "Late \(processor.lateFrames)"
         
         flashCount = flashCount + 1
         if flashCount == 16 {
@@ -195,7 +198,7 @@ class Spectrum: Machine {
         }
     }
     
-    func captureRow(_ row: UInt16) {
+    final func captureRow(_ row: UInt16) {
         var pixelAddress  = screenRowAddress[row]
         var colourAddress = attributeRowAddress[row >> 3]
         
@@ -210,7 +213,7 @@ class Spectrum: Machine {
         }
     }
     
-    func input(_ high: UInt8, low: UInt8) -> UInt8 {
+    final func input(_ high: UInt8, low: UInt8) -> UInt8 {
         var byte: UInt8 = 0x00
         
         if low == 0xfe {            // keyboard
@@ -306,7 +309,7 @@ class Spectrum: Machine {
         return byte
     }
     
-    func output(_ port: UInt8, byte: UInt8) {
+    final func output(_ port: UInt8, byte: UInt8) {
         if port == 0xfe {
             let colour = colourTable[byte & 0x07]
             
@@ -320,13 +323,13 @@ class Spectrum: Machine {
         }
     }
     
-    func playSound() {
+    final func playSound() {
         if clickCount > 0 {
             clickCount = 0
 //            print("beep click count \(clickCount)")
         }
     }
     
-    var ticksPerFrame: UInt32 = 69888
-    var audioPacketSize: UInt32 = 79
+    final var ticksPerFrame: UInt32 = 69888
+    final var audioPacketSize: UInt32 = 79
 }

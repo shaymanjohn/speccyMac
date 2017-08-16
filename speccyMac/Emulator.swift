@@ -23,6 +23,7 @@ class Emulator: NSViewController {
         machine = Spectrum()
         machine.emulatorView = self.view as? EmulatorView
         machine.emulatorScreen = self.emulatorScreen
+        machine.lateLabel = self.lateLabel
         
         self.machine.start()
     }
