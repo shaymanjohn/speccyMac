@@ -226,15 +226,11 @@ class Z80 : Processor {
                 running = false
             }
         }
-        
-        DispatchQueue.main.async {
-            print("Game over")
-        }
     }
     
     final func pause() {
         paused = true
-        Thread.sleep(forTimeInterval: 0.01)
+        Thread.sleep(forTimeInterval: 0.1)
     }
     
     final func unpause() {
