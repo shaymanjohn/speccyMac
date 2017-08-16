@@ -48,7 +48,7 @@ extension Z80 {
             r.value = a.value
             
         case 0x50:  // in d, (c)
-            d.value = machine.input(b.value, low: c.value)
+            d.value = machine?.input(b.value, low: c.value) ?? 0
             
         case 0x52:  // sbc hl, de
             hl.sbc(de)
@@ -63,7 +63,7 @@ extension Z80 {
             a.value = i
             
         case 0x58:  // in e, (c)
-            e.value = machine.input(b.value, low: c.value)
+            e.value = machine?.input(b.value, low: c.value) ?? 0
             
         case 0x5a:  // adc hl, de
             hl.adc(de.value)
@@ -109,10 +109,10 @@ extension Z80 {
             memory.set(word16 &+ 1, byte: UInt8(Z80.sp >> 8))
             
         case 0x78:  // in a, (c)
-            a.value = machine.input(b.value, low: c.value)
+            a.value = machine?.input(b.value, low: c.value) ?? 0
             
         case 0x79:  // out (c), a
-            machine.output(c.value, byte: a.value)
+            machine?.output(c.value, byte: a.value)
             
         case 0x7a:  // adc hl, sp
             hl.adc(Z80.sp)

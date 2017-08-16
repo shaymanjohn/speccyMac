@@ -103,7 +103,7 @@ class Loader {
         Z80.sp = (UInt16(data[24]) << 8) + UInt16(data[23])
         
         z80.interruptMode = data[25]
-        z80.machine.output(0xfe, byte: data[26])
+        z80.machine?.output(0xfe, byte: data[26])
         
         let start = z80.memory.romSize
         

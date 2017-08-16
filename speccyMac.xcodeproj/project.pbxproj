@@ -215,6 +215,7 @@
 				6FFB31531F22379B00C15CD7 /* AppDelegate.swift */,
 				6FFB31551F22379B00C15CD7 /* Emulator.swift */,
 				6FA3852D1F39BCEF006CC865 /* EmulatorView.swift */,
+				6F036DBE1F44C68D005A16D0 /* Spectrum.swift */,
 				6FEFA90C1F2238A500F9AD93 /* Memory.swift */,
 				6FFC9E071F35CFA400B9322C /* Register.swift */,
 				6FFC9E091F35CFB200B9322C /* RegisterPair.swift */,
@@ -235,7 +236,6 @@
 				6FFB31591F22379B00C15CD7 /* Main.storyboard */,
 				6FFB315C1F22379B00C15CD7 /* Info.plist */,
 				6FFB315D1F22379B00C15CD7 /* speccyMac.entitlements */,
-				6F036DBE1F44C68D005A16D0 /* Spectrum.swift */,
 			);
 			path = speccyMac;
 			sourceTree = "<group>";

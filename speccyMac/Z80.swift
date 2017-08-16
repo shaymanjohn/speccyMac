@@ -8,8 +8,20 @@
 
 import Foundation
 
-class Z80 {
+protocol Processor: class {
     
+    func start()
+    func pause()
+    func unpause()
+    
+    var ula:      UInt32 { get }
+    var videoRow: UInt16 { get }
+    
+    var machine: Machine? { get set }
+    var lateFrames: Int { get }
+}
+
+class Z80 : Processor {
     let a = Accumulator()
     let b = Register()
     let c = Register()
@@ -43,8 +55,7 @@ class Z80 {
     var iff1: UInt8 = 0
     var iff2: UInt8 = 0
     
-    weak var machine: Machine!
-    
+    var machine: Machine?
     var memory: Memory
     
     var exaf: UInt16 = 0
@@ -59,7 +70,7 @@ class Z80 {
     var videoRow:      UInt16 = 0
     var lastFrame:     TimeInterval = 0
     let frameTime:     TimeInterval = 0.02      // pal refresh rate = 50Hz
-    var lateFrames:    UInt16 = 0
+    var lateFrames:    Int = 0
     var interrupts:    Bool = false
     var halted:        Bool = false
     var interruptMode: UInt8 = 0
@@ -105,6 +116,7 @@ class Z80 {
     var log = false
     
     init(memory: Memory) {
+        
         af  = RegisterPair(hi: a, lo: Z80.f)
         hl  = RegisterPair(hi: h, lo: l)
         bc  = RegisterPair(hi: b, lo: c)
@@ -143,7 +155,7 @@ class Z80 {
         
         while running {
             do {
-                if counter >= machine.ticksPerFrame {
+                if counter >= machine?.ticksPerFrame ?? 0 {
                     serviceInterrupts()
                 } else if !paused {
                     do {
@@ -186,11 +198,11 @@ class Z80 {
                 if ula >= 224 {
                     switch videoRow {
                     case 64...255:
-                        self.machine.captureRow(videoRow - 64)
+                        self.machine?.captureRow(videoRow - 64)
                         
                     case 311:
                         DispatchQueue.main.async {
-                            self.machine.refreshScreen()
+                            self.machine?.refreshScreen()
                         }
                         
                     default:
@@ -201,10 +213,10 @@ class Z80 {
                     videoRow = videoRow + 1
                 }
                 
-                if soundCounter >= machine.audioPacketSize {
-                    soundCounter = soundCounter - machine.audioPacketSize
+                if soundCounter >= machine?.audioPacketSize ?? 0 {
+                    soundCounter = soundCounter - (machine?.audioPacketSize ?? 0)
                     DispatchQueue.main.async {
-                        self.machine.playSound()
+                        self.machine?.playSound()
                     }
                 }
                 
@@ -218,6 +230,15 @@ class Z80 {
         DispatchQueue.main.async {
             print("Game over")
         }
+    }
+    
+    final func pause() {
+        paused = true
+        Thread.sleep(forTimeInterval: 0.01)
+    }
+    
+    final func unpause() {
+        paused = false
     }
     
     final func incCounters(_ amount: UInt32) {
@@ -310,7 +331,7 @@ class Z80 {
             lastFrame = lastFrame + frameTime
         }
         
-        counter = counter - machine.ticksPerFrame
+        counter = counter - (machine?.ticksPerFrame ?? 0)
         ula = counter
         videoRow = 0
         
