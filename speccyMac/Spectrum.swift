@@ -279,7 +279,7 @@ class Spectrum: Machine {
         } else if low == 0x1f {     // kempston
             let downKeys = emulatorView?.keysDown ?? []
             
-            let padKeys = [124, 123, 125, 126, 49]  // cursor keys and space bar
+            let padKeys = [124, 123, 125, 126, 55]  // cursor keys and left cmd
             var bit:  UInt8 = 0x01
             
             for key in padKeys {
