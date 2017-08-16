@@ -204,7 +204,7 @@ class Z80 {
                 if soundCounter >= machine.audioPacketSize {
                     soundCounter = soundCounter - machine.audioPacketSize
                     DispatchQueue.main.async {
-                        self.machine.beep()
+                        self.machine.playSound()
                     }
                 }
                 
@@ -314,10 +314,10 @@ class Z80 {
         ula = counter
         videoRow = 0
         
-        if interrupts == true {
+        if interrupts {
             interrupts = false
             
-            if halted == true {
+            if halted {
                 pc = pc &+ 1
                 halted = false
             }

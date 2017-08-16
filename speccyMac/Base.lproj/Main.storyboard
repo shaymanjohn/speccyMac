@@ -200,11 +200,11 @@
             </objects>
             <point key="canvasLocation" x="75" y="250"/>
         </scene>
-        <!--Spectrum-->
+        <!--Emulator-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="Spectrum" customModule="speccyMac" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl" customClass="SpectrumView" customModule="speccyMac" customModuleProvider="target">
+                <viewController id="XfG-lQ-9wD" customClass="Emulator" customModule="speccyMac" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl" customClass="EmulatorView" customModule="speccyMac" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="720" height="540"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
@@ -224,9 +224,8 @@
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q1X-na-ykB">
-                                <rect key="frame" x="625" y="492" width="81" height="32"/>
+                                <rect key="frame" x="619" y="492" width="87" height="32"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="69" id="rn6-9r-kTt"/>
                                     <constraint firstAttribute="height" constant="21" id="v12-jb-iag"/>
                                 </constraints>
                                 <buttonCell key="cell" type="push" title="Change" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xVt-VZ-oj9">
@@ -249,8 +248,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="emulatorScreen" destination="UOb-xd-KSE" id="EYb-mz-9EF"/>
                         <outlet property="lateLabel" destination="aMG-Oy-uFV" id="x4I-Iv-UUO"/>
-                        <outlet property="spectrumScreen" destination="UOb-xd-KSE" id="EYb-mz-9EF"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

@@ -1,5 +1,5 @@
 //
-//  SpectrumView.swift
+//  EmulatorView.swift
 //  speccyMac
 //
 //  Created by John Ward on 08/08/2017.
@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class SpectrumView: NSView {
+class EmulatorView: NSView {
     
     var keysDown: [UInt16] = []
     
