@@ -11,27 +11,37 @@ import Cocoa
 
 protocol Machine : class {
     
+    func start()
     func refreshScreen()
+    func playSound()
+    
+    func loadNextGame()
+    
     func captureRow(_ row: UInt16)
     
     func input(_ high: UInt8, low: UInt8) -> UInt8
     func output(_ port: UInt8, byte: UInt8)
     
-    func playSound()
-    
-    func start()
-    
-    func loadNextGame()
-    
     var processor: Processor { get }
-    var memory: Memory { get }
+    var memory:    Memory { get }
     
-    var ticksPerFrame: UInt32 { get }
+    var ticksPerFrame:   UInt32 { get }
     var audioPacketSize: UInt32 { get }
     
-    weak var emulatorScreen: NSImageView? { get set }
-    weak var emulatorView: EmulatorView? { get set }
-    weak var lateLabel: NSTextField? { get set }
+    weak var emulatorScreen: NSImageView?  { get set }
+    weak var emulatorView:   EmulatorView? { get set }
+    weak var lateLabel:      NSTextField?  { get set }
+}
+
+extension Machine {
+    
+    func start() {
+        processor.machine = self
+        
+        DispatchQueue.global().async {
+            self.processor.start()
+        }
+    }
 }
 
 class Spectrum: Machine {
@@ -40,7 +50,7 @@ class Spectrum: Machine {
     
     weak var emulatorView:   EmulatorView?
     weak var emulatorScreen: NSImageView?
-    weak var lateLabel: NSTextField?
+    weak var lateLabel:      NSTextField?
     
     var clickCount: UInt32 = 0
     
@@ -104,7 +114,7 @@ class Spectrum: Machine {
             colourIndex = colourIndex + 1
         }
         
-        // Precalculate screen and colour rows
+        // Precalculate screen and colour row addresses
         var rowNum = 0
         for row in 0..<24 {
             for pixelRow in 0..<8 {
@@ -120,19 +130,11 @@ class Spectrum: Machine {
             attributeRowAddress[row] = 22528 + (32 * UInt16(row))
         }
         
-        gameIndex = allGames.count
-        
         provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
             (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
         })!
-    }
-    
-    func start() {
-        processor.machine = self
         
-        DispatchQueue.global().async {
-            self.processor.start()
-        }
+        gameIndex = allGames.count
     }
     
     func loadNextGame() {
@@ -149,15 +151,19 @@ class Spectrum: Machine {
         
         if let _ = Loader(game, z80: processor as! Z80) {
             print("loaded \(game)")
+            processor.unpause()
         } else {
             print("couldnt load \(game)")
         }
-        
-        processor.unpause()
     }
     
     final func refreshScreen() {
-        self.lateLabel?.stringValue = "Late \(processor.lateFrames)"
+        if processor.lateFrames > 1 {
+            self.lateLabel?.stringValue = "Late \(processor.lateFrames)"
+            self.lateLabel?.isHidden = false
+        } else {
+            self.lateLabel?.isHidden = true
+        }
         
         flashCount = flashCount + 1
         if flashCount == 16 {
@@ -216,8 +222,9 @@ class Spectrum: Machine {
     final func input(_ high: UInt8, low: UInt8) -> UInt8 {
         var byte: UInt8 = 0x00
         
+        
         if low == 0xfe {            // keyboard
-            let downKeys = emulatorView?.keysDown ?? []
+            let downKeys = emulatorView?.keysDown ?? []            
             
             var keysDown: [UInt16] = []
             for key in downKeys {
@@ -230,16 +237,14 @@ class Spectrum: Machine {
             
             var keys: Array<UInt8> = [0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf]
             
-            if keysDown.count > 0 {
-                for key in keysDown {
-                    let row: UInt8 = UInt8(key >> 8)
-                    let val: UInt8 = UInt8(key & 0xff)
-                    
-                    if let keyNum = [0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f].index(of: row) {
-                        var thisKey: UInt8 = keys[keyNum]
-                        thisKey &= ~val
-                        keys[keyNum] = thisKey
-                    }
+            for key in keysDown {
+                let row: UInt8 = UInt8(key >> 8)
+                let val: UInt8 = UInt8(key & 0xff)
+                
+                if let keyNum = [0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f].index(of: row) {
+                    var thisKey: UInt8 = keys[keyNum]
+                    thisKey &= ~val
+                    keys[keyNum] = thisKey
                 }
             }
             
@@ -279,7 +284,7 @@ class Spectrum: Machine {
         } else if low == 0x1f {     // kempston
             let downKeys = emulatorView?.keysDown ?? []
             
-            let padKeys = [124, 123, 125, 126, 55]  // cursor keys and left cmd
+            let padKeys = [124, 123, 125, 126, 50]  // cursor keys and ` (to the left of Z key)
             var bit:  UInt8 = 0x01
             
             for key in padKeys {
@@ -311,7 +316,7 @@ class Spectrum: Machine {
     
     final func output(_ port: UInt8, byte: UInt8) {
         if port == 0xfe {
-            let colour = colourTable[byte & 0x07]
+            let colour = colourTable[(byte & 0x07)]
             
             DispatchQueue.main.async {
                 self.emulatorView?.layer?.backgroundColor = CGColor(red: CGFloat(colour.r) / 255.0, green: CGFloat(colour.g) / 255.0, blue: CGFloat(colour.b) / 255.0, alpha: 1)

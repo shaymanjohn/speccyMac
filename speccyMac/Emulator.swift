@@ -16,6 +16,7 @@ class Emulator: NSViewController {
     var machine: Machine!
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
         
         self.view.wantsLayer = true
@@ -29,6 +30,7 @@ class Emulator: NSViewController {
     }
     
     @IBAction func loadNextGame(_ sender: NSButton) {
+        
         machine.loadNextGame()
     }
 }

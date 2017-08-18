@@ -65,9 +65,10 @@ class Z80 : Processor {
     
     var counter:       UInt32 = 0
     
-    var paused:        Bool = false
     var ula:           UInt32 = 0
     var videoRow:      UInt16 = 0
+    
+    var paused:        Bool = false
     var lastFrame:     TimeInterval = 0
     let frameTime:     TimeInterval = 0.02      // pal refresh rate = 50Hz
     var lateFrames:    Int = 0

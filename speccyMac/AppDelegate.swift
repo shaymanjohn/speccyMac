@@ -19,8 +19,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        
         return true
-    }    
+    }
+    
+    func applicationDidBecomeActive(_ notification: Notification) {
+        
+        if let emulator = NSApplication.shared.mainWindow?.contentViewController as? Emulator {
+            (emulator.view as? EmulatorView)?.clearKeysWhenGettingFocus()
+        }
+    }
 
 }
 

@@ -17,24 +17,33 @@ class EmulatorView: NSView {
             keysDown = Array(keyStates.filter{key in key.value == true}.keys)
         }
     }
-
-    override func draw(_ dirtyRect: NSRect) {
-        super.draw(dirtyRect)
-    }
     
     override var acceptsFirstResponder : Bool {
+        
         return true
     }
     
+    func clearKeysWhenGettingFocus() {
+        
+        keyStates = [:]
+    }
+    
     override func keyDown(with event: NSEvent) {
+        
         keyStates[event.keyCode] = true
     }
     
     override func keyUp(with event: NSEvent) {
+        
         keyStates[event.keyCode] = false
     }
     
     override func flagsChanged(with event: NSEvent) {
+        
+        if event.keyCode == 0 {
+            return
+        }
+
         if let state = keyStates[event.keyCode] {
             keyStates[event.keyCode] = !state
         } else {
