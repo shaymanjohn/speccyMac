@@ -15,8 +15,7 @@ protocol Machine : class {
     func refreshScreen()
     func playSound()
     
-    func loadNextGame()
-    
+    func loadGame(_ game: String)
     func captureRow(_ row: UInt16)
     
     func input(_ high: UInt8, low: UInt8) -> UInt8
@@ -27,6 +26,8 @@ protocol Machine : class {
     
     var ticksPerFrame:   UInt32 { get }
     var audioPacketSize: UInt32 { get }
+    
+    var allGames: [Game] { get }
     
     weak var emulatorScreen: NSImageView?  { get set }
     weak var emulatorView:   EmulatorView? { get set }
@@ -61,8 +62,6 @@ class Spectrum: Machine {
     var flashCount = 0
     var invertColours = false
     
-    var gameIndex = 0
-    
     var colours = [UInt32](repeating: 0, count: 16)
     
     // precalculated screen and attribute rows
@@ -91,14 +90,28 @@ class Spectrum: Machine {
                   0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xfe01, 0x0000, 0x0000, 0x0000,
                   0xfe01]
     
-    let allGames = ["manic.sna", "aticatac.sna", "brucelee.sna",
-                    "deathchase.sna", "JetPac.sna", "monty.sna",
-                    "spacies.sna", "thehobbit.sna", "jetsetw.sna",
-                    "techted.sna", "uridium.sna",
-                    "cobra.sna", "cybernoid1.sna", "cybernoid2.sna",
-                    "dynadan.sna", "greenberet.sna", "headoverheels.sna",
-                    "hypersports.sna", "JetMan.sna", //"ninjaman.sna",
-        "sabre.sna", "starquake.sna"] //, "testz80.sna"]
+    var allGames = [Game(file: "manic.sna", name: "Manic Miner"),
+                    Game(file: "aticatac.sna", name: "Atic Atac"),
+                    Game(file: "brucelee.sna", name: "Bruce Lee"),
+                    Game(file: "deathchase.sna", name: "3D Deathchase"),
+                    Game(file: "JetPac.sna", name: "Jetpac"),
+                    Game(file: "monty.sna", name: "Wanted: Monty Mole"),
+                    Game(file: "spacies.sna", name: "Space Invaders (unfinished)"),
+                    Game(file: "thehobbit.sna", name: "The Hobbit"),
+                    Game(file: "jetsetw.sna", name: "Jet Set Willy"),
+                    Game(file: "techted.sna", name: "Technician Ted"),
+                    Game(file: "uridium.sna", name: "Uridium"),
+                    Game(file: "cobra.sna", name: "Cobra"),
+                    Game(file: "cybernoid1.sna", name: "Cybernoid"),
+                    Game(file: "cybernoid2.sna", name: "Cybernoid 2"),
+                    Game(file: "dynadan.sna", name: "Dynamite Dan"),
+                    Game(file: "greenberet.sna", name: "Green Beret"),
+                    Game(file: "headoverheels.sna", name: "Head Over Heels"),
+                    Game(file: "hypersports.sna", name: "Hypersports"),
+                    Game(file: "JetMan.sna", name: "Lunar Jetman"),
+                    Game(file: "sabre.sna", name: "Sabre Wulf"),
+                    Game(file: "starquake.sna", name: "Starquake")
+    ]
     
     init() {
         memory = Memory("48.rom")
@@ -132,18 +145,7 @@ class Spectrum: Machine {
         
         provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
             (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
-        })!
-        
-        gameIndex = allGames.count
-    }
-    
-    func loadNextGame() {
-        gameIndex = gameIndex + 1
-        if gameIndex > allGames.count - 1 {
-            gameIndex = 0
-        }
-        
-        loadGame(allGames[gameIndex])
+        })!        
     }
     
     func loadGame(_ game: String) {

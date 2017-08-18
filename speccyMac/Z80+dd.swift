@@ -72,6 +72,9 @@ extension Z80 {
         case 0x36:  // ld (ix+d), n
             memory.set(offsetAddress, byte: second)
             
+        case 0x39:  // add ix, sp
+            ixy.add(Z80.sp)
+            
         case 0x3f:  //
             Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))
             

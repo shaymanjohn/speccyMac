@@ -23,3 +23,8 @@ struct keyMap {
     let macKey: UInt16
     let machineKey: UInt16
 }
+
+struct Game {
+    let file: String
+    let name: String
+}

@@ -26,6 +26,7 @@ Keyboard (?)
 Known Bugs
 ----------
 testZ80 - missing opcodes
+Cobra - crashes intermittently
 
 
 Fixed bugs

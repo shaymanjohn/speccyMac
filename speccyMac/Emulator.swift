@@ -29,8 +29,11 @@ class Emulator: NSViewController {
         self.machine.start()
     }
     
-    @IBAction func loadNextGame(_ sender: NSButton) {
+    @IBAction func changeGame(_ sender: NSButton) {
         
-        machine.loadNextGame()
+        if let gameSelect = self.storyboard?.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "gameSelect")) as? GameSelectViewController {
+            gameSelect.machine = machine
+            self.presentViewControllerAsModalWindow(gameSelect)
+        }
     }
 }
