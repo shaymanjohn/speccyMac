@@ -71,29 +71,9 @@ extension Z80 {
         case 0x3e:  // srl (hl)
             memory.srl(hl)
             
-        case 0x46:  // bit 0, (hl)
-            memory.indexBit(0, address: hl.value)
-            
-        case 0x4e:  // bit 1, (hl)
-            memory.indexBit(1, address: hl.value)
-            
-        case 0x56:  // bit 2, (hl)
-            memory.indexBit(2, address: hl.value)
-            
-        case 0x5e:  // bit 3, (hl)
-            memory.indexBit(3, address: hl.value)
-            
-        case 0x66:  // bit 4, (hl)
-            memory.indexBit(4, address: hl.value)
-            
-        case 0x6e:  // bit 5, (hl)
-            memory.indexBit(5, address: hl.value)
-            
-        case 0x76:  // bit 6, (hl)
-            memory.indexBit(6, address: hl.value)
-            
-        case 0x7e:  // bit 7, (hl)
-            memory.indexBit(7, address: hl.value)
+        case 0x46, 0x4e, 0x56, 0x5e, 0x66, 0x6e, 0x76, 0x7e:
+            let bit = ((opcode - 0x40) & 0x3c) >> 3
+            memory.indexBit(bit, address: hl.value)
             
         case 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x87:  // res 0, r
             [b, c, d, e, h, l, a, a][opcode - 0x80].res(0)
@@ -119,29 +99,9 @@ extension Z80 {
         case 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xbf:  // res 7, r
             [b, c, d, e, h, l, a, a][opcode - 0xb8].res(7)
             
-        case 0x86:  // res 0, (hl)
-            memory.indexRes(0, address: hl.value)
-            
-        case 0x8e:  // res 1, (hl)
-            memory.indexRes(1, address: hl.value)
-            
-        case 0x96:  // res 2, (hl)
-            memory.indexRes(2, address: hl.value)
-            
-        case 0x9e:  // res 3, (hl)
-            memory.indexRes(3, address: hl.value)
-            
-        case 0xa6: // res 4, (hl)
-            memory.indexRes(4, address: hl.value)
-            
-        case 0xae: // res 5, (hl)
-            memory.indexRes(5, address: hl.value)
-            
-        case 0xb6: // res 6, (hl)
-            memory.indexRes(6, address: hl.value)
-            
-        case 0xbe: // res 7, (hl)
-            memory.indexRes(7, address: hl.value)
+        case 0x86, 0x8e, 0x96, 0x9e, 0xa6, 0xae, 0xb6, 0xbe:
+            let bit = ((opcode - 0x80) & 0x3c) >> 3
+            memory.indexRes(bit, address: hl.value)
             
         case 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc7:  // set 0, r
             [b, c, d, e, h, l, a, a][opcode - 0xc0].set(0)
@@ -167,29 +127,9 @@ extension Z80 {
         case 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xff:  // set 7, r
             [b, c, d, e, h, l, a, a][opcode - 0xf8].set(7)
             
-        case 0xc6: // set 0, (hl)
-            memory.indexSet(0, address: hl.value)
-            
-        case 0xce:  // set 1, (hl)
-            memory.indexSet(1, address: hl.value)
-            
-        case 0xd6:  // set 2, (hl)
-            memory.indexSet(2, address: hl.value)
-            
-        case 0xde:  // set 3, (hl)
-            memory.indexSet(3, address: hl.value)
-            
-        case 0xe6:  // set 4, (hl)
-            memory.indexSet(4, address: hl.value)
-            
-        case 0xee:  // set 5, (hl)
-            memory.indexSet(5, address: hl.value)
-            
-        case 0xf6: // set 6, (hl)
-            memory.indexSet(6, address: hl.value)
-            
-        case 0xfe:  // set 7, (hl)
-            memory.indexSet(7, address: hl.value)
+        case 0xc6, 0xce, 0xd6, 0xde, 0xe6, 0xee, 0xf6, 0xfe:
+            let bit = ((opcode - 0xc0) & 0x3c) >> 3
+            memory.indexSet(bit, address: hl.value)            
             
         default:
             throw NSError(domain: "z80+cb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
