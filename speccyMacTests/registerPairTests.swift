@@ -37,34 +37,6 @@ class registerPairTests: XCTestCase {
         XCTAssert(z80.hl.value == 0x3040, "Setting registers does not update register pair")
     }
     
-    func testIncNoWrap() {
-        z80.hl.value = 0x1234
-        z80.hl.inc()
-        
-        XCTAssert(z80.hl.value == 0x1235, "inc reg pair no wrap failed")
-    }
-    
-    func testIncWrap() {
-        z80.hl.value = 0xffff
-        z80.hl.inc()
-        
-        XCTAssert(z80.hl.value == 0x0000, "inc reg pair with wrap failed")
-    }
-    
-    func testDecNoWrap() {
-        z80.hl.value = 0x1234
-        z80.hl.dec()
-        
-        XCTAssert(z80.hl.value == 0x1233, "dec reg pair no wrap failed")
-    }
-    
-    func testDecWrap() {
-        z80.hl.value = 0x0000
-        z80.hl.dec()
-        
-        XCTAssert(z80.hl.value == 0xffff, "dec reg pair with wrap failed")
-    }
-    
     func testAddNoWrap() {
         z80.hl.value = 0x1000
         z80.hl.add(0x1000)
