@@ -22,20 +22,6 @@ class RefreshReg {
         }
         
         value = value | highBit
-        
-//        if value & 0x80 > 0 {
-//            value = value & 0x7f
-//            value = value + 1
-//            if value == 128 {
-//                value = 0
-//            }
-//            value = value | 0x80
-//        } else {
-//            value = value + 1
-//            if value == 128 {
-//                value = 0
-//            }
-//        }
     }
     
 }

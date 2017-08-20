@@ -22,39 +22,40 @@ class Spectrum: Machine {
     weak var lateLabel:      NSTextField?
     
     let brightBit: UInt8 = 0x40
-    let flashBit: UInt8  = 0x80
+    let flashBit:  UInt8 = 0x80
     let attributeAddress: UInt16 = 22528
     
     var clickCount: UInt32 = 0
     
     var provider: CGDataProvider!
     let colourSpace = CGColorSpaceCreateDeviceRGB()
-    let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
+    let bitmapInfo  = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
     
     var flashCounter = 0
     var invertFlashColours = false
     
     var colours = [UInt32](repeating: 0, count: 16)
     
-    // precalculated screen and attribute rows
+    // Precalculated screen and attribute rows
     var screenRowAddress    = [UInt16](repeating: 0, count: 192)
     var attributeRowAddress = [UInt16](repeating: 0, count: 24)
     
     // Screen image
     var screenBuffer = [UInt8](repeating: 0, count: 32 * 192)
     
-    // Attribute image
+    // Attribute image - save colour per row (not 8 rows) to allow hi-colour effects
     var colourBuffer = [UInt8](repeating: 0, count: 32 * 192)
     
-    // bmp pool to render image
-    var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 24 * 8)
+    // Bmp pool to render image
+    var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 192)
     
-    let colourTable = [colour(r: 0x00, g: 0x00, b: 0x00), colour(r: 0x00, g: 0x00, b: 0xcd), colour(r: 0xcd, g: 0x00, b: 0x00), colour(r: 0xcd, g: 0x00, b: 0xcd),
-                       colour(r: 0x00, g: 0xcd, b: 0x00), colour(r: 0x00, g: 0xcd, b: 0xcd), colour(r: 0xcd, g: 0xcd, b: 0x00), colour(r: 0xcd, g: 0xcd, b: 0xcd),
-                       colour(r: 0x00, g: 0x00, b: 0x00), colour(r: 0x00, g: 0x00, b: 0xff), colour(r: 0xff, g: 0x00, b: 0x00), colour(r: 0xff, g: 0x00, b: 0xff),
-                       colour(r: 0x00, g: 0xff, b: 0x00), colour(r: 0x00, g: 0xff, b: 0xff), colour(r: 0xff, g: 0xff, b: 0x00), colour(r: 0xff, g: 0xff, b: 0xff)]
+    // 8 Spectrum RGB values, plus addition 8 for bright mode.
+    let colourTable = [colour(hex: 0x000000), colour(hex: 0x0000cd), colour(hex: 0xcd0000), colour(hex: 0xcd00cd),
+                       colour(hex: 0x00cd00), colour(hex: 0x00cdcd), colour(hex: 0xcdcd00), colour(hex: 0xcdcdcd),
+                       colour(hex: 0x000000), colour(hex: 0x0000ff), colour(hex: 0xff0000), colour(hex: 0xff00ff),
+                       colour(hex: 0x00ff00), colour(hex: 0x00ffff), colour(hex: 0xffff00), colour(hex: 0xffffff)]
     
-    // mac key code to spectrum key code
+    // Mac key code to spectrum key code
     let keyMap: [UInt16] = [0xfd01, 0xfd02, 0xfd04, 0xfd08, 0xbf10, 0xfd10, 0xfe02, 0xfe04, 0xfe08, 0xfe10,
                             0x0000, 0x7f10, 0xfb01, 0xfb02, 0xfb04, 0xfb08, 0xdf10, 0xfb10, 0xf701, 0xf702,
                             0xf704, 0xf708, 0xef10, 0xf710, 0x0000, 0xef02, 0xef08, 0x0000, 0xef04, 0xef01,
@@ -91,13 +92,11 @@ class Spectrum: Machine {
         processor = Z80(memory: memory)
         
         // Populate colour tables
-        var colourIndex = 0
-        for colour in colourTable {
+        for (colourIndex, colour) in colourTable.enumerated() {
             let rComp = UInt32(colour.r) << 8
             let gComp = UInt32(colour.g) << 16
             let bComp = UInt32(colour.b) << 24
             colours[colourIndex] = rComp | gComp | bComp | UInt32(0xff)
-            colourIndex = colourIndex + 1
         }
         
         // Precalculate screen and colour row addresses
@@ -109,7 +108,7 @@ class Spectrum: Machine {
                 
                 let address:UInt16 = UInt16((dataByteHigh) << 8) + UInt16(dataByteLow)
                 screenRowAddress[rowNum] = address
-                
+
                 rowNum = rowNum + 1
             }
             
@@ -235,7 +234,7 @@ class Spectrum: Machine {
             default:
                 byte = 0xbf
                 let value = high ^ 0xff
-                var bit:UInt8 = 0x01
+                var bit: UInt8 = 0x01
                 
                 for key in keys {
                     if value & bit > 0 {
@@ -248,7 +247,7 @@ class Spectrum: Machine {
             let downKeys = emulatorView?.keysDown ?? []
             
             let padKeys: [UInt16] = [124, 123, 125, 126, 50]  // cursor keys and ` (to the left of Z key)
-            var bit:  UInt8 = 0x01
+            var bit: UInt8 = 0x01
             
             for key in padKeys {
                 if downKeys.contains(key) {
@@ -279,7 +278,7 @@ class Spectrum: Machine {
             let colour = colourTable[(byte & 0x07)]
             
             DispatchQueue.main.async {
-                self.emulatorView?.layer?.backgroundColor = CGColor(red: CGFloat(colour.r) / 255.0, green: CGFloat(colour.g) / 255.0, blue: CGFloat(colour.b) / 255.0, alpha: 1)
+                self.emulatorView?.layer?.backgroundColor = CGColor(red: colour.rf, green: colour.gf, blue: colour.bf, alpha: 1)
             }
             
             if byte & 0x10 > 0 {
@@ -299,6 +298,7 @@ class Spectrum: Machine {
         
         if let _ = Loader(game, z80: processor as! Z80) {
             print("loaded \(game)")
+            clickCount = 0
             processor.unpause()
         } else {
             print("couldnt load \(game)")

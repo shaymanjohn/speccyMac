@@ -58,7 +58,7 @@ class Loader {
                     z80.iff2 = 0
                 }
                 
-                // Sound vars
+            // Sound vars
                 //            clicksCount = 0;
                 //            beep = false;
                 //            soundCounter = 0;

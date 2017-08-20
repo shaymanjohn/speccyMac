@@ -9,9 +9,31 @@
 import Foundation
 
 struct colour {
-    let r: UInt8
-    let g: UInt8
-    let b: UInt8
+    let hex: UInt32
+    
+    var r: UInt8 {
+        return UInt8((hex & 0xff0000) >> 16)
+    }
+    
+    var g: UInt8 {
+        return UInt8((hex & 0x00ff00) >> 8)
+    }
+    
+    var b: UInt8 {
+        return UInt8(hex & 0x000ff)
+    }
+    
+    var rf: CGFloat {
+        return CGFloat(r) / 255.0
+    }
+    
+    var gf: CGFloat {
+        return CGFloat(g) / 255.0
+    }
+    
+    var bf: CGFloat {
+        return CGFloat(b) / 255.0
+    }
 }
 
 struct keyboardMap {

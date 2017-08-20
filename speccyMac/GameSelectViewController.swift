@@ -37,10 +37,12 @@ extension GameSelectViewController: NSTableViewDelegate {
     func tableViewSelectionDidChange(_ notification: Notification) {
         
         if let tv = notification.object as? NSTableView {
-            let selectedGame = machine.games[tv.selectedRow]
-            machine.loadGame(selectedGame.file)
-            
-            self.dismissViewController(self)
+            if tv.selectedRow >= 0 {
+                let selectedGame = machine.games[tv.selectedRow]
+                machine.loadGame(selectedGame.file)
+                
+                self.dismissViewController(self)
+            }
         }
     }
 }
