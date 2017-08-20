@@ -53,7 +53,9 @@ class Memory {
     }
     
     @inline(__always) final func set(_ address: UInt16, reg: Register) {
-        set(address, byte: reg.value)
+        if address >= romSize {
+            memory[Int(address)] = reg.value
+        }
     }
     
     @inline(__always) final func set(_ address: UInt16, regPair: RegisterPair) {

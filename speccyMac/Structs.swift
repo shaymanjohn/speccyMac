@@ -11,28 +11,24 @@ import Foundation
 struct colour {
     let hex: UInt32
     
-    var r: UInt8 {
-        return UInt8((hex & 0xff0000) >> 16)
-    }
+    let r: UInt8
+    let g: UInt8
+    let b: UInt8
     
-    var g: UInt8 {
-        return UInt8((hex & 0x00ff00) >> 8)
-    }
-    
-    var b: UInt8 {
-        return UInt8(hex & 0x000ff)
-    }
-    
-    var rf: CGFloat {
-        return CGFloat(r) / 255.0
-    }
-    
-    var gf: CGFloat {
-        return CGFloat(g) / 255.0
-    }
-    
-    var bf: CGFloat {
-        return CGFloat(b) / 255.0
+    let rf: CGFloat
+    let gf: CGFloat
+    let bf: CGFloat
+            
+    init(_ hex: UInt32) {
+        self.hex = hex
+        
+        r = UInt8((hex & 0xff0000) >> 16)
+        g = UInt8((hex & 0x00ff00) >> 8)
+        b = UInt8(hex & 0x000ff)
+        
+        rf = CGFloat(r) / 255.0
+        gf = CGFloat(g) / 255.0
+        bf = CGFloat(b) / 255.0
     }
 }
 

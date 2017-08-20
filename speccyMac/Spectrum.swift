@@ -50,10 +50,10 @@ class Spectrum: Machine {
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 192)
     
     // 8 Spectrum RGB values, plus addition 8 for bright mode.
-    let colourTable = [colour(hex: 0x000000), colour(hex: 0x0000cd), colour(hex: 0xcd0000), colour(hex: 0xcd00cd),
-                       colour(hex: 0x00cd00), colour(hex: 0x00cdcd), colour(hex: 0xcdcd00), colour(hex: 0xcdcdcd),
-                       colour(hex: 0x000000), colour(hex: 0x0000ff), colour(hex: 0xff0000), colour(hex: 0xff00ff),
-                       colour(hex: 0x00ff00), colour(hex: 0x00ffff), colour(hex: 0xffff00), colour(hex: 0xffffff)]
+    let colourTable = [colour(0x000000), colour(0x0000cd), colour(0xcd0000), colour(0xcd00cd),
+                       colour(0x00cd00), colour(0x00cdcd), colour(0xcdcd00), colour(0xcdcdcd),
+                       colour(0x000000), colour(0x0000ff), colour(0xff0000), colour(0xff00ff),
+                       colour(0x00ff00), colour(0x00ffff), colour(0xffff00), colour(0xffffff)]
     
     // Mac key code to spectrum key code
     let keyMap: [UInt16] = [0xfd01, 0xfd02, 0xfd04, 0xfd08, 0xbf10, 0xfd10, 0xfe02, 0xfe04, 0xfe08, 0xfe10,

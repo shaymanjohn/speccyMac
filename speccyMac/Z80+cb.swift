@@ -10,7 +10,7 @@ import Foundation
 
 extension Z80 {
     
-    final func cbprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
+    final func cbprefix(opcode: UInt8) throws {
         
         let instruction = cbprefixedOps[opcode]
 //        log(instruction)

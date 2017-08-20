@@ -235,392 +235,104 @@ extension Z80 {
             a.value = first
             
         case 0x3f:  // ccf
-            Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))            
+            Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))
             
-        case 0x40:  // ld b, b
-            break
-            
-        case 0x41:  // ld b, c
-            b.value = c.value
-            
-        case 0x42:  // ld b, d
-            b.value = d.value
-            
-        case 0x43:  // ld b, e
-            b.value = e.value
-            
-        case 0x44:  // ld b, h
-            b.value = h.value
-            
-        case 0x45:  // ld b, l
-            b.value = l.value
+        case 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x47:  // ld b, reg
+            b.value = [b, c, d, e, h, l, a, a][opcode - 0x40].value
             
         case 0x46:  // ld b, (hl)
             b.value = memory.get(hl)
             
-        case 0x47:  // ld b, a
-            b.value = a.value
-            
-        case 0x48:  // ld c, b
-            c.value = b.value
-            
-        case 0x49:  // ld c, c
-            break
-            
-        case 0x4a:  // ld c, d
-            c.value = d.value
-            
-        case 0x4b:  // ld c, e
-            c.value = e.value
-            
-        case 0x4c:  // ld c, h
-            c.value = h.value
-            
-        case 0x4d:  // ld c, l
-            c.value = l.value
+        case 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4f:  // ld c, reg
+            c.value = [b, c, d, e, h, l, a, a][opcode - 0x48].value
             
         case 0x4e:  // ld c, (hl)
             c.value = memory.get(hl)
             
-        case 0x4f:  // ld c, a
-            c.value = a.value
-            
-        case 0x50:  // ld d, b
-            d.value = b.value
-            
-        case 0x51:  // ld d, c
-            d.value = c.value
-            
-        case 0x52:  // ld d, d
-            break
-            
-        case 0x53:  // ld d, e
-            d.value = e.value
-            
-        case 0x54:  // ld d, h
-            d.value = h.value
-            
-        case 0x55:  // ld d, l
-            d.value = l.value
+        case 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x57:  // ld d, reg
+            d.value = [b, c, d, e, h, l, a, a][opcode - 0x50].value
             
         case 0x56:  // ld d, (hl)
             d.value = memory.get(hl)
             
-        case 0x57:  // ld d, a
-            d.value = a.value
-            
-        case 0x58:  // ld e, b
-            e.value = b.value
-            
-        case 0x59:  // ld e, c
-            e.value = c.value
-            
-        case 0x5a:  // ld e, d
-            e.value = d.value
-            
-        case 0x5b:  // ld e, e
-            break
-            
-        case 0x5c:  // ld e, h
-            e.value = h.value
-            
-        case 0x5d:  // ld e, l
-            e.value = l.value
+        case 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5f:  // ld e, reg
+            e.value = [b, c, d, e, h, l, a, a][opcode - 0x58].value
             
         case 0x5e:  // ld e, (hl)
             e.value = memory.get(hl)
             
-        case 0x5f:  // ld e, a
-            e.value = a.value
-            
-        case 0x60:  // ld h, b
-            h.value = b.value
-            
-        case 0x61:  // ld h, c
-            h.value = c.value
-            
-        case 0x62:  // ld h, d
-            h.value = d.value
-            
-        case 0x63:  // ld h, e
-            h.value = e.value
-            
-        case 0x64:  // ld h, h
-            h.value = h.value
-            
-        case 0x65:  // ld h, l
-            h.value = l.value
+        case 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x67:  // ld h, reg
+            h.value = [b, c, d, e, h, l, a, a][opcode - 0x60].value
             
         case 0x66:  // ld h, (hl)
             h.value = memory.get(hl)
             
-        case 0x67:  // ld h, a
-            h.value = a.value
-            
-        case 0x68:  // ld l, b
-            l.value = b.value
-            
-        case 0x69:  // ld l, c
-            l.value = c.value
-            
-        case 0x6a:  // ld l, d
-            l.value = d.value
-            
-        case 0x6b:  // ld l, e
-            l.value = e.value
-            
-        case 0x6c:  // ld l, h
-            l.value = h.value
-            
-        case 0x6d:  // ld l, l
-            l.value = l.value
+        case 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6f:  // ld l, reg
+            l.value = [b, c, d, e, h, l, a, a][opcode - 0x68].value
             
         case 0x6e:  // ld l, (hl)
             l.value = memory.get(hl)
             
-        case 0x6f:  // ld l, a
-            l.value = a.value
-            
-        case 0x70:  // ld (hl), b
-            memory.set(hl.value, byte: b.value)
-            
-        case 0x71:  // ld (hl), c
-            memory.set(hl.value, byte: c.value)
-            
-        case 0x72:  // ld (hl), d
-            memory.set(hl.value, byte: d.value)
-            
-        case 0x73:  // ld (hl), e
-            memory.set(hl.value, byte: e.value)
-            
-        case 0x74:  // ld (hl), h
-            memory.set(hl.value, byte: h.value)
-            
-        case 0x75:  // ld (hl), a
-            memory.set(hl.value, byte: l.value)
+        case 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x77:  // ld (hl), reg
+            memory.set(hl.value, byte: [b, c, d, e, h, l, a, a][opcode - 0x70].value)
             
         case 0x76:  // halt
             halted = true
             pc = pc &- 1
             
-        case 0x77:  // ld (hl), a
-            memory.set(hl.value, byte: a.value)
-            
-        case 0x78:  // ld a, b
-            a.value = b.value
-            
-        case 0x79:  // ld a, c
-            a.value = c.value
-            
-        case 0x7a:  // ld a, d
-            a.value = d.value
-            
-        case 0x7b:  // ld a, e
-            a.value = e.value
-            
-        case 0x7c:  // ld a, h
-            a.value = h.value
-            
-        case 0x7d:  // ld a, l
-            a.value = l.value
+        case 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7f:  // ld a, reg
+            a.value = [b, c, d, e, h, l, a, a][opcode - 0x78].value
             
         case 0x7e:  // ld a, (hl)
             a.value = memory.get(hl)
             
-        case 0x7f:  // ld a, a
-            break
-            
-        case 0x80:  // add a, b
-            a.add(b.value)
-            
-        case 0x81:  // add a, c
-            a.add(c.value)
-            
-        case 0x82:  // add a, d
-            a.add(d.value)
-            
-        case 0x83:  // add a, e
-            a.add(e.value)
-            
-        case 0x84:  // add a, h
-            a.add(h.value)
-            
-        case 0x85:  // add a, l
-            a.add(l.value)
+        case 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x87:  // add a, reg
+            a.add([b, c, d, e, h, l, a, a][opcode - 0x80].value)
             
         case 0x86:  // add a, (hl)
             a.add(memory.get(hl))
             
-        case 0x87:  // add a, a
-            a.add(a.value)
-            
-        case 0x88:  // adc a, b
-            a.adc(b.value)
-            
-        case 0x89:  // adc a, c
-            a.adc(c.value)
-            
-        case 0x8a:  // adc a, d
-            a.adc(d.value)
-            
-        case 0x8b:  // adc a, e
-            a.adc(e.value)
-            
-        case 0x8c:  // adc a, h
-            a.adc(h.value)
-            
-        case 0x8d:  // adc a, l
-            a.adc(l.value)
+        case 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8f:  // adc a, reg
+            a.adc([b, c, d, e, h, l, a, a][opcode - 0x88].value)
             
         case 0x8e:  // adc a, (hl)
             a.adc(memory.get(hl))
             
-        case 0x8f:  // adc a, a
-            a.adc(a.value)
-            
-        case 0x90:  // sub b
-            a.sub(b.value)
-            
-        case 0x91:  // sub c
-            a.sub(c.value)
-            
-        case 0x92:  // sub d
-            a.sub(d.value)
-            
-        case 0x93:  // sub e
-            a.sub(e.value)
-            
-        case 0x94:  // sub h
-            a.sub(h.value)
-            
-        case 0x95:  // sub l
-            a.sub(l.value)
+        case 0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x97:  // sub reg
+            a.sub([b, c, d, e, h, l, a, a][opcode - 0x90].value)
             
         case 0x96:  // sub (hl)
             a.sub(memory.get(hl))
             
-        case 0x97:  // sub a
-            a.sub(a.value)
-            
-        case 0x98:  // sbc a, b
-            a.sbc(b.value)
-            
-        case 0x99:  // sbc a, c
-            a.sbc(c.value)
-            
-        case 0x9a:  // sbc a, d
-            a.sbc(d.value)
-            
-        case 0x9b:  // sbc a, e
-            a.sbc(e.value)
-            
-        case 0x9c:  // sbc a, h
-            a.sbc(h.value)
-            
-        case 0x9d:  // sbc a, l
-            a.sbc(l.value)
+        case 0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9f:  // sbc reg
+            a.sbc([b, c, d, e, h, l, a, a][opcode - 0x98].value)
             
         case 0x9e:  // sbc a, (hl)
             a.sbc(memory.get(hl))
             
-        case 0x9f:  // sbc a, a
-            a.sbc(a.value)
-
-        case 0xa0:  // and b
-            a.and(b)
-            
-        case 0xa1:  // and c
-            a.and(c)
-            
-        case 0xa2:  // and d
-            a.and(d)
-            
-        case 0xa3:  // and e
-            a.and(e)
-            
-        case 0xa4:  // and h
-            a.and(h)
-            
-        case 0xa5:  // and l
-            a.and(l)
+        case 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa7:  // and reg
+            a.and([b, c, d, e, h, l, a, a][opcode - 0xa0])
             
         case 0xa6:  // and (hl)
             a.and(memory.get(hl))
             
-        case 0xa7:  // and a
-            a.and(a)
-            
-        case 0xa8:  // xor b
-            a.xor(b)
-            
-        case 0xa9:  // xor c
-            a.xor(c)
-            
-        case 0xaa:  // xor d
-            a.xor(d)
-            
-        case 0xab:  // xor e
-            a.xor(e)
-            
-        case 0xac:  // xor h
-            a.xor(h)
-            
-        case 0xad:  // xor l
-            a.xor(l)
+        case 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xaf:  // xor reg
+            a.xor([b, c, d, e, h, l, a, a][opcode - 0xa8])
             
         case 0xae:  // xor (hl)
             a.xor(memory.get(hl))
             
-        case 0xaf:  // xor a
-            a.xor(a)
-            
-        case 0xb0:  // or b
-            a.or(b)
-            
-        case 0xb1:  // or c
-            a.or(c)
-            
-        case 0xb2:  // or d
-            a.or(d)
-            
-        case 0xb3:  // or e
-            a.or(e)
-            
-        case 0xb4:  // or h
-            a.or(h)
-            
-        case 0xb5:  // or l
-            a.or(l)
+        case 0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb7:  // or reg
+            a.or([b, c, d, e, h, l, a, a][opcode - 0xb0])
             
         case 0xb6:  // or (hl)
             a.or(memory.get(hl))
             
-        case 0xb7:  // or a
-            a.or(a)
-            
-        case 0xb8:  // cp b
-            a.cp(b)
-            
-        case 0xb9:  // cp c
-            a.cp(c)
-            
-        case 0xba:  // cp d
-            a.cp(d)
-            
-        case 0xbb:  // cp e
-            a.cp(e)
-            
-        case 0xbc:  // cp h
-            a.cp(h)
-            
-        case 0xbd:  // cp l
-            a.cp(l)
+        case 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xbf:  // cp reg
+            a.cp([b, c, d, e, h, l, a, a][opcode - 0xb8])
             
         case 0xbe:  // cp (hl)
             a.cp(memory.get(hl))
-            
-        case 0xbf:  // cp a
-            a.cp(a)
             
         case 0xc0:  // ret nz
             if Z80.f.value & Z80.zBit > 0 {

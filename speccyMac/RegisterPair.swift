@@ -13,12 +13,12 @@ class RegisterPair {
     let hi: Register
     let lo: Register
     
-    var value: UInt16 {
-        get {
+    final var value: UInt16 {
+        @inline(__always) get {
             return (UInt16(hi.value) << 8) | UInt16(lo.value)
         }
         
-        set {
+        @inline(__always) set {
             hi.value = UInt8(newValue >> 8)
             lo.value = UInt8(newValue & 0xff)
         }
@@ -43,7 +43,7 @@ class RegisterPair {
     }
     
     final func adc(_ amount: UInt16) {
-        let add16temp: UInt32 = UInt32(value) &+ UInt32(amount) &+ UInt32(Z80.f.value & Z80.cBit)
+        let add16temp: UInt32 = UInt32(value) + UInt32(amount) + UInt32(Z80.f.value & Z80.cBit)
         let lookup = ((value & 0x8800) >> 11) | ((amount & 0x8800) >> 10) | ((UInt16(add16temp & 0xffff) & 0x8800) >> 9)
         value = UInt16(add16temp & 0xffff)
         

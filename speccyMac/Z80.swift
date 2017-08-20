@@ -161,36 +161,42 @@ class Z80 : Processor {
                 } else if !paused {
                     do {
                         opCode = memory.get(pc)
-                        byte1  = memory.get(pc &+ 1)
-                        byte2  = memory.get(pc &+ 2)
-                        byte3  = memory.get(pc &+ 3)
                         
                         switch opCode {
-                        case 0xcb:
-                            try cbprefix(opcode: byte1, first: byte2, second: byte3)
                             
-                        case 0xdd:
-                            ixy.value = ix
-                            if byte1 == 0xcb {
-                                try ddcbprefix(opcode: byte3, first: byte2)
-                            } else {
-                                try ddprefix(opcode: byte1, first: byte2, second: byte3)
-                            }
-                            ix = ixy.value
+                        case 0xcb:
+                            byte1  = memory.get(pc &+ 1)
+                            try cbprefix(opcode: byte1)
                             
                         case 0xed:
+                            byte1  = memory.get(pc &+ 1)
+                            byte2  = memory.get(pc &+ 2)
+                            byte3  = memory.get(pc &+ 3)
                             try edprefix(opcode: byte1, first: byte2, second: byte3)
                             
-                        case 0xfd:
-                            ixy.value = iy
+                        case 0xdd, 0xfd:
+                            byte1  = memory.get(pc &+ 1)
+                            byte2  = memory.get(pc &+ 2)
+                            byte3  = memory.get(pc &+ 3)
+                            
+                            let activeRegPair = opCode == 0xdd ? ix : iy
+                            ixy.value = activeRegPair
+                            
                             if byte1 == 0xcb {
                                 try ddcbprefix(opcode: byte3, first: byte2)
                             } else {
                                 try ddprefix(opcode: byte1, first: byte2, second: byte3)
                             }
-                            iy = ixy.value
+                            
+                            if opCode == 0xdd {
+                                ix = ixy.value
+                            } else {
+                                iy = ixy.value
+                            }
                             
                         default:
+                            byte1  = memory.get(pc &+ 1)
+                            byte2  = memory.get(pc &+ 2)
                             try unprefixed(opcode: opCode, first: byte1, second: byte2)
                         }
                     }
