@@ -9,49 +9,21 @@
 import Foundation
 import Cocoa
 
-protocol Machine : class {
-    
-    func start()
-    func refreshScreen()
-    func playSound()
-    
-    func loadGame(_ game: String)
-    func captureRow(_ row: UInt16)
-    
-    func input(_ high: UInt8, low: UInt8) -> UInt8
-    func output(_ port: UInt8, byte: UInt8)
-    
-    var processor: Processor { get }
-    var memory:    Memory { get }
-    
-    var ticksPerFrame:   UInt32 { get }
-    var audioPacketSize: UInt32 { get }
-    
-    var allGames: [Game] { get }
-    
-    weak var emulatorScreen: NSImageView?  { get set }
-    weak var emulatorView:   EmulatorView? { get set }
-    weak var lateLabel:      NSTextField?  { get set }
-}
-
-extension Machine {
-    
-    func start() {
-        processor.machine = self
-        
-        DispatchQueue.global().async {
-            self.processor.start()
-        }
-    }
-}
-
 class Spectrum: Machine {
+    
     var processor: Processor
     var memory:    Memory
+    
+    var ticksPerFrame:   UInt32 = 69888
+    var audioPacketSize: UInt32 = 79
     
     weak var emulatorView:   EmulatorView?
     weak var emulatorScreen: NSImageView?
     weak var lateLabel:      NSTextField?
+    
+    let brightBit: UInt8 = 0x40
+    let flashBit: UInt8  = 0x80
+    let attributeAddress: UInt16 = 22528
     
     var clickCount: UInt32 = 0
     
@@ -59,8 +31,8 @@ class Spectrum: Machine {
     let colourSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
     
-    var flashCount = 0
-    var invertColours = false
+    var flashCounter = 0
+    var invertFlashColours = false
     
     var colours = [UInt32](repeating: 0, count: 16)
     
@@ -82,35 +54,36 @@ class Spectrum: Machine {
                        colour(r: 0x00, g: 0x00, b: 0x00), colour(r: 0x00, g: 0x00, b: 0xff), colour(r: 0xff, g: 0x00, b: 0x00), colour(r: 0xff, g: 0x00, b: 0xff),
                        colour(r: 0x00, g: 0xff, b: 0x00), colour(r: 0x00, g: 0xff, b: 0xff), colour(r: 0xff, g: 0xff, b: 0x00), colour(r: 0xff, g: 0xff, b: 0xff)]
     
-    let keyMap = [0xfd01, 0xfd02, 0xfd04, 0xfd08, 0xbf10, 0xfd10, 0xfe02, 0xfe04, 0xfe08, 0xfe10,
-                  0x0000, 0x7f10, 0xfb01, 0xfb02, 0xfb04, 0xfb08, 0xdf10, 0xfb10, 0xf701, 0xf702,
-                  0xf704, 0xf708, 0xef10, 0xf710, 0x0000, 0xef02, 0xef08, 0x0000, 0xef04, 0xef01,
-                  0x0000, 0xdf02, 0xdf08, 0x0000, 0xdf04, 0xdf01, 0xbf01, 0xbf02, 0xbf08, 0x0000,
-                  0xbf04, 0x0000, 0x0000, 0x7f02, 0x0000, 0x7f08, 0x7f04, 0x0000, 0x0000, 0x7f01,
-                  0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xfe01, 0x0000, 0x0000, 0x0000,
-                  0xfe01]
+    // mac key code to spectrum key code
+    let keyMap: [UInt16] = [0xfd01, 0xfd02, 0xfd04, 0xfd08, 0xbf10, 0xfd10, 0xfe02, 0xfe04, 0xfe08, 0xfe10,
+                            0x0000, 0x7f10, 0xfb01, 0xfb02, 0xfb04, 0xfb08, 0xdf10, 0xfb10, 0xf701, 0xf702,
+                            0xf704, 0xf708, 0xef10, 0xf710, 0x0000, 0xef02, 0xef08, 0x0000, 0xef04, 0xef01,
+                            0x0000, 0xdf02, 0xdf08, 0x0000, 0xdf04, 0xdf01, 0xbf01, 0xbf02, 0xbf08, 0x0000,
+                            0xbf04, 0x0000, 0x0000, 0x7f02, 0x0000, 0x7f08, 0x7f04, 0x0000, 0x0000, 0x7f01,
+                            0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xfe01, 0x0000, 0x0000, 0x0000,
+                            0xfe01]
     
-    var allGames = [Game(file: "manic.sna", name: "Manic Miner"),
-                    Game(file: "aticatac.sna", name: "Atic Atac"),
-                    Game(file: "brucelee.sna", name: "Bruce Lee"),
-                    Game(file: "deathchase.sna", name: "3D Deathchase"),
-                    Game(file: "JetPac.sna", name: "Jetpac"),
-                    Game(file: "monty.sna", name: "Wanted: Monty Mole"),
-                    Game(file: "spacies.sna", name: "Space Invaders (unfinished)"),
-                    Game(file: "thehobbit.sna", name: "The Hobbit"),
-                    Game(file: "jetsetw.sna", name: "Jet Set Willy"),
-                    Game(file: "techted.sna", name: "Technician Ted"),
-                    Game(file: "uridium.sna", name: "Uridium"),
-                    Game(file: "cobra.sna", name: "Cobra"),
-                    Game(file: "cybernoid1.sna", name: "Cybernoid"),
-                    Game(file: "cybernoid2.sna", name: "Cybernoid 2"),
-                    Game(file: "dynadan.sna", name: "Dynamite Dan"),
-                    Game(file: "greenberet.sna", name: "Green Beret"),
-                    Game(file: "headoverheels.sna", name: "Head Over Heels"),
-                    Game(file: "hypersports.sna", name: "Hypersports"),
-                    Game(file: "JetMan.sna", name: "Lunar Jetman"),
-                    Game(file: "sabre.sna", name: "Sabre Wulf"),
-                    Game(file: "starquake.sna", name: "Starquake")
+    var games = [Game(file: "manic.sna", name: "Manic Miner"),
+                 Game(file: "aticatac.sna", name: "Atic Atac"),
+                 Game(file: "brucelee.sna", name: "Bruce Lee"),
+                 Game(file: "deathchase.sna", name: "3D Deathchase"),
+                 Game(file: "JetPac.sna", name: "Jetpac"),
+                 Game(file: "monty.sna", name: "Wanted: Monty Mole"),
+                 Game(file: "spacies.sna", name: "Space Invaders (unfinished)"),
+                 Game(file: "thehobbit.sna", name: "The Hobbit"),
+                 Game(file: "jetsetw.sna", name: "Jet Set Willy"),
+                 Game(file: "techted.sna", name: "Technician Ted"),
+                 Game(file: "uridium.sna", name: "Uridium"),
+                 Game(file: "cobra.sna", name: "Cobra"),
+                 Game(file: "cybernoid1.sna", name: "Cybernoid"),
+                 Game(file: "cybernoid2.sna", name: "Cybernoid 2"),
+                 Game(file: "dynadan.sna", name: "Dynamite Dan"),
+                 Game(file: "greenberet.sna", name: "Green Beret"),
+                 Game(file: "headoverheels.sna", name: "Head Over Heels"),
+                 Game(file: "hypersports.sna", name: "Hypersports"),
+                 Game(file: "JetMan.sna", name: "Lunar Jetman"),
+                 Game(file: "sabre.sna", name: "Sabre Wulf"),
+                 Game(file: "starquake.sna", name: "Starquake")
     ]
     
     init() {
@@ -140,7 +113,7 @@ class Spectrum: Machine {
                 rowNum = rowNum + 1
             }
             
-            attributeRowAddress[row] = 22528 + (32 * UInt16(row))
+            attributeRowAddress[row] = attributeAddress + (32 * UInt16(row))
         }
         
         provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
@@ -148,14 +121,18 @@ class Spectrum: Machine {
         })!        
     }
     
-    func loadGame(_ game: String) {
-        processor.pause()
+    final func captureRow(_ row: UInt16) {
+        var pixelAddress  = screenRowAddress[row]
+        var colourAddress = attributeRowAddress[row >> 3]
         
-        if let _ = Loader(game, z80: processor as! Z80) {
-            print("loaded \(game)")
-            processor.unpause()
-        } else {
-            print("couldnt load \(game)")
+        var index = Int(row << 5)
+        for _ in 0..<32 {
+            screenBuffer[index] = memory.get(pixelAddress)
+            colourBuffer[index] = memory.get(colourAddress)
+            
+            pixelAddress  = pixelAddress + 1
+            colourAddress = colourAddress + 1
+            index = index + 1
         }
     }
     
@@ -167,26 +144,26 @@ class Spectrum: Machine {
             self.lateLabel?.isHidden = true
         }
         
-        flashCount = flashCount + 1
-        if flashCount == 16 {
-            invertColours = !invertColours
-            flashCount = 0
+        flashCounter = flashCounter + 1
+        if flashCounter == 16 {
+            invertFlashColours = !invertFlashColours
+            flashCounter = 0
         }
         
         var bmpIndex = 0
         
         for index in 0..<192 * 32 {
-            let byte   = screenBuffer[index]
-            let colour = colourBuffer[index]
+            let byte      = screenBuffer[index]
+            let attribute = colourBuffer[index]
             
-            let offset:UInt8 = colour & 0x40 > 0 ? 8 : 0
+            let colourOffset:UInt8 = attribute & brightBit > 0 ? 8 : 0
             
-            var ink   = colours[(colour & 0x07) + offset]
-            var paper = colours[((colour & 0x38) >> 3) + offset]
+            var ink   = colours[(attribute & 0x07) + colourOffset]
+            var paper = colours[((attribute & 0x38) >> 3) + colourOffset]
             
-            if colour & 0x80 > 0 && invertColours {
-                paper = colours[(colour & 0x07) + offset]
-                ink   = colours[((colour & 0x38) >> 3) + offset]
+            if attribute & flashBit > 0 && invertFlashColours {
+                paper = colours[(attribute & 0x07) + colourOffset]
+                ink   = colours[((attribute & 0x38) >> 3) + colourOffset]
             }
             
             bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
@@ -206,33 +183,17 @@ class Spectrum: Machine {
         }
     }
     
-    final func captureRow(_ row: UInt16) {
-        var pixelAddress  = screenRowAddress[row]
-        var colourAddress = attributeRowAddress[row >> 3]
-        
-        var index = Int(row << 5)
-        for _ in 0..<32 {
-            screenBuffer[index] = memory.get(pixelAddress)
-            colourBuffer[index] = memory.get(colourAddress)
-            
-            pixelAddress = pixelAddress + 1
-            colourAddress = colourAddress + 1
-            index = index + 1
-        }
-    }
-    
     final func input(_ high: UInt8, low: UInt8) -> UInt8 {
         var byte: UInt8 = 0x00
         
-        
-        if low == 0xfe {            // keyboard
+        if low == 0xfe {            // keyboard port
             let downKeys = emulatorView?.keysDown ?? []            
             
             var keysDown: [UInt16] = []
             for key in downKeys {
                 if key < keyMap.count  {
                     if keyMap[key] > 0 {
-                        keysDown.append(UInt16(keyMap[key]))
+                        keysDown.append(keyMap[key])
                     }
                 }
             }
@@ -283,29 +244,26 @@ class Spectrum: Machine {
                     bit = bit << 1
                 }
             }
-        } else if low == 0x1f {     // kempston
+        } else if low == 0x1f {     // kempston port
             let downKeys = emulatorView?.keysDown ?? []
             
-            let padKeys = [124, 123, 125, 126, 50]  // cursor keys and ` (to the left of Z key)
+            let padKeys: [UInt16] = [124, 123, 125, 126, 50]  // cursor keys and ` (to the left of Z key)
             var bit:  UInt8 = 0x01
             
             for key in padKeys {
-                if downKeys.contains(UInt16(key)) {
+                if downKeys.contains(key) {
                     byte |= bit
                 }
                 bit = bit << 1
             }
-        } else if low == 0xff {     // video beam
-            if processor.videoRow < 64 || processor.videoRow > 255 {
-                byte = 0xff
-            } else {
+        } else if low == 0xff {     // video beam port
+            byte = 0xff
+            if processor.videoRow >= 64 && processor.videoRow <= 255 {
                 if processor.ula >= 24 && processor.ula <= 152 {
                     let rowNum = processor.videoRow - 64
-                    let attribAddress = 22528 + ((rowNum >> 3) << 5)
+                    let attribAddress = self.attributeAddress + ((rowNum >> 3) << 5)
                     let col = (processor.ula - 24) >> 2
                     byte = memory.get(attribAddress + UInt16(col & 0xffff))
-                } else {
-                    byte = 0xff
                 }
             }
         } else {
@@ -333,10 +291,17 @@ class Spectrum: Machine {
     final func playSound() {
         if clickCount > 0 {
             clickCount = 0
-//            print("beep click count \(clickCount)")
         }
     }
     
-    final var ticksPerFrame: UInt32 = 69888
-    final var audioPacketSize: UInt32 = 79
+    func loadGame(_ game: String) {
+        processor.pause()
+        
+        if let _ = Loader(game, z80: processor as! Z80) {
+            print("loaded \(game)")
+            processor.unpause()
+        } else {
+            print("couldnt load \(game)")
+        }
+    }
 }

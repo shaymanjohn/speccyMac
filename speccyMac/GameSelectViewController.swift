@@ -21,7 +21,7 @@ extension GameSelectViewController: NSTableViewDataSource {
     
     func numberOfRows(in tableView: NSTableView) -> Int {
         
-        return machine.allGames.count
+        return machine.games.count
     }
 }
 
@@ -29,7 +29,7 @@ extension GameSelectViewController: NSTableViewDelegate {
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         
-        let game = machine.allGames[row]
+        let game = machine.games[row]
         let tf = NSTextField(labelWithString: game.name)        
         return tf
     }
@@ -37,7 +37,7 @@ extension GameSelectViewController: NSTableViewDelegate {
     func tableViewSelectionDidChange(_ notification: Notification) {
         
         if let tv = notification.object as? NSTableView {
-            let selectedGame = machine.allGames[tv.selectedRow]
+            let selectedGame = machine.games[tv.selectedRow]
             machine.loadGame(selectedGame.file)
             
             self.dismissViewController(self)
