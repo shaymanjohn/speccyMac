@@ -18,6 +18,12 @@ extension Z80 {
         
         switch opcode {
             
+        case 0x06:
+            memory.rlc(offsetAddress)
+            
+        case 0x0e:
+            memory.rrc(offsetAddress)
+            
         case 0x2e:
             memory.sra(offsetAddress)
             

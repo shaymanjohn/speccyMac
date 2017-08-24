@@ -53,6 +53,9 @@ extension Z80 {
         case 0x26:  // ld ixh, n
             ixy.hi.value = first
             
+        case 0x29:  // add ix, ix
+            ixy.add(ixy.value)
+            
         case 0x2a:  // ld ix, (nn)
             ixy.lo.value = memory.get(word16)
             ixy.hi.value = memory.get(word16 &+ 1)
@@ -62,6 +65,9 @@ extension Z80 {
             
         case 0x2d:  // dec ixl
             ixy.lo.dec()
+            
+        case 0x2e:  // ld ixl, n
+            ixy.lo.value = first
             
         case 0x34:  // inc (ix+d)
             memory.inc(offsetAddress)
@@ -108,6 +114,12 @@ extension Z80 {
         case 0x67:  // ld ixh, a
             ixy.hi.value = a.value
             
+        case 0x68:  // ld ixl, b
+            ixy.lo.value = b.value
+            
+        case 0x69:  // ld ixl, c
+            ixy.lo.value = c.value
+            
         case 0x6e:  // ld l, (ix+d)
             l.value = memory.get(offsetAddress)
             
@@ -134,6 +146,9 @@ extension Z80 {
             
         case 0x77:  // ld (ix+d), a
             memory.set(offsetAddress, reg: a)
+            
+        case 0x7c:  // ld a, ixh
+            a.value = ixy.hi.value
             
         case 0x7d:  // ld a, ixl
             a.value = ixy.lo.value

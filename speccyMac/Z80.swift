@@ -17,11 +17,12 @@ protocol Processor: class {
     var ula:      UInt32 { get }
     var videoRow: UInt16 { get }
     
-    var machine: Machine? { get set }
+    var machine:    Machine? { get set }
     var lateFrames: Int { get }
 }
 
 class Z80 : Processor {
+    
     let a = Accumulator()
     let b = Register()
     let c = Register()
@@ -231,6 +232,7 @@ class Z80 : Processor {
                 let err = error as NSError
                 print("Unknown opcode error, \(err.domain), \(err.userInfo)")
                 running = false
+                
             }
         }
     }
@@ -326,7 +328,7 @@ class Z80 : Processor {
         
         if thisFrameTime < frameTime {
             lastFrame = lastFrame + frameTime
-            Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
+//            Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
         } else if thisFrameTime > frameTime {
             lateFrames = lateFrames + 1
             lastFrame = timeNow

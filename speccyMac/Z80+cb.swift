@@ -67,6 +67,9 @@ extension Z80 {
             
         case 0x1e:  // rr (hl)
             memory.rr(hl)
+            
+        case 0x26:  // sla (hl)
+            memory.sla(hl)
 
         case 0x3e:  // srl (hl)
             memory.srl(hl)

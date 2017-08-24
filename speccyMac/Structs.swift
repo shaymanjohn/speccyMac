@@ -9,6 +9,7 @@
 import Foundation
 
 struct colour {
+    
     let hex: UInt32
     
     let r: UInt8

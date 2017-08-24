@@ -33,6 +33,8 @@ class Spectrum: Machine {
     
     var flashCounter = 0
     var invertFlashColours = false
+    var borderColourIndex: UInt8
+    var borderColour: colour!
     
     var colours = [UInt32](repeating: 0, count: 16)
     
@@ -84,7 +86,10 @@ class Spectrum: Machine {
                  Game(file: "hypersports.sna", name: "Hypersports"),
                  Game(file: "JetMan.sna", name: "Lunar Jetman"),
                  Game(file: "sabre.sna", name: "Sabre Wulf"),
-                 Game(file: "starquake.sna", name: "Starquake")
+                 Game(file: "starquake.sna", name: "Starquake"),
+                 Game(file: "chuckie.sna", name: "Chuckie Egg"),
+                 Game(file: "batty.sna", name: "Batty"),
+                 Game(file: "testz80.sna", name: "Z80 test")
     ]
     
     init() {
@@ -98,6 +103,8 @@ class Spectrum: Machine {
             let bComp = UInt32(colour.b) << 24
             colours[colourIndex] = rComp | gComp | bComp | UInt32(0xff)
         }
+        
+        
         
         // Precalculate screen and colour row addresses
         var rowNum = 0
@@ -114,6 +121,8 @@ class Spectrum: Machine {
             
             attributeRowAddress[row] = attributeAddress + (32 * UInt16(row))
         }
+        
+        borderColourIndex = 255
         
         provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
             (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
@@ -143,6 +152,8 @@ class Spectrum: Machine {
             self.lateLabel?.isHidden = true
         }
         
+        self.emulatorView?.layer?.backgroundColor = CGColor(red: borderColour.rf, green: borderColour.gf, blue: borderColour.bf, alpha: 1.0)
+        
         flashCounter = flashCounter + 1
         if flashCounter == 16 {
             invertFlashColours = !invertFlashColours
@@ -161,8 +172,9 @@ class Spectrum: Machine {
             var paper = colours[((attribute & 0x38) >> 3) + colourOffset]
             
             if attribute & flashBit > 0 && invertFlashColours {
-                paper = colours[(attribute & 0x07) + colourOffset]
-                ink   = colours[((attribute & 0x38) >> 3) + colourOffset]
+                let temp = paper
+                paper = ink
+                ink = temp
             }
             
             bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
@@ -275,10 +287,9 @@ class Spectrum: Machine {
     
     final func output(_ port: UInt8, byte: UInt8) {
         if port == 0xfe {
-            let colour = colourTable[(byte & 0x07)]
-            
-            DispatchQueue.main.async {
-                self.emulatorView?.layer?.backgroundColor = CGColor(red: colour.rf, green: colour.gf, blue: colour.bf, alpha: 1)
+            if borderColourIndex != (byte & 0x07) {
+                borderColourIndex = byte & 0x07
+                borderColour = colourTable[borderColourIndex]
             }
             
             if byte & 0x10 > 0 {
