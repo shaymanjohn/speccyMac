@@ -17,7 +17,7 @@ class Spectrum: Machine {
     var ticksPerFrame:   UInt32 = 69888
     var audioPacketSize: UInt32 = 79
     
-    weak var emulatorView:   EmulatorView?
+    weak var emulatorView:   EmulatorInputView?
     weak var emulatorScreen: NSImageView?
     weak var lateLabel:      NSTextField?
     

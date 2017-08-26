@@ -10,7 +10,7 @@ import Cocoa
 
 class Emulator: NSViewController {
     
-    @IBOutlet weak var emulatorScreen: NSImageView!
+    @IBOutlet weak var emulatorScreen: EmulatorImageView!
     @IBOutlet weak var lateLabel:      NSTextField!
     
     var machine: Machine!
@@ -22,7 +22,7 @@ class Emulator: NSViewController {
         self.view.wantsLayer = true
                 
         machine = Spectrum()
-        machine.emulatorView = self.view as? EmulatorView
+        machine.emulatorView = self.view as? EmulatorInputView
         machine.emulatorScreen = self.emulatorScreen
         machine.lateLabel = self.lateLabel
         

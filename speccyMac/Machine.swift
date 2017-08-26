@@ -30,7 +30,7 @@ protocol Machine : class {
     var games: [Game] { get }
     
     weak var emulatorScreen: NSImageView?  { get set }
-    weak var emulatorView:   EmulatorView? { get set }
+    weak var emulatorView:   EmulatorInputView? { get set }
     weak var lateLabel:      NSTextField?  { get set }
 }
 

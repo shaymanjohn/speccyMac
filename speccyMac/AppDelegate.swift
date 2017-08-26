@@ -26,7 +26,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func applicationDidBecomeActive(_ notification: Notification) {
         
         if let emulator = NSApplication.shared.mainWindow?.contentViewController as? Emulator {
-            (emulator.view as? EmulatorView)?.clearKeysWhenGettingFocus()
+            (emulator.view as? EmulatorInputView)?.clearKeysWhenGettingFocus()
         }
     }
 

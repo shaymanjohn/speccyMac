@@ -18,6 +18,7 @@
 		6F33B92E1F38F56C00B886CD /* spacies.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9251F38F55200B886CD /* spacies.sna */; };
 		6F33B92F1F38F56E00B886CD /* thehobbit.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9241F38F55200B886CD /* thehobbit.sna */; };
 		6F37E1BE1F46F25F005A4976 /* GameSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F37E1BD1F46F25F005A4976 /* GameSelectViewController.swift */; };
+		6F5217DF1F517C8C005063E5 /* EmulatorImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5217DE1F517C8C005063E5 /* EmulatorImageView.swift */; };
 		6F7421E11F36FDFF00C056EA /* RefreshReg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7421E01F36FDFF00C056EA /* RefreshReg.swift */; };
 		6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7618D91F49697F00D793D7 /* Machine.swift */; };
 		6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */; };
@@ -26,7 +27,7 @@
 		6F8E15441F3B2FB800A34AB4 /* testz80.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E15381F3B14E100A34AB4 /* testz80.sna */; };
 		6F93325E1F4F6B35000CA284 /* chuckie.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F93325D1F4F6B2B000CA284 /* chuckie.sna */; };
 		6F93325F1F4F6B38000CA284 /* batty.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F93325C1F4F6B2A000CA284 /* batty.sna */; };
-		6FA3852E1F39BCEF006CC865 /* EmulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3852D1F39BCEF006CC865 /* EmulatorView.swift */; };
+		6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */; };
 		6FCA5BA71F38B38200A22E92 /* accumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */; };
 		6FCC17D21F3EDDF900B867E1 /* batman.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CA1F3EDDEE00B867E1 /* batman.sna */; };
 		6FCC17D31F3EDDFC00B867E1 /* cobra.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17C91F3EDDEE00B867E1 /* cobra.sna */; };
@@ -86,6 +87,7 @@
 		6F33B9271F38F55200B886CD /* JetPac.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = JetPac.sna; sourceTree = "<group>"; };
 		6F33B9281F38F55200B886CD /* aticatac.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = aticatac.sna; sourceTree = "<group>"; };
 		6F37E1BD1F46F25F005A4976 /* GameSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSelectViewController.swift; sourceTree = "<group>"; };
+		6F5217DE1F517C8C005063E5 /* EmulatorImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorImageView.swift; sourceTree = "<group>"; };
 		6F7421E01F36FDFF00C056EA /* RefreshReg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshReg.swift; sourceTree = "<group>"; };
 		6F7618D91F49697F00D793D7 /* Machine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Machine.swift; sourceTree = "<group>"; };
 		6F8E15381F3B14E100A34AB4 /* testz80.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = testz80.sna; sourceTree = "<group>"; };
@@ -94,7 +96,7 @@
 		6F8E15401F3B2F1600A34AB4 /* jetsetw.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = jetsetw.sna; sourceTree = "<group>"; };
 		6F93325C1F4F6B2A000CA284 /* batty.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = batty.sna; sourceTree = "<group>"; };
 		6F93325D1F4F6B2B000CA284 /* chuckie.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = chuckie.sna; sourceTree = "<group>"; };
-		6FA3852D1F39BCEF006CC865 /* EmulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorView.swift; sourceTree = "<group>"; };
+		6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorInputView.swift; sourceTree = "<group>"; };
 		6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = accumulatorTests.swift; sourceTree = "<group>"; };
 		6FCC17C61F3EDDED00B867E1 /* hypersports.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = hypersports.sna; sourceTree = "<group>"; };
 		6FCC17C71F3EDDEE00B867E1 /* greenberet.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = greenberet.sna; sourceTree = "<group>"; };
@@ -231,7 +233,8 @@
 			children = (
 				6FFB31531F22379B00C15CD7 /* AppDelegate.swift */,
 				6FFB31551F22379B00C15CD7 /* Emulator.swift */,
-				6FA3852D1F39BCEF006CC865 /* EmulatorView.swift */,
+				6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */,
+				6F5217DE1F517C8C005063E5 /* EmulatorImageView.swift */,
 				6F37E1BD1F46F25F005A4976 /* GameSelectViewController.swift */,
 				6F7618D91F49697F00D793D7 /* Machine.swift */,
 				6F036DBE1F44C68D005A16D0 /* Spectrum.swift */,
@@ -407,7 +410,7 @@
 				6FEFA90F1F2238C200F9AD93 /* Z80.swift in Sources */,
 				6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */,
 				6FFC9E081F35CFA400B9322C /* Register.swift in Sources */,
-				6FA3852E1F39BCEF006CC865 /* EmulatorView.swift in Sources */,
+				6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */,
 				6FEFA9261F224F9000F9AD93 /* Z80+cb.swift in Sources */,
 				6FEFA9281F224FC000F9AD93 /* Z80+dd.swift in Sources */,
 				6F7421E11F36FDFF00C056EA /* RefreshReg.swift in Sources */,
@@ -417,6 +420,7 @@
 				6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */,
 				6F036DBF1F44C68D005A16D0 /* Spectrum.swift in Sources */,
 				6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */,
+				6F5217DF1F517C8C005063E5 /* EmulatorImageView.swift in Sources */,
 				6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */,
 				6F37E1BE1F46F25F005A4976 /* GameSelectViewController.swift in Sources */,
 				6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */,

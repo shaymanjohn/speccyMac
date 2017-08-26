@@ -328,7 +328,7 @@ class Z80 : Processor {
         
         if thisFrameTime < frameTime {
             lastFrame = lastFrame + frameTime
-//            Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
+            Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
         } else if thisFrameTime > frameTime {
             lateFrames = lateFrames + 1
             lastFrame = timeNow

@@ -8,9 +8,9 @@
 
 import Cocoa
 
-class EmulatorView: NSView {
+class EmulatorInputView: NSView {
     
-    var keysDown: [UInt16] = []
+    var keysDown: [UInt16] = []    
     
     private var keyStates: [UInt16 : Bool] = [:] {
         didSet {
