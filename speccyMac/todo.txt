@@ -27,6 +27,7 @@ Known Bugs
 ----------
 testZ80 - missing opcodes
 Cobra - crashes intermittently
+Green Beret - crashes intermittently
 
 
 Fixed bugs

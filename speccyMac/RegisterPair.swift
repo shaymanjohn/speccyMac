@@ -40,12 +40,7 @@ class RegisterPair {
         value = UInt16(temp & 0xffff)
         
         Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (temp & 0x10000 > 0 ? Z80.cBit : 0) | (UInt8((temp & 0xff00) >> 8) & (Z80.threeBit | Z80.fiveBit)) | Z80.halfCarryAdd[lookup]
-    }
-    
-//    UInt32 temp = _hl + word;\
-//    UInt8 lookup = ((_hl & 0x0800) >> 11) | ((word & 0x0800) >> 10) | ((temp & 0x0800) >> 9);\
-//    _hl = temp;\
-//    _f = (_f & (PV_BIT | Z_BIT | S_BIT)) | (temp & 0x10000 ? C_BIT : 0) | ((temp >> 8) & (THREE_BIT | FIVE_BIT)) | halfcarry_add_table[lookup];\
+    }    
     
     final func adc(_ amount: UInt16) {
         let add16temp: UInt32 = UInt32(value) + UInt32(amount) + UInt32(Z80.f.value & Z80.cBit)
