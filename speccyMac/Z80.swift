@@ -162,23 +162,21 @@ class Z80 : Processor {
                 } else if !paused {
                     do {
                         opCode = memory.get(pc)
+                        byte1  = memory.get(pc &+ 1)
                         
                         switch opCode {
                             
                         case 0xcb:
-                            byte1  = memory.get(pc &+ 1)
                             try cbprefix(opcode: byte1)
                             
                         case 0xed:
-                            byte1  = memory.get(pc &+ 1)
-                            byte2  = memory.get(pc &+ 2)
-                            byte3  = memory.get(pc &+ 3)
+                            byte2 = memory.get(pc &+ 2)
+                            byte3 = memory.get(pc &+ 3)
                             try edprefix(opcode: byte1, first: byte2, second: byte3)
                             
                         case 0xdd, 0xfd:
-                            byte1  = memory.get(pc &+ 1)
-                            byte2  = memory.get(pc &+ 2)
-                            byte3  = memory.get(pc &+ 3)
+                            byte2 = memory.get(pc &+ 2)
+                            byte3 = memory.get(pc &+ 3)
                             
                             let activeRegPair = opCode == 0xdd ? ix : iy
                             ixy.value = activeRegPair
@@ -196,10 +194,13 @@ class Z80 : Processor {
                             }
                             
                         default:
-                            byte1  = memory.get(pc &+ 1)
-                            byte2  = memory.get(pc &+ 2)
+                            byte2 = memory.get(pc &+ 2)
                             try unprefixed(opcode: opCode, first: byte1, second: byte2)
                         }
+                    } catch {
+                        let err = error as NSError
+                        print("Unknown opcode error, \(err.domain), \(err.userInfo)")
+                        running = false
                     }
                 }
                 
@@ -227,11 +228,6 @@ class Z80 : Processor {
                         self.machine?.playSound()
                     }
                 }
-                
-            } catch {
-                let err = error as NSError
-                print("Unknown opcode error, \(err.domain), \(err.userInfo)")
-                running = false
                 
             }
         }
