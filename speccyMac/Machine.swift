@@ -21,6 +21,8 @@ protocol Machine : class {
     func input(_ high: UInt8, low: UInt8) -> UInt8
     func output(_ port: UInt8, byte: UInt8)
     
+    func reportProblem(_ error: Error)
+    
     var processor: Processor { get }
     var memory:    Memory { get }
     
@@ -37,10 +39,24 @@ protocol Machine : class {
 extension Machine {
     
     func start() {
+        
         processor.machine = self
         
         DispatchQueue.global().async {
             self.processor.start()
+        }
+    }
+    
+    func reportProblem(_ error: Error) {
+        
+        let err = error as NSError
+        
+        if let instruction = err.userInfo["instruction"] as? String,
+            let opcode = err.userInfo["opcode"] as? String {
+            
+            let alert = NSAlert()
+            alert.messageText = "Unemulated Instruction:\n\n\(instruction)\nInstruction number: \(opcode)\nSection: \(err.domain)"
+            alert.runModal()
         }
     }
 }

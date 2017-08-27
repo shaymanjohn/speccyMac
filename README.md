@@ -1,4 +1,4 @@
-# speccyMac
+# SpeccyMac
 ZX Spectrum emulator for OSX (currently 48K only), written in Swift 4
 
 Requires Xcode 9 to build
@@ -9,12 +9,11 @@ Lots of things still to do:<br>
 Sound<br>
 Joypad support<br>
 Hi-res border<br>
-Check timings<br>
-Contention<br>
-Zip support<br>
-Z80<br>
-TZX<br>
-SZX<br>
+Check all timings<br>
+Contended memory<br>
+Add zip support<br>
+Add Z80 file support<br>
+Add TZX/SZX file support<br>
 128K mode<br>
 AY sounds<br>
 Lots more unit tests<br>

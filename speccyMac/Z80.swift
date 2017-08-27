@@ -198,8 +198,10 @@ class Z80 : Processor {
                             try unprefixed(opcode: opCode, first: byte1, second: byte2)
                         }
                     } catch {
-                        let err = error as NSError
-                        print("Unknown opcode error, \(err.domain), \(err.userInfo)")
+                        DispatchQueue.main.async {
+                            self.machine?.reportProblem(error)
+                        }
+                        
                         running = false
                     }
                 }
