@@ -15,5 +15,6 @@ TZX<br>
 SZX<br>
 128K mode<br>
 AY sounds<br>
+Lots more unit tests<br>
 <br>
 All included games are in the public domain to the best of my knowledge<br>

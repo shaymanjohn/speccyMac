@@ -28,6 +28,7 @@
 		6F93325E1F4F6B35000CA284 /* chuckie.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F93325D1F4F6B2B000CA284 /* chuckie.sna */; };
 		6F93325F1F4F6B38000CA284 /* batty.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F93325C1F4F6B2A000CA284 /* batty.sna */; };
 		6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */; };
+		6FC90B4F1F5295AA002506DC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC90B4E1F5295AA002506DC /* README.md */; };
 		6FCA5BA71F38B38200A22E92 /* accumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */; };
 		6FCC17D21F3EDDF900B867E1 /* batman.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CA1F3EDDEE00B867E1 /* batman.sna */; };
 		6FCC17D31F3EDDFC00B867E1 /* cobra.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17C91F3EDDEE00B867E1 /* cobra.sna */; };
@@ -97,6 +98,7 @@
 		6F93325C1F4F6B2A000CA284 /* batty.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = batty.sna; sourceTree = "<group>"; };
 		6F93325D1F4F6B2B000CA284 /* chuckie.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = chuckie.sna; sourceTree = "<group>"; };
 		6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorInputView.swift; sourceTree = "<group>"; };
+		6FC90B4E1F5295AA002506DC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = accumulatorTests.swift; sourceTree = "<group>"; };
 		6FCC17C61F3EDDED00B867E1 /* hypersports.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = hypersports.sna; sourceTree = "<group>"; };
 		6FCC17C71F3EDDEE00B867E1 /* greenberet.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = greenberet.sna; sourceTree = "<group>"; };
@@ -254,6 +256,7 @@
 				6F036DBC1F44C210005A16D0 /* Structs.swift */,
 				6FEFA9101F2239AD00F9AD93 /* Roms */,
 				6F2D00F91F3CA62000343F28 /* todo.txt */,
+				6FC90B4E1F5295AA002506DC /* README.md */,
 				6FFB31571F22379B00C15CD7 /* Assets.xcassets */,
 				6FEFA91B1F223AA400F9AD93 /* z80ops.json */,
 				6FFB31591F22379B00C15CD7 /* Main.storyboard */,
@@ -356,6 +359,7 @@
 				6FCC17D71F3EDE0A00B867E1 /* greenberet.sna in Resources */,
 				6FCC17D91F3EDE1100B867E1 /* hypersports.sna in Resources */,
 				6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */,
+				6FC90B4F1F5295AA002506DC /* README.md in Resources */,
 				6FCC17DA1F3EDE1400B867E1 /* JetMan.sna in Resources */,
 				6FCC17D61F3EDE0700B867E1 /* dynadan.sna in Resources */,
 				6F33B92B1F38F56300B886CD /* deathchase.sna in Resources */,
