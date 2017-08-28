@@ -67,13 +67,12 @@ class Spectrum: Machine {
                             0xfe01]
     
     var games = [Game(file: "manic.sna", name: "Manic Miner"),
-                 Game(file: "aticatac.sna", name: "Atic Atac"),
                  Game(file: "brucelee.sna", name: "Bruce Lee"),
-                 Game(file: "deathchase.sna", name: "3D Deathchase"),
-                 Game(file: "JetPac.sna", name: "Jetpac"),
+                 Game(file: "deathchase.sna", name: "Deathchase"),
                  Game(file: "monty.sna", name: "Wanted: Monty Mole"),
                  Game(file: "spacies.sna", name: "Space Invaders (unfinished)"),
                  Game(file: "thehobbit.sna", name: "The Hobbit"),
+                 Game(file: "testz80.sna", name: "Z80 test"),
                  Game(file: "jetsetw.sna", name: "Jet Set Willy"),
                  Game(file: "techted.sna", name: "Technician Ted"),
                  Game(file: "uridium.sna", name: "Uridium"),
@@ -84,12 +83,10 @@ class Spectrum: Machine {
                  Game(file: "greenberet.sna", name: "Green Beret"),
                  Game(file: "headoverheels.sna", name: "Head Over Heels"),
                  Game(file: "hypersports.sna", name: "Hypersports"),
-                 Game(file: "JetMan.sna", name: "Lunar Jetman"),
-                 Game(file: "sabre.sna", name: "Sabre Wulf"),
                  Game(file: "starquake.sna", name: "Starquake"),
                  Game(file: "chuckie.sna", name: "Chuckie Egg"),
                  Game(file: "batty.sna", name: "Batty"),
-                 Game(file: "testz80.sna", name: "Z80 test")
+                 Game(file: "batman.sna", name: "Batman")
     ]
     
     init() {

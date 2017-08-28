@@ -177,6 +177,11 @@ extension Z80 {
         case 0xbe:  // cp (ix + d)
             a.cp(memory.get(offsetAddress))
             
+        case 0xcd:  // call nnnn
+            memory.push(pc &+ 4)
+            pc = word16
+            pc = pc &- 4
+            
         case 0xe1:  // pop ixy
             ixy.value = memory.pop()
             
