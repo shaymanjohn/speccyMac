@@ -26,6 +26,7 @@
 		6F8E15441F3B2FB800A34AB4 /* testz80.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E15381F3B14E100A34AB4 /* testz80.sna */; };
 		6F93325E1F4F6B35000CA284 /* chuckie.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F93325D1F4F6B2B000CA284 /* chuckie.sna */; };
 		6F93325F1F4F6B38000CA284 /* batty.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F93325C1F4F6B2A000CA284 /* batty.sna */; };
+		6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA031651F5460CA00CD636E /* AudioStreamer.swift */; };
 		6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */; };
 		6FC90B4F1F5295AA002506DC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC90B4E1F5295AA002506DC /* README.md */; };
 		6FCA5BA71F38B38200A22E92 /* accumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */; };
@@ -90,6 +91,7 @@
 		6F8E15401F3B2F1600A34AB4 /* jetsetw.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = jetsetw.sna; sourceTree = "<group>"; };
 		6F93325C1F4F6B2A000CA284 /* batty.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = batty.sna; sourceTree = "<group>"; };
 		6F93325D1F4F6B2B000CA284 /* chuckie.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = chuckie.sna; sourceTree = "<group>"; };
+		6FA031651F5460CA00CD636E /* AudioStreamer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioStreamer.swift; sourceTree = "<group>"; };
 		6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorInputView.swift; sourceTree = "<group>"; };
 		6FC90B4E1F5295AA002506DC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = accumulatorTests.swift; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				6F7618D91F49697F00D793D7 /* Machine.swift */,
 				6F036DBE1F44C68D005A16D0 /* Spectrum.swift */,
 				6FEFA90C1F2238A500F9AD93 /* Memory.swift */,
+				6FA031651F5460CA00CD636E /* AudioStreamer.swift */,
 				6FFC9E071F35CFA400B9322C /* Register.swift */,
 				6FFC9E091F35CFB200B9322C /* RegisterPair.swift */,
 				6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */,
@@ -388,6 +391,7 @@
 				6F036DBD1F44C210005A16D0 /* Structs.swift in Sources */,
 				6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */,
 				6FFC9E0C1F35D65C00B9322C /* Accumulator.swift in Sources */,
+				6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */,
 				6FFB31561F22379B00C15CD7 /* Emulator.swift in Sources */,
 				6FEFA90F1F2238C200F9AD93 /* Z80.swift in Sources */,
 				6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */,

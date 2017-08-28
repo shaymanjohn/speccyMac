@@ -14,8 +14,10 @@ class Spectrum: Machine {
     var processor: Processor
     var memory:    Memory
     
-    var ticksPerFrame:   UInt32 = 69888
-    var audioPacketSize: UInt32 = 79
+    var ticksPerFrame:   Int = 69888
+    var audioPacketSize: Int = 79
+    
+    var clicks: UInt8 = 0
     
     weak var emulatorView:   EmulatorInputView?
     weak var emulatorScreen: NSImageView?
@@ -25,16 +27,16 @@ class Spectrum: Machine {
     let flashBit:  UInt8 = 0x80
     let attributeAddress: UInt16 = 22528
     
-    var clickCount: UInt32 = 0
-    
     var provider: CGDataProvider!
     let colourSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo  = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
     
     var flashCounter = 0
     var invertFlashColours = false
-    var borderColourIndex: UInt8
+    var borderColourIndex: UInt8 = 0
     var borderColour: colour!
+    
+    let beeper = AudioStreamer()
     
     var colours = [UInt32](repeating: 0, count: 16)
     
@@ -66,7 +68,7 @@ class Spectrum: Machine {
                             0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xfe01, 0x0000, 0x0000, 0x0000,
                             0xfe01]
     
-    var games = [Game(file: "manic.sna", name: "Manic Miner"),
+    let games = [Game(file: "manic.sna", name: "Manic Miner"),
                  Game(file: "brucelee.sna", name: "Bruce Lee"),
                  Game(file: "deathchase.sna", name: "Deathchase"),
                  Game(file: "monty.sna", name: "Wanted: Monty Mole"),
@@ -87,7 +89,7 @@ class Spectrum: Machine {
                  Game(file: "chuckie.sna", name: "Chuckie Egg"),
                  Game(file: "batty.sna", name: "Batty"),
                  Game(file: "batman.sna", name: "Batman")
-    ]
+    ]    
     
     init() {
         memory = Memory("48.rom")
@@ -100,8 +102,6 @@ class Spectrum: Machine {
             let bComp = UInt32(colour.b) << 24
             colours[colourIndex] = rComp | gComp | bComp | UInt32(0xff)
         }
-        
-        
         
         // Precalculate screen and colour row addresses
         var rowNum = 0
@@ -123,7 +123,9 @@ class Spectrum: Machine {
         
         provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
             (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
-        })!        
+        })!
+        
+        beeper.machine = self
     }
     
     final func captureRow(_ row: UInt16) {
@@ -141,7 +143,8 @@ class Spectrum: Machine {
         }
     }
     
-    final func refreshScreen() {
+    final func frameCompleted() {
+        
         if processor.lateFrames > 1 {
             self.lateLabel?.stringValue = "Late \(processor.lateFrames)"
             self.lateLabel?.isHidden = false
@@ -189,6 +192,10 @@ class Spectrum: Machine {
         if let image = CGImage(width: 256, height: 192, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 1024, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) {
             emulatorScreen?.image = NSImage(cgImage: image, size: .zero)
         }
+    }
+    
+    func soundFrameCompleted() {
+        beeper.endFrame()
     }
     
     final func input(_ high: UInt8, low: UInt8) -> UInt8 {
@@ -278,7 +285,6 @@ class Spectrum: Machine {
             byte = 0xff
         }
         
-        Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[byte]
         return byte
     }
     
@@ -289,24 +295,20 @@ class Spectrum: Machine {
                 borderColour = colourTable[borderColourIndex]
             }
             
-            if byte & 0x10 > 0 {
-                clickCount = clickCount + 1
-            }
+            clicks = byte
         }
     }
     
-    final func playSound() {
-        if clickCount > 0 {
-            clickCount = 0
-        }
+    func tick() {
+        beeper.updateSample((processor as! Z80).counter, beep: clicks)
     }
     
     func loadGame(_ game: String) {
         processor.pause()
+        clicks = 0
         
         if let _ = Loader(game, z80: processor as! Z80) {
             print("loaded \(game)")
-            clickCount = 0
             processor.unpause()
         } else {
             print("couldnt load \(game)")

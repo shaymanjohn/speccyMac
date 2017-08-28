@@ -395,9 +395,6 @@ extension Z80 {
                 normalFlow = false
             }
             
-        case 0xcb:  // shouldn't happen
-            break
-            
         case 0xcc:  // call z, nn
             if Z80.f.value & Z80.zBit > 0 {
                 memory.push(pc &+ 3)
@@ -489,6 +486,7 @@ extension Z80 {
             
         case 0xdb:  // in a, (n)
             a.value = machine?.input(a.value, low: first) ?? 0
+            Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[a.value]
             
         case 0xdc:  // call c, nn
             if Z80.f.value & Z80.cBit > 0 {
@@ -498,9 +496,6 @@ extension Z80 {
             } else {
                 normalFlow = false
             }
-            
-        case 0xdd:  // shouldn't happen
-            break
             
         case 0xde:  // sbc a, n
             a.sbc(first)
@@ -588,9 +583,6 @@ extension Z80 {
                 normalFlow = false
             }
             
-        case 0xed:  // shouldn't happen
-            break
-            
         case 0xee:  // xor n
             a.xor(first)
             
@@ -670,10 +662,7 @@ extension Z80 {
                 pc = pc &- 3
             } else {
                 normalFlow = false
-            }
-            
-        case 0xfd:  // shouldn't happen
-            break
+            }            
             
         case 0xfe:  // cp n
             a.cp(first)

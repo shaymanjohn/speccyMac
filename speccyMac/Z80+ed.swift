@@ -49,6 +49,7 @@ extension Z80 {
             
         case 0x50:  // in d, (c)
             d.value = machine?.input(b.value, low: c.value) ?? 0
+            Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[d.value]
             
         case 0x52:  // sbc hl, de
             hl.sbc(de)
@@ -64,6 +65,7 @@ extension Z80 {
             
         case 0x58:  // in e, (c)
             e.value = machine?.input(b.value, low: c.value) ?? 0
+            Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[e.value]
             
         case 0x5a:  // adc hl, de
             hl.adc(de.value)
@@ -110,6 +112,7 @@ extension Z80 {
             
         case 0x78:  // in a, (c)
             a.value = machine?.input(b.value, low: c.value) ?? 0
+            Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[a.value]
             
         case 0x79:  // out (c), a
             machine?.output(c.value, byte: a.value)

@@ -77,7 +77,6 @@ class Z80 : Processor {
     var halted:        Bool = false
     var interruptMode: UInt8 = 0
     var running:       Bool = false
-    var soundCounter:  UInt32 = 0
     
     static let cBit:     UInt8 = 1 << 0
     static let nBit:     UInt8 = 1 << 1
@@ -129,6 +128,11 @@ class Z80 : Processor {
         
         parseInstructions()
         calculateTables()
+        
+        Z80.sp = 0xffff
+        pc = 0x0000
+        iff1 = 0
+        iff2 = 0
     }
     
     func log(_ instruction: Instruction) {
@@ -204,6 +208,8 @@ class Z80 : Processor {
                         
                         running = false
                     }
+
+                    self.machine?.tick()
                 }
                 
                 if ula >= 224 {
@@ -212,8 +218,9 @@ class Z80 : Processor {
                         self.machine?.captureRow(videoRow - 64)
                         
                     case 311:
+                        machine?.soundFrameCompleted()                        
                         DispatchQueue.main.async {
-                            self.machine?.refreshScreen()
+                            self.machine?.frameCompleted()
                         }
                         
                     default:
@@ -222,13 +229,6 @@ class Z80 : Processor {
                     
                     ula = ula - 224
                     videoRow = videoRow + 1
-                }
-                
-                if soundCounter >= machine?.audioPacketSize ?? 0 {
-                    soundCounter = soundCounter - (machine?.audioPacketSize ?? 0)
-                    DispatchQueue.main.async {
-                        self.machine?.playSound()
-                    }
                 }
                 
             }
@@ -247,7 +247,6 @@ class Z80 : Processor {
     final func incCounters(_ amount: UInt32) {
         counter = counter + amount
         ula = ula + amount
-        soundCounter = soundCounter + amount
     }
     
     final func parseInstructions() {
@@ -334,7 +333,7 @@ class Z80 : Processor {
             lastFrame = lastFrame + frameTime
         }
         
-        counter = counter - (machine?.ticksPerFrame ?? 0)
+        counter = counter - UInt32(machine?.ticksPerFrame ?? 0)
         ula = counter
         videoRow = 0
         

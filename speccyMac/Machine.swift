@@ -12,8 +12,10 @@ import Cocoa
 protocol Machine : class {
     
     func start()
-    func refreshScreen()
-    func playSound()
+    func frameCompleted()
+    func soundFrameCompleted()
+    
+    func tick()
     
     func loadGame(_ game: String)
     func captureRow(_ row: UInt16)
@@ -26,10 +28,11 @@ protocol Machine : class {
     var processor: Processor { get }
     var memory:    Memory { get }
     
-    var ticksPerFrame:   UInt32 { get }
-    var audioPacketSize: UInt32 { get }
+    var ticksPerFrame:   Int { get }
+    var audioPacketSize: Int { get }
     
     var games: [Game] { get }
+    var clicks: UInt8 { get }
     
     weak var emulatorScreen: NSImageView?  { get set }
     weak var emulatorView:   EmulatorInputView? { get set }
