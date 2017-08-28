@@ -18,22 +18,13 @@ extension Z80 {
         
         let offsetAddress = first > 127 ? ixy.value &- (UInt16(256) - UInt16(first)) : ixy.value &+ UInt16(first)
         
-        switch opcode {
-            
-        case 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08:
-            break
+        switch opcode {            
             
         case 0x09:  // add ix, bc
             ixy.add(bc.value)
             
-        case 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18:
-            break
-            
         case 0x19:  // add ix, de
             ixy.add(de.value)
-            
-        case 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20:
-            break
             
         case 0x21:  // ld ixy, nnnn
             ixy.value = word16

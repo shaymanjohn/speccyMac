@@ -18,4 +18,4 @@ Add TZX/SZX file support<br>
 AY sounds<br>
 Lots more unit tests<br>
 <br>
-All included games are in the public domain to the best of my knowledge<br>
+All included games have distribution permitted, see: http://worldofspectrum.org/archive.html<br>
