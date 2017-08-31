@@ -47,8 +47,6 @@ class Loader {
                 z80.counter = 0
                 z80.lateFrames = 0
                 z80.halted = false
-                z80.ula = 0
-                z80.videoRow = 0
                 
                 if z80.interrupts {
                     z80.iff1 = 1
@@ -56,15 +54,7 @@ class Loader {
                 } else {
                     z80.iff1 = 0
                     z80.iff2 = 0
-                }
-                
-            // Sound vars
-                //            clicksCount = 0;
-                //            beep = false;
-                //            soundCounter = 0;
-                //            bufferIndex = 0;
-                
-                //            kempston = 0;
+                }                
                 
             } catch {
                 return nil

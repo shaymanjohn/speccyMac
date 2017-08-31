@@ -14,9 +14,6 @@ protocol Processor: class {
     func pause()
     func unpause()
     
-    var ula:      UInt32 { get }
-    var videoRow: UInt16 { get }
-    
     var machine:    Machine? { get set }
     var lateFrames: Int { get }
 }
@@ -33,7 +30,7 @@ class Z80 : Processor {
     
     let h = Register()
     let l = Register()
-
+    
     let ixyh = Register()
     let ixyl = Register()
     
@@ -51,23 +48,20 @@ class Z80 : Processor {
     var pc: UInt16 = 0
     
     var r = RefreshReg()
-    var i: UInt8 = 0
     
+    var i:    UInt8 = 0
     var iff1: UInt8 = 0
     var iff2: UInt8 = 0
     
     var machine: Machine?
-    var memory: Memory
+    var memory:  Memory
     
     var exaf: UInt16 = 0
     var exhl: UInt16 = 0
     var exbc: UInt16 = 0
     var exde: UInt16 = 0
     
-    var counter:       UInt32 = 0
-    
-    var ula:           UInt32 = 0
-    var videoRow:      UInt16 = 0
+    var counter:       UInt32 = 0    
     
     var paused:        Bool = false
     var lastFrame:     TimeInterval = 0
@@ -103,9 +97,9 @@ class Z80 : Processor {
         var opCode:     String
         
         func log(_ pc: UInt16) {
-//            if pc >= 0x4000 {
-                print("pc: ", String(pc, radix: 16, uppercase: true), self.opCode)
-//            }
+            //            if pc >= 0x4000 {
+            print("pc: ", String(pc, radix: 16, uppercase: true), self.opCode)
+            //            }
         }
     }
     
@@ -160,10 +154,10 @@ class Z80 : Processor {
         running = true        
         
         while running {
-            do {
+            if !paused {
                 if counter >= machine?.ticksPerFrame ?? 0 {
                     serviceInterrupts()
-                } else if !paused {
+                } else {
                     do {
                         opCode = memory.get(pc)
                         byte1  = memory.get(pc &+ 1)
@@ -202,35 +196,15 @@ class Z80 : Processor {
                             try unprefixed(opcode: opCode, first: byte1, second: byte2)
                         }
                     } catch {
-                        DispatchQueue.main.async {
+                        DispatchQueue.main.async {                  // instruction not emulated...
                             self.machine?.reportProblem(error)
                         }
                         
                         running = false
                     }
-
-                    self.machine?.tick()
                 }
                 
-                if ula >= 224 {
-                    switch videoRow {
-                    case 64...255:
-                        self.machine?.captureRow(videoRow - 64)
-                        
-                    case 311:
-                        machine?.soundFrameCompleted()                        
-                        DispatchQueue.main.async {
-                            self.machine?.frameCompleted()
-                        }
-                        
-                    default:
-                        break
-                    }
-                    
-                    ula = ula - 224
-                    videoRow = videoRow + 1
-                }
-                
+                self.machine?.tick()                
             }
         }
     }
@@ -241,12 +215,13 @@ class Z80 : Processor {
     }
     
     final func unpause() {
+        counter = 0
         paused = false
     }
     
     final func incCounters(_ amount: UInt32) {
         counter = counter + amount
-        ula = ula + amount
+        machine!.ula = machine!.ula + amount
     }
     
     final func parseInstructions() {
@@ -334,8 +309,8 @@ class Z80 : Processor {
         }
         
         counter = counter - UInt32(machine?.ticksPerFrame ?? 0)
-        ula = counter
-        videoRow = 0
+        machine!.ula = counter
+        machine!.videoRow = 0
         
         if interrupts {
             interrupts = false

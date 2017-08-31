@@ -675,7 +675,7 @@ extension Z80 {
         }                
         
         pc = pc &+ instruction.length
-        
+
         incCounters(normalFlow ? instruction.tStates : instruction.altTStates)        
         r.inc()
     }

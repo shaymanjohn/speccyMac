@@ -12,13 +12,9 @@ import Cocoa
 protocol Machine : class {
     
     func start()
-    func frameCompleted()
-    func soundFrameCompleted()
-    
     func tick()
     
     func loadGame(_ game: String)
-    func captureRow(_ row: UInt16)
     
     func input(_ high: UInt8, low: UInt8) -> UInt8
     func output(_ port: UInt8, byte: UInt8)
@@ -27,6 +23,9 @@ protocol Machine : class {
     
     var processor: Processor { get }
     var memory:    Memory { get }
+    
+    var ula:      UInt32 { get set }
+    var videoRow: UInt16 { get set }
     
     var ticksPerFrame:   Int { get }
     var audioPacketSize: Int { get }

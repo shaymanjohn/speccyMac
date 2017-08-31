@@ -19,6 +19,9 @@ class Spectrum: Machine {
     
     var clicks: UInt8 = 0
     
+    var ula:      UInt32 = 0
+    var videoRow: UInt16 = 0
+    
     weak var emulatorView:   EmulatorInputView?
     weak var emulatorScreen: NSImageView?
     weak var lateLabel:      NSTextField?
@@ -273,11 +276,11 @@ class Spectrum: Machine {
             }
         } else if low == 0xff {     // video beam port
             byte = 0xff
-            if processor.videoRow >= 64 && processor.videoRow <= 255 {
-                if processor.ula >= 24 && processor.ula <= 152 {
-                    let rowNum = processor.videoRow - 64
+            if videoRow >= 64 && videoRow <= 255 {
+                if ula >= 24 && ula <= 152 {
+                    let rowNum = videoRow - 64
                     let attribAddress = self.attributeAddress + ((rowNum >> 3) << 5)
-                    let col = (processor.ula - 24) >> 2
+                    let col = (ula - 24) >> 2
                     byte = memory.get(attribAddress + UInt16(col & 0xffff))
                 }
             }
@@ -301,6 +304,25 @@ class Spectrum: Machine {
     
     func tick() {
         beeper.updateSample((processor as! Z80).counter, beep: clicks)
+        
+        if ula >= 224 {
+            switch videoRow {
+            case 64...255:
+                captureRow(videoRow - 64)
+                
+            case 311:
+                soundFrameCompleted()
+                DispatchQueue.main.async {
+                    self.frameCompleted()
+                }
+                
+            default:
+                break
+            }
+            
+            ula = ula - 224
+            videoRow = videoRow + 1
+        }
     }
     
     func loadGame(_ game: String) {
@@ -309,6 +331,8 @@ class Spectrum: Machine {
         
         if let _ = Loader(game, z80: processor as! Z80) {
             print("loaded \(game)")
+            videoRow = 0
+            ula = 0
             processor.unpause()
         } else {
             print("couldnt load \(game)")
