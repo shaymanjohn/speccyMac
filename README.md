@@ -3,6 +3,10 @@ ZX Spectrum emulator for OSX (currently 48K only), written in Swift 4
 
 Requires Xcode 9 to build
 
+Please see issues to check known problems. Please raise more if yours isn't there.
+
+Collaborators welcomed.
+
 Performance:<br>
 Pretty good when running a release build (quite a bit slower on a debug build).<br>
 Sound tends to be a bit scratchy, don't know why yet.
