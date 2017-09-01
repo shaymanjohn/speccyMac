@@ -303,7 +303,7 @@ class Spectrum: Machine {
     }
     
     func tick() {
-        beeper.updateSample((processor as! Z80).counter, beep: clicks)
+        beeper.updateSample(processor.counter, beep: clicks)
         
         if ula >= 224 {
             switch videoRow {
@@ -333,6 +333,7 @@ class Spectrum: Machine {
             print("loaded \(game)")
             videoRow = 0
             ula = 0
+            processor.counter = 0
             processor.unpause()
         } else {
             print("couldnt load \(game)")

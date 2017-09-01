@@ -7,6 +7,8 @@ Please see issues to check known problems. Please raise more if yours isn't ther
 
 Collaborators welcomed.
 
+![ScreenShot](https://user-images.githubusercontent.com/622889/29965616-351e1960-8f06-11e7-81e5-813cc66977b0.png)
+
 Performance:<br>
 Pretty good when running a release build (quite a bit slower on a debug build).<br>
 Sound tends to be a bit scratchy, don't know why yet.

@@ -33,11 +33,6 @@ struct colour {
     }
 }
 
-struct keyboardMap {
-    let macKeycode: UInt16
-    let spectrumCode: UInt16
-}
-
 struct keyMap {
     let macKey: UInt16
     let machineKey: UInt16

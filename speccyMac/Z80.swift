@@ -14,6 +14,7 @@ protocol Processor: class {
     func pause()
     func unpause()
     
+    var counter:    UInt32 { get set }
     var machine:    Machine? { get set }
     var lateFrames: Int { get }
 }
@@ -154,6 +155,7 @@ class Z80 : Processor {
         running = true        
         
         while running {
+            
             if !paused {
                 if counter >= machine?.ticksPerFrame ?? 0 {
                     serviceInterrupts()
