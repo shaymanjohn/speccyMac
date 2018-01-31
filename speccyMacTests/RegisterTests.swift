@@ -9,7 +9,7 @@
 import XCTest
 @testable import speccyMac
 
-class registerTests: XCTestCase {
+class RegisterTests: XCTestCase {
 
     var z80: Z80 = Z80(memory: Memory("48.rom"))
     

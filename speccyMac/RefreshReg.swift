@@ -16,7 +16,7 @@ class RefreshReg {
         let highBit = value & 0x80
         
         value = value & 0x7f
-        value = value + 1
+        value += 1
         if value == 128 {
             value = 0
         }

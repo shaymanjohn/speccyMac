@@ -9,7 +9,7 @@
 import XCTest
 @testable import speccyMac
 
-class memoryTests: XCTestCase {
+class MemoryTests: XCTestCase {
 
     let memory = Memory("48.rom")
     

@@ -37,7 +37,7 @@ class Spectrum: Machine {
     var flashCounter = 0
     var invertFlashColours = false
     var borderColourIndex: UInt8 = 0
-    var borderColour: colour!
+    var borderColour: Colour!
     
     let beeper = AudioStreamer()
     
@@ -57,10 +57,10 @@ class Spectrum: Machine {
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 192)
     
     // 8 Spectrum RGB values, plus addition 8 for bright mode.
-    let colourTable = [colour(0x000000), colour(0x0000cd), colour(0xcd0000), colour(0xcd00cd),
-                       colour(0x00cd00), colour(0x00cdcd), colour(0xcdcd00), colour(0xcdcdcd),
-                       colour(0x000000), colour(0x0000ff), colour(0xff0000), colour(0xff00ff),
-                       colour(0x00ff00), colour(0x00ffff), colour(0xffff00), colour(0xffffff)]
+    let colourTable = [Colour(0x000000), Colour(0x0000cd), Colour(0xcd0000), Colour(0xcd00cd),
+                       Colour(0x00cd00), Colour(0x00cdcd), Colour(0xcdcd00), Colour(0xcdcdcd),
+                       Colour(0x000000), Colour(0x0000ff), Colour(0xff0000), Colour(0xff00ff),
+                       Colour(0x00ff00), Colour(0x00ffff), Colour(0xffff00), Colour(0xffffff)]
     
     // Mac key code to spectrum key code
     let keyMap: [UInt16] = [0xfd01, 0xfd02, 0xfd04, 0xfd08, 0xbf10, 0xfd10, 0xfe02, 0xfe04, 0xfe08, 0xfe10,
@@ -116,7 +116,7 @@ class Spectrum: Machine {
                 let address:UInt16 = UInt16((dataByteHigh) << 8) + UInt16(dataByteLow)
                 screenRowAddress[rowNum] = address
 
-                rowNum = rowNum + 1
+                rowNum += 1
             }
             
             attributeRowAddress[row] = attributeAddress + (32 * UInt16(row))
@@ -140,9 +140,9 @@ class Spectrum: Machine {
             screenBuffer[index] = memory.get(pixelAddress)
             colourBuffer[index] = memory.get(colourAddress)
             
-            pixelAddress  = pixelAddress + 1
-            colourAddress = colourAddress + 1
-            index = index + 1
+            pixelAddress  += 1
+            colourAddress += 1
+            index += 1
         }
     }
     
@@ -157,7 +157,7 @@ class Spectrum: Machine {
         
         self.emulatorView?.layer?.backgroundColor = CGColor(red: borderColour.rf, green: borderColour.gf, blue: borderColour.bf, alpha: 1.0)
         
-        flashCounter = flashCounter + 1
+        flashCounter += 1   
         if flashCounter == 16 {
             invertFlashColours = !invertFlashColours
             flashCounter = 0
@@ -189,7 +189,7 @@ class Spectrum: Machine {
             bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
             bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
             
-            bmpIndex = bmpIndex + 8
+            bmpIndex += 8
         }
         
         if let image = CGImage(width: 256, height: 192, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 1024, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) {
@@ -201,6 +201,7 @@ class Spectrum: Machine {
         beeper.endFrame()
     }
     
+// swiftlint:disable cyclomatic_complexity
     final func input(_ high: UInt8, low: UInt8) -> UInt8 {
         var byte: UInt8 = 0x00
         
@@ -320,8 +321,8 @@ class Spectrum: Machine {
                 break
             }
             
-            ula = ula - 224
-            videoRow = videoRow + 1
+            ula -= 224
+            videoRow += 1
         }
     }
     

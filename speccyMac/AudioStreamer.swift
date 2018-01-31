@@ -48,7 +48,7 @@ class AudioStreamer {
         // create new output audio queue
         AudioQueueNewOutput(
             &streamBasicDescription,
-            AudioStreamerOuputCallback,
+            audioStreamerOuputCallback,
             unsafeBitCast(self, to: UnsafeMutableRawPointer.self),
             nil,
             nil,
@@ -71,7 +71,7 @@ class AudioStreamer {
                 bufferRef.pointee.mUserData = selfPointer
                 bufferRef.pointee.mAudioDataByteSize = self.bufferByteSize
                 
-                AudioStreamerOuputCallback(userData: selfPointer, queueRef: self.outputQueue!, buffer: bufferRef)
+                audioStreamerOuputCallback(userData: selfPointer, queueRef: self.outputQueue!, buffer: bufferRef)
             }
         }
     }
@@ -119,7 +119,7 @@ class AudioStreamer {
     }
 }
 
-private func AudioStreamerOuputCallback(userData: Optional<UnsafeMutableRawPointer>, queueRef: AudioQueueRef, buffer: AudioQueueBufferRef) {
+private func audioStreamerOuputCallback(userData: Optional<UnsafeMutableRawPointer>, queueRef: AudioQueueRef, buffer: AudioQueueBufferRef) {
     // recover AudioStreamer instance from void * userData
     let this = Unmanaged<AudioStreamer>.fromOpaque(userData!).takeUnretainedValue()
     var ptr = buffer.pointee.mAudioData.assumingMemoryBound(to: AudioDataElement.self)

@@ -10,6 +10,7 @@ import Foundation
 
 extension Z80 {
     
+// swiftlint:disable cyclomatic_complexity
     final func ddprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
         let word16 = (UInt16(second) << 8) | UInt16(first)

@@ -10,6 +10,7 @@ import Foundation
 
 extension Z80 {
     
+// swiftlint:disable cyclomatic_complexity
     final func unprefixed(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
         let instruction = unprefixedOps[opcode]

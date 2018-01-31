@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct colour {
+struct Colour {
     
     let hex: UInt32
     
@@ -33,7 +33,7 @@ struct colour {
     }
 }
 
-struct keyMap {
+struct KeyMap {
     let macKey: UInt16
     let machineKey: UInt16
 }

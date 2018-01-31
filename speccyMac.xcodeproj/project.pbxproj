@@ -29,7 +29,7 @@
 		6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA031651F5460CA00CD636E /* AudioStreamer.swift */; };
 		6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */; };
 		6FC90B4F1F5295AA002506DC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC90B4E1F5295AA002506DC /* README.md */; };
-		6FCA5BA71F38B38200A22E92 /* accumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */; };
+		6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */; };
 		6FCC17D21F3EDDF900B867E1 /* batman.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CA1F3EDDEE00B867E1 /* batman.sna */; };
 		6FCC17D31F3EDDFC00B867E1 /* cobra.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17C91F3EDDEE00B867E1 /* cobra.sna */; };
 		6FCC17D41F3EDDFF00B867E1 /* cybernoid1.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17C81F3EDDEE00B867E1 /* cybernoid1.sna */; };
@@ -39,8 +39,8 @@
 		6FCC17D81F3EDE0D00B867E1 /* headoverheels.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CB1F3EDDEF00B867E1 /* headoverheels.sna */; };
 		6FCC17D91F3EDE1100B867E1 /* hypersports.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17C61F3EDDED00B867E1 /* hypersports.sna */; };
 		6FCC17DD1F3EDE1F00B867E1 /* starquake.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17D01F3EDDEF00B867E1 /* starquake.sna */; };
-		6FE5147A1F372D96004F0751 /* registerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE514791F372D96004F0751 /* registerTests.swift */; };
-		6FE5147C1F3732A3004F0751 /* registerPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE5147B1F3732A3004F0751 /* registerPairTests.swift */; };
+		6FE5147A1F372D96004F0751 /* RegisterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE514791F372D96004F0751 /* RegisterTests.swift */; };
+		6FE5147C1F3732A3004F0751 /* RegisterPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE5147B1F3732A3004F0751 /* RegisterPairTests.swift */; };
 		6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90C1F2238A500F9AD93 /* Memory.swift */; };
 		6FEFA90F1F2238C200F9AD93 /* Z80.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90E1F2238C200F9AD93 /* Z80.swift */; };
 		6FEFA91E1F223B5A00F9AD93 /* z80ops.json in Resources */ = {isa = PBXBuildFile; fileRef = 6FEFA91B1F223AA400F9AD93 /* z80ops.json */; };
@@ -58,7 +58,8 @@
 		6FFC9E081F35CFA400B9322C /* Register.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E071F35CFA400B9322C /* Register.swift */; };
 		6FFC9E0A1F35CFB200B9322C /* RegisterPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E091F35CFB200B9322C /* RegisterPair.swift */; };
 		6FFC9E0C1F35D65C00B9322C /* Accumulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */; };
-		6FFE6FC21F376BEF00EBCC3B /* memoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFE6FC11F376BEF00EBCC3B /* memoryTests.swift */; };
+		6FFE6FC21F376BEF00EBCC3B /* MemoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFE6FC11F376BEF00EBCC3B /* MemoryTests.swift */; };
+		9DA50D134820D5CC3C303277 /* Pods_speccyMac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE25E0AD770ECA0DDF43229E /* Pods_speccyMac.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,7 +95,7 @@
 		6FA031651F5460CA00CD636E /* AudioStreamer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioStreamer.swift; sourceTree = "<group>"; };
 		6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorInputView.swift; sourceTree = "<group>"; };
 		6FC90B4E1F5295AA002506DC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
-		6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = accumulatorTests.swift; sourceTree = "<group>"; };
+		6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccumulatorTests.swift; sourceTree = "<group>"; };
 		6FCC17C61F3EDDED00B867E1 /* hypersports.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = hypersports.sna; sourceTree = "<group>"; };
 		6FCC17C71F3EDDEE00B867E1 /* greenberet.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = greenberet.sna; sourceTree = "<group>"; };
 		6FCC17C81F3EDDEE00B867E1 /* cybernoid1.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = cybernoid1.sna; sourceTree = "<group>"; };
@@ -106,8 +107,8 @@
 		6FCC17D11F3EDDF000B867E1 /* dynadan.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = dynadan.sna; sourceTree = "<group>"; };
 		6FE5146F1F372CF1004F0751 /* speccyMacTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = speccyMacTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FE514731F372CF1004F0751 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		6FE514791F372D96004F0751 /* registerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = registerTests.swift; sourceTree = "<group>"; };
-		6FE5147B1F3732A3004F0751 /* registerPairTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = registerPairTests.swift; sourceTree = "<group>"; };
+		6FE514791F372D96004F0751 /* RegisterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterTests.swift; sourceTree = "<group>"; };
+		6FE5147B1F3732A3004F0751 /* RegisterPairTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterPairTests.swift; sourceTree = "<group>"; };
 		6FEFA90C1F2238A500F9AD93 /* Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memory.swift; sourceTree = "<group>"; };
 		6FEFA90E1F2238C200F9AD93 /* Z80.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z80.swift; sourceTree = "<group>"; };
 		6FEFA91B1F223AA400F9AD93 /* z80ops.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = z80ops.json; sourceTree = SOURCE_ROOT; };
@@ -128,7 +129,10 @@
 		6FFC9E071F35CFA400B9322C /* Register.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register.swift; sourceTree = "<group>"; };
 		6FFC9E091F35CFB200B9322C /* RegisterPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterPair.swift; sourceTree = "<group>"; };
 		6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accumulator.swift; sourceTree = "<group>"; };
-		6FFE6FC11F376BEF00EBCC3B /* memoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = memoryTests.swift; sourceTree = "<group>"; };
+		6FFE6FC11F376BEF00EBCC3B /* MemoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryTests.swift; sourceTree = "<group>"; };
+		83ED0AD371BEE5CDA945919A /* Pods-speccyMac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-speccyMac.debug.xcconfig"; path = "Pods/Target Support Files/Pods-speccyMac/Pods-speccyMac.debug.xcconfig"; sourceTree = "<group>"; };
+		B0F0CC4DE112CA6D51E3E9AB /* Pods-speccyMac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-speccyMac.release.xcconfig"; path = "Pods/Target Support Files/Pods-speccyMac/Pods-speccyMac.release.xcconfig"; sourceTree = "<group>"; };
+		DE25E0AD770ECA0DDF43229E /* Pods_speccyMac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_speccyMac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,15 +147,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9DA50D134820D5CC3C303277 /* Pods_speccyMac.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		11D2DE442431D07CF4B378F9 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				83ED0AD371BEE5CDA945919A /* Pods-speccyMac.debug.xcconfig */,
+				B0F0CC4DE112CA6D51E3E9AB /* Pods-speccyMac.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		6F37E1B81F46CC62005A4976 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DE25E0AD770ECA0DDF43229E /* Pods_speccyMac.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -160,10 +175,10 @@
 			isa = PBXGroup;
 			children = (
 				6FE514731F372CF1004F0751 /* Info.plist */,
-				6FFE6FC11F376BEF00EBCC3B /* memoryTests.swift */,
-				6FE514791F372D96004F0751 /* registerTests.swift */,
-				6FE5147B1F3732A3004F0751 /* registerPairTests.swift */,
-				6FCA5BA61F38B38200A22E92 /* accumulatorTests.swift */,
+				6FFE6FC11F376BEF00EBCC3B /* MemoryTests.swift */,
+				6FE514791F372D96004F0751 /* RegisterTests.swift */,
+				6FE5147B1F3732A3004F0751 /* RegisterPairTests.swift */,
+				6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */,
 			);
 			path = speccyMacTests;
 			sourceTree = "<group>";
@@ -204,6 +219,7 @@
 				6FE514701F372CF1004F0751 /* speccyMacTests */,
 				6FFB31511F22379B00C15CD7 /* Products */,
 				6F37E1B81F46CC62005A4976 /* Frameworks */,
+				11D2DE442431D07CF4B378F9 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -277,9 +293,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6FFB31601F22379B00C15CD7 /* Build configuration list for PBXNativeTarget "speccyMac" */;
 			buildPhases = (
+				8AD38389EC8D4E01E4BF928D /* [CP] Check Pods Manifest.lock */,
 				6FFB314C1F22379B00C15CD7 /* Sources */,
 				6FFB314D1F22379B00C15CD7 /* Frameworks */,
 				6FFB314E1F22379B00C15CD7 /* Resources */,
+				41016BA4988CE3193A952E01 /* [CP] Embed Pods Frameworks */,
+				204287BC4754DEB064099ADE /* [CP] Copy Pods Resources */,
+				6FDFE67A2021DEA600BA450F /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -372,15 +392,80 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		204287BC4754DEB064099ADE /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-speccyMac/Pods-speccyMac-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		41016BA4988CE3193A952E01 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-speccyMac/Pods-speccyMac-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6FDFE67A2021DEA600BA450F /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"";
+		};
+		8AD38389EC8D4E01E4BF928D /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-speccyMac-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		6FE5146B1F372CF1004F0751 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6FCA5BA71F38B38200A22E92 /* accumulatorTests.swift in Sources */,
-				6FE5147C1F3732A3004F0751 /* registerPairTests.swift in Sources */,
-				6FFE6FC21F376BEF00EBCC3B /* memoryTests.swift in Sources */,
-				6FE5147A1F372D96004F0751 /* registerTests.swift in Sources */,
+				6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */,
+				6FE5147C1F3732A3004F0751 /* RegisterPairTests.swift in Sources */,
+				6FFE6FC21F376BEF00EBCC3B /* MemoryTests.swift in Sources */,
+				6FE5147A1F372D96004F0751 /* RegisterTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -577,6 +662,7 @@
 		};
 		6FFB31611F22379B00C15CD7 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 83ED0AD371BEE5CDA945919A /* Pods-speccyMac.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -595,6 +681,7 @@
 		};
 		6FFB31621F22379B00C15CD7 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B0F0CC4DE112CA6D51E3E9AB /* Pods-speccyMac.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

@@ -222,7 +222,7 @@ class Z80 : Processor {
     }
     
     final func incCounters(_ amount: UInt32) {
-        counter = counter + amount
+        counter += amount
         machine!.ula = machine!.ula + amount
     }
     
@@ -301,16 +301,16 @@ class Z80 : Processor {
         let thisFrameTime = timeNow - lastFrame
         
         if thisFrameTime < frameTime {
-            lastFrame = lastFrame + frameTime
+            lastFrame += frameTime
             Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
         } else if thisFrameTime > frameTime {
-            lateFrames = lateFrames + 1
+            lateFrames += 1
             lastFrame = timeNow
         } else {
-            lastFrame = lastFrame + frameTime
+            lastFrame += frameTime
         }
         
-        counter = counter - UInt32(machine?.ticksPerFrame ?? 0)
+        counter -= UInt32(machine?.ticksPerFrame ?? 0)
         machine!.ula = counter
         machine!.videoRow = 0
         

@@ -1,0 +1,35 @@
+# Ignore the files, prevents unwanted files in git
+
+# White list of files and folders to allow
+!.gitignore
+!Podfile
+!Podfile.lock
+
+# User profiles not needed to be checked in
+#/speccyMac.xcodeproj/xcuserdata/
+#/speccyMac.xcodeproj/project.xcworkspace/
+
+# Pods related exclusions (Created using terminal “pods install”
+#/speccyMac.xcworkspace/
+#/Pods/
+
+# Xcode
+.DS_Store
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xcworkspace
+!default.xcworkspace
+xcuserdata
+profile
+*.moved-aside
+DerivedData
+.idea/
+# Pods - for those of you who use CocoaPods
+Pods
