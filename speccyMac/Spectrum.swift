@@ -15,7 +15,6 @@ class Spectrum: Machine {
     var memory:    Memory
     
     var ticksPerFrame:   Int = 69888
-    var audioPacketSize: Int = 79
     
     var clicks: UInt8 = 0
     

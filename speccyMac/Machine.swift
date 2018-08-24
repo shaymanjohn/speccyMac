@@ -27,8 +27,7 @@ protocol Machine : class {
     var ula:      UInt32 { get set }
     var videoRow: UInt16 { get set }
     
-    var ticksPerFrame:   Int { get }
-    var audioPacketSize: Int { get }
+    var ticksPerFrame: Int { get }
     
     var games: [Game] { get }
     var clicks: UInt8 { get }
