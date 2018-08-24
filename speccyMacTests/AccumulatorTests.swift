@@ -11,12 +11,12 @@ import XCTest
 
 class AccumulatorTests: XCTestCase {
 
-    var z80 = Z80(memory: Memory("48.rom"))
+    var z80 = ZilogZ80(memory: Memory("48.rom"))
     
     override func setUp() {        
         super.setUp()
         
-        z80 = Z80(memory: Memory("48.rom"))
+        z80 = ZilogZ80(memory: Memory("48.rom"))
     }
     
     override func tearDown() {

@@ -33,9 +33,9 @@ protocol Machine : class {
     var games: [Game] { get }
     var clicks: UInt8 { get }
     
-    weak var emulatorScreen: NSImageView?  { get set }
-    weak var emulatorView:   EmulatorInputView? { get set }
-    weak var lateLabel:      NSTextField?  { get set }
+    var emulatorScreen: NSImageView? { get set }
+    var emulatorView:   EmulatorInputView? { get set }
+    var lateLabel:      NSTextField? { get set }
 }
 
 extension Machine {

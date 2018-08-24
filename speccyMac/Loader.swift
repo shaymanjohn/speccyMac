@@ -10,9 +10,9 @@ import Foundation
 
 class Loader {
     
-    var z80: Z80
+    var z80: ZilogZ80
     
-    init?(_ game: String, z80: Z80) {
+    init?(_ game: String, z80: ZilogZ80) {
         
         self.z80 = z80
         
@@ -90,7 +90,7 @@ class Loader {
         z80.r.value = data[20]
         
         z80.af.value = (UInt16(data[22]) << 8) + UInt16(data[21])
-        Z80.sp = (UInt16(data[24]) << 8) + UInt16(data[23])
+        ZilogZ80.sp = (UInt16(data[24]) << 8) + UInt16(data[23])
         
         z80.interruptMode = data[25]
         z80.machine?.output(0xfe, byte: data[26])
@@ -101,15 +101,15 @@ class Loader {
             z80.memory.set(start + UInt16(jx), byte: data[jx + 27])
         }
         
-        let lo = z80.memory.get(Z80.sp)
-        Z80.sp = Z80.sp &+ 1
-        let hi = z80.memory.get(Z80.sp)
-        Z80.sp = Z80.sp &+ 1
+        let lo = z80.memory.get(ZilogZ80.sp)
+        ZilogZ80.sp = ZilogZ80.sp &+ 1
+        let hi = z80.memory.get(ZilogZ80.sp)
+        ZilogZ80.sp = ZilogZ80.sp &+ 1
         
         z80.pc = (UInt16(hi) << 8) + UInt16(lo)
         
-        z80.memory.set(Z80.sp &- 1, byte: 0)
-        z80.memory.set(Z80.sp &- 2, byte: 0)
+        z80.memory.set(ZilogZ80.sp &- 1, byte: 0)
+        z80.memory.set(ZilogZ80.sp &- 2, byte: 0)
         
         return true
     }

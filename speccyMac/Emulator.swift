@@ -31,9 +31,9 @@ class Emulator: NSViewController {
     
     @IBAction func changeGame(_ sender: NSButton) {
         
-        if let gameSelect = self.storyboard?.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier(rawValue: "gameSelect")) as? GameSelectViewController {
+        if let gameSelect = self.storyboard?.instantiateController(withIdentifier: "gameSelect") as? GameSelectViewController {
             gameSelect.machine = machine
-            self.presentViewControllerAsModalWindow(gameSelect)
+            self.presentAsModalWindow(gameSelect)
         }
     }
 }

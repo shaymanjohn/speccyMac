@@ -41,18 +41,18 @@ class RegisterPair {
         
         value = UInt16(temp & 0xffff)
         
-        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (temp & 0x10000 > 0 ? Z80.cBit : 0) | (UInt8((temp & 0xff00) >> 8) & (Z80.threeBit | Z80.fiveBit)) | Z80.halfCarryAdd[lookup]
+        ZilogZ80.f.value = (ZilogZ80.f.value & (ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | (temp & 0x10000 > 0 ? ZilogZ80.cBit : 0) | (UInt8((temp & 0xff00) >> 8) & (ZilogZ80.threeBit | ZilogZ80.fiveBit)) | ZilogZ80.halfCarryAdd[lookup]
     }    
     
     final func adc(_ amount: UInt16) {
-        let add16temp: UInt32 = UInt32(value) + UInt32(amount) + UInt32(Z80.f.value & Z80.cBit)
+        let add16temp: UInt32 = UInt32(value) + UInt32(amount) + UInt32(ZilogZ80.f.value & ZilogZ80.cBit)
         let lookup = ((value & 0x8800) >> 11) | ((amount & 0x8800) >> 10) | ((UInt16(add16temp & 0xffff) & 0x8800) >> 9)
         value = UInt16(add16temp & 0xffff)
         
-        let part1 = (add16temp & 0x10000) > 0 ? Z80.cBit : 0
-        let part2 = Z80.overFlowAdd[UInt8(lookup & 0xff) >> 4]
-        let part3 = hi.value & (Z80.threeBit | Z80.fiveBit | Z80.sBit)
-        Z80.f.value = part1 | part2 | part3 | Z80.halfCarryAdd[UInt8(lookup & 0xff) & 0x07] | (value > 0 ? 0 : Z80.zBit)
+        let part1 = (add16temp & 0x10000) > 0 ? ZilogZ80.cBit : 0
+        let part2 = ZilogZ80.overFlowAdd[UInt8(lookup & 0xff) >> 4]
+        let part3 = hi.value & (ZilogZ80.threeBit | ZilogZ80.fiveBit | ZilogZ80.sBit)
+        ZilogZ80.f.value = part1 | part2 | part3 | ZilogZ80.halfCarryAdd[UInt8(lookup & 0xff) & 0x07] | (value > 0 ? 0 : ZilogZ80.zBit)
     }
     
     final func sbc(_ regPair: RegisterPair) {
@@ -60,13 +60,13 @@ class RegisterPair {
     }
         
     final func sbc(_ amount: UInt16) {
-        let sub16temp: UInt32 = UInt32(value) &- UInt32(amount) &- UInt32(Z80.f.value & Z80.cBit)
+        let sub16temp: UInt32 = UInt32(value) &- UInt32(amount) &- UInt32(ZilogZ80.f.value & ZilogZ80.cBit)
         let lookup = ((value & 0x8800) >> 11) | ((amount & 0x8800) >> 10) | ((UInt16(sub16temp & 0xffff) & 0x8800) >> 9)
         value = UInt16(sub16temp & 0xffff)
         
-        let part1 = (sub16temp & 0x10000 > 0 ? Z80.cBit : 0)
-        let part2 = Z80.overFlowSub[UInt8(lookup & 0xff) >> 4]
-        let part3 = hi.value & (Z80.threeBit | Z80.fiveBit | Z80.sBit)
-        Z80.f.value = part1 | Z80.nBit | part2 | part3 | Z80.halfCarrySub[UInt8(lookup & 0xff) & 0x07] | (value > 0 ? 0 : Z80.zBit)
+        let part1 = (sub16temp & 0x10000 > 0 ? ZilogZ80.cBit : 0)
+        let part2 = ZilogZ80.overFlowSub[UInt8(lookup & 0xff) >> 4]
+        let part3 = hi.value & (ZilogZ80.threeBit | ZilogZ80.fiveBit | ZilogZ80.sBit)
+        ZilogZ80.f.value = part1 | ZilogZ80.nBit | part2 | part3 | ZilogZ80.halfCarrySub[UInt8(lookup & 0xff) & 0x07] | (value > 0 ? 0 : ZilogZ80.zBit)
     }
 }

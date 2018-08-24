@@ -8,12 +8,12 @@
 
 import Foundation
 
-extension Z80 {
+extension ZilogZ80 {
 
 // swiftlint:disable cyclomatic_complexity
     final func cbprefix(opcode: UInt8) throws {
         
-        let instruction = cbprefixedOps[opcode]
+        let instruction = instructionSet.cbprefix[opcode]
 //        log(instruction)
         
         switch opcode {
@@ -136,11 +136,11 @@ extension Z80 {
             memory.indexSet(bit, address: hl.value)            
             
         default:
-            throw NSError(domain: "z80+cb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
+            throw NSError(domain: "z80+cb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])
         }        
         
         pc = pc &+ instruction.length        
-        incCounters(instruction.tStates)
+        incCounters(instruction.tstates)
         
         r.inc()
         r.inc()

@@ -46,9 +46,8 @@ extension GameSelectViewController: NSTableViewDelegate {
                 let selectedGame = sortedGames[tv.selectedRow]
                 machine.loadGame(selectedGame.file)
                 
-                self.dismissViewController(self)
+                self.dismiss(self)
             }
         }
     }
 }
-

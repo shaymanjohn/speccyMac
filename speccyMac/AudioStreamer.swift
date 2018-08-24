@@ -96,7 +96,7 @@ class AudioStreamer {
         sample -= sample / 8
         sample += amplitude / 8
         
-        let offset: Int = (Int(counter) * kSamplesPerFrame) / machine.ticksPerFrame;
+        let offset: Int = (Int(counter) * kSamplesPerFrame) / machine.ticksPerFrame
         if offset < kSamplesPerFrame {
             audioData[offset] = sample
         }
@@ -133,4 +133,3 @@ private func audioStreamerOuputCallback(userData: Optional<UnsafeMutableRawPoint
     AudioQueueEnqueueBuffer(queueRef, buffer, 0, nil)
 //    this.audioDataProcessed()
 }
-

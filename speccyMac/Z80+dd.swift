@@ -8,13 +8,13 @@
 
 import Foundation
 
-extension Z80 {
+extension ZilogZ80 {
     
 // swiftlint:disable cyclomatic_complexity
     final func ddprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
         let word16 = (UInt16(second) << 8) | UInt16(first)
-        let instruction = ddprefixedOps[opcode]
+        let instruction = instructionSet.ddprefix[opcode]
 //        log(instruction)
         
         let offsetAddress = first > 127 ? ixy.value &- (UInt16(256) - UInt16(first)) : ixy.value &+ UInt16(first)
@@ -71,10 +71,10 @@ extension Z80 {
             memory.set(offsetAddress, byte: second)
             
         case 0x39:  // add ix, sp
-            ixy.add(Z80.sp)
+            ixy.add(ZilogZ80.sp)
             
         case 0x3f:  //
-            Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))
+            ZilogZ80.f.value = (ZilogZ80.f.value & (ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | ((ZilogZ80.f.value & ZilogZ80.cBit) > 0 ? ZilogZ80.hBit : ZilogZ80.cBit) | (a.value & (ZilogZ80.threeBit | ZilogZ80.fiveBit))
             
         case 0x44:  // ld b, ixh
             b.value = ixy.hi.value
@@ -185,14 +185,14 @@ extension Z80 {
             pc = pc &- 2
             
         case 0xf9:  // ld sp, ix
-            Z80.sp = ixy.value
+            ZilogZ80.sp = ixy.value
             
         default:
-            throw NSError(domain: "z80+dd", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
+            throw NSError(domain: "z80+dd", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])
         }        
         
         pc = pc &+ instruction.length        
-        incCounters(instruction.tStates)
+        incCounters(instruction.tstates)
         
         r.inc()
         r.inc()

@@ -14,7 +14,7 @@ class EmulatorInputView: NSView {
     
     private var keyStates: [UInt16 : Bool] = [:] {
         didSet {
-            keysDown = Array(keyStates.filter{key in key.value == true}.keys)
+            keysDown = Array(keyStates.filter {key in key.value == true}.keys)
         }
     }
     

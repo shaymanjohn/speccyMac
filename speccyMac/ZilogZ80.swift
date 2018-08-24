@@ -1,5 +1,5 @@
 //
-//  Z80.swift
+//  ZilogZ80.swift
 //  speccyMac
 //
 //  Created by John Ward on 21/07/2017.
@@ -19,7 +19,7 @@ protocol Processor: class {
     var lateFrames: Int { get }
 }
 
-class Z80 : Processor {
+class ZilogZ80 : Processor {
     
     let a = Accumulator()
     let b = Register()
@@ -82,38 +82,41 @@ class Z80 : Processor {
     static let zBit:     UInt8 = 1 << 6
     static let sBit:     UInt8 = 1 << 7
     
-    static var sz53pvTable: Array<UInt8> = []
-    static var sz53Table:   Array<UInt8> = []
-    static var parityBit:   Array<UInt8> = []
+    static var sz53pvTable: [UInt8] = []
+    static var sz53Table:   [UInt8] = []
+    static var parityBit:   [UInt8] = []
     
-    static let halfCarryAdd:  Array<UInt8> = [0, 1 << 4, 1 << 4, 1 << 4, 0, 0, 0, 1 << 4]
-    static let halfCarrySub:  Array<UInt8> = [0, 0, 1 << 4, 0, 1 << 4, 0, 1 << 4, 1 << 4]
-    static let overFlowAdd:   Array<UInt8> = [0, 0, 0, 1 << 2, 1 << 2, 0, 0, 0]
-    static let overFlowSub:   Array<UInt8> = [0, 1 << 2, 0, 0, 0, 0, 1 << 2, 0]
-    
-    struct Instruction {
+    static let halfCarryAdd:  [UInt8] = [0, 1 << 4, 1 << 4, 1 << 4, 0, 0, 0, 1 << 4]
+    static let halfCarrySub:  [UInt8] = [0, 0, 1 << 4, 0, 1 << 4, 0, 1 << 4, 1 << 4]
+    static let overFlowAdd:   [UInt8] = [0, 0, 0, 1 << 2, 1 << 2, 0, 0, 0]
+    static let overFlowSub:   [UInt8] = [0, 1 << 2, 0, 0, 0, 0, 1 << 2, 0]
+
+    struct Instruction : Codable {
+        var opcode:     String
+        var tstates:    UInt32
+        var alttstates: UInt32
         var length:     UInt16
-        var tStates:    UInt32
-        var altTStates: UInt32
-        var opCode:     String
-        
+
         func log(_ pc: UInt16) {
             //            if pc >= 0x4000 {
-            print("pc: ", String(pc, radix: 16, uppercase: true), self.opCode)
+            print("pc: ", String(pc, radix: 16, uppercase: true), self.opcode)
             //            }
         }
     }
-    
-    var unprefixedOps:  Array<Instruction> = []
-    var edprefixedOps:  Array<Instruction> = []
-    var ddprefixedOps:  Array<Instruction> = []
-    var cbprefixedOps:  Array<Instruction> = []
-    
+
+    struct Instructions : Codable {
+        var unprefixed: [Instruction]
+        var edprefix:   [Instruction]
+        var ddprefix:   [Instruction]
+        var cbprefix:   [Instruction]
+    }
+
+    var instructionSet: Instructions!
     var log = false
     
     init(memory: Memory) {
         
-        af  = RegisterPair(hi: a, lo: Z80.f)
+        af  = RegisterPair(hi: a, lo: ZilogZ80.f)
         hl  = RegisterPair(hi: h, lo: l)
         bc  = RegisterPair(hi: b, lo: c)
         de  = RegisterPair(hi: d, lo: e)
@@ -124,7 +127,7 @@ class Z80 : Processor {
         parseInstructions()
         calculateTables()
         
-        Z80.sp = 0xffff
+        ZilogZ80.sp = 0xffff
         pc = 0x0000
         iff1 = 0
         iff2 = 0
@@ -143,7 +146,7 @@ class Z80 : Processor {
         print("hl: ", String(hl.value, radix: 16, uppercase: true))
         print("ix: ", String(ix, radix: 16, uppercase: true))
         print("iy: ", String(iy, radix: 16, uppercase: true))
-        print("sp: ", String(Z80.sp, radix: 16, uppercase: true))
+        print("sp: ", String(ZilogZ80.sp, radix: 16, uppercase: true))
     }
     
     func start() {
@@ -227,55 +230,23 @@ class Z80 : Processor {
     }
     
     final func parseInstructions() {
-        var json: String
-        do {
-            let path = Bundle.main.path(forResource: "z80ops", ofType: "json")
-            try json = String.init(contentsOfFile: path!)
-            
-            let data = json.data(using: .utf8)
-            var dict: Dictionary<String, Any>
+        if let path = Bundle.main.path(forResource: "z80ops", ofType: "json"),
+            let json = try? String.init(contentsOfFile: path),
+            let data = json.data(using: .utf8) {
+
             do {
-                try dict = JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! Dictionary<String, Any>
-                
-                if let unprefixed = dict["unprefixed"] as? Array<Dictionary<String, Any>> {
-                    for opDic in unprefixed {
-                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! UInt32, altTStates: opDic["alt_tstate"] as! UInt32, opCode: opDic["opcode"] as! String)
-                        unprefixedOps.append(inst)
-                    }                    
-                }
-                
-                if let edprefixed = dict["edprefix"] as? Array<Dictionary<String, Any>> {
-                    for opDic in edprefixed {
-                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! UInt32, altTStates: opDic["alt_tstate"] as! UInt32, opCode: opDic["opcode"] as! String)
-                        edprefixedOps.append(inst)
-                    }
-                }
-                
-                if let ddprefixed = dict["ddprefix"] as? Array<Dictionary<String, Any>> {
-                    for opDic in ddprefixed {
-                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! UInt32, altTStates: opDic["alt_tstate"] as! UInt32, opCode: opDic["opcode"] as! String)
-                        ddprefixedOps.append(inst)
-                    }
-                }
-                
-                if let cbprefixed = dict["cbprefix"] as? Array<Dictionary<String, Any>> {
-                    for opDic in cbprefixed {
-                        let inst = Instruction(length: opDic["length"] as! UInt16, tStates: opDic["tstates"] as! UInt32, altTStates: opDic["alt_tstate"] as! UInt32, opCode: opDic["opcode"] as! String)
-                        cbprefixedOps.append(inst)
-                    }
-                }
-                
+                instructionSet = try JSONDecoder().decode(Instructions.self, from: data)
             } catch {
-                print("couldn't get json")
+                print("couldn't parse json")
             }
-        } catch {
-            print("couldn't find z80ops")
+        } else {
+            print("couldn't find opcodes")
         }
     }
-    
+
     func calculateTables() {
         for ii in 0...255 {
-            Z80.sz53Table.append(UInt8(ii) & (Z80.threeBit | Z80.fiveBit | Z80.sBit))
+            ZilogZ80.sz53Table.append(UInt8(ii) & (ZilogZ80.threeBit | ZilogZ80.fiveBit | ZilogZ80.sBit))
             var j = UInt(ii)
             var parity:UInt8 = 0
             for _ in 0...7 {
@@ -284,16 +255,16 @@ class Z80 : Processor {
             }
             
             if parity == 0 {
-                Z80.parityBit.append(0)
+                ZilogZ80.parityBit.append(0)
             } else {
-                Z80.parityBit.append(Z80.pvBit)
+                ZilogZ80.parityBit.append(ZilogZ80.pvBit)
             }
             
-            Z80.sz53pvTable.append(Z80.sz53Table[ii] | Z80.parityBit[ii])
+            ZilogZ80.sz53pvTable.append(ZilogZ80.sz53Table[ii] | ZilogZ80.parityBit[ii])
         }
         
-        Z80.sz53Table[0]   = Z80.sz53Table[0]   | Z80.zBit
-        Z80.sz53pvTable[0] = Z80.sz53pvTable[0] | Z80.zBit
+        ZilogZ80.sz53Table[0]   = ZilogZ80.sz53Table[0]   | ZilogZ80.zBit
+        ZilogZ80.sz53pvTable[0] = ZilogZ80.sz53pvTable[0] | ZilogZ80.zBit
     }
     
     final func serviceInterrupts() {

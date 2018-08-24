@@ -41,17 +41,17 @@ class Spectrum: Machine {
     
     let beeper = AudioStreamer()
     
-    var colours = [UInt32](repeating: 0, count: 16)
+    var colours = ContiguousArray<UInt32>(repeating: 0, count: 16)
     
     // Precalculated screen and attribute rows
-    var screenRowAddress    = [UInt16](repeating: 0, count: 192)
-    var attributeRowAddress = [UInt16](repeating: 0, count: 24)
+    var screenRowAddress    = ContiguousArray<UInt16>(repeating: 0, count: 192)
+    var attributeRowAddress = ContiguousArray<UInt16>(repeating: 0, count: 24)
     
     // Screen image
-    var screenBuffer = [UInt8](repeating: 0, count: 32 * 192)
+    var screenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
     
     // Attribute image - save colour per row (not 8 rows) to allow hi-colour effects
-    var colourBuffer = [UInt8](repeating: 0, count: 32 * 192)
+    var colourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
     
     // Bmp pool to render image
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 192)
@@ -96,7 +96,7 @@ class Spectrum: Machine {
     
     init() {
         memory = Memory("48.rom")
-        processor = Z80(memory: memory)
+        processor = ZilogZ80(memory: memory)
         
         // Populate colour tables
         for (colourIndex, colour) in colourTable.enumerated() {
@@ -123,9 +123,8 @@ class Spectrum: Machine {
         }
         
         borderColourIndex = 255
-        
         provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
-            (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> () in
+            (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> Void in
         })!
         
         beeper.machine = self
@@ -164,18 +163,26 @@ class Spectrum: Machine {
         }
         
         var bmpIndex = 0
-        
+
+        var ink:   UInt32 = 0
+        var paper: UInt32 = 0
+        var temp:  UInt32 = 0
+
+        var byte: UInt8 = 0
+        var attribute: UInt8 = 0
+        var colourOffset: UInt8 = 0
+
         for index in 0..<192 * 32 {
-            let byte      = screenBuffer[index]
-            let attribute = colourBuffer[index]
+            byte      = screenBuffer[index]
+            attribute = colourBuffer[index]
+
+            colourOffset = attribute & brightBit > 0 ? 8 : 0
             
-            let colourOffset:UInt8 = attribute & brightBit > 0 ? 8 : 0
+            ink   = colours[(attribute & 0x07) + colourOffset]
+            paper = colours[((attribute & 0x38) >> 3) + colourOffset]
             
-            var ink   = colours[(attribute & 0x07) + colourOffset]
-            var paper = colours[((attribute & 0x38) >> 3) + colourOffset]
-            
-            if attribute & flashBit > 0 && invertFlashColours {
-                let temp = paper
+            if invertFlashColours && attribute & flashBit > 0 {
+                temp = paper
                 paper = ink
                 ink = temp
             }
@@ -210,14 +217,12 @@ class Spectrum: Machine {
             
             var keysDown: [UInt16] = []
             for key in downKeys {
-                if key < keyMap.count  {
-                    if keyMap[key] > 0 {
-                        keysDown.append(keyMap[key])
-                    }
+                if key < keyMap.count && keyMap[key] > 0 {
+                    keysDown.append(keyMap[key])
                 }
             }
             
-            var keys: Array<UInt8> = [0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf]
+            var keys: [UInt8] = [0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf]
             
             for key in keysDown {
                 let row: UInt8 = UInt8(key >> 8)
@@ -329,8 +334,9 @@ class Spectrum: Machine {
     func loadGame(_ game: String) {
         processor.pause()
         clicks = 0
-        
-        if let _ = Loader(game, z80: processor as! Z80) {
+
+        if let z80 = processor as? ZilogZ80,
+            Loader(game, z80: z80) != nil {
             print("loaded \(game)")
             videoRow = 0
             ula = 0

@@ -12,7 +12,7 @@ class Accumulator : Register {
     
     final func cpl() {
         value = value ^ 0xff
-        Z80.f.value = (Z80.f.value & (Z80.cBit | Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & (Z80.threeBit | Z80.fiveBit)) | (Z80.nBit | Z80.hBit)
+        ZilogZ80.f.value = (ZilogZ80.f.value & (ZilogZ80.cBit | ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | (value & (ZilogZ80.threeBit | ZilogZ80.fiveBit)) | (ZilogZ80.nBit | ZilogZ80.hBit)
     }
     
     final func add(_ amount: UInt8) {
@@ -23,37 +23,37 @@ class Accumulator : Register {
         let part3 = UInt8(addtemp & 0x88) >> 1
         let lookup = part1 | part2 | part3
         value = UInt8(addtemp & 0xff)
-        Z80.f.value = (addtemp & 0x100 > 0 ? Z80.cBit : 0 ) | Z80.halfCarryAdd[UInt8(lookup & 0xff) & 0x07] | Z80.overFlowAdd[UInt8(lookup & 0xff) >> 4] | Z80.sz53Table[value]
+        ZilogZ80.f.value = (addtemp & 0x100 > 0 ? ZilogZ80.cBit : 0 ) | ZilogZ80.halfCarryAdd[UInt8(lookup & 0xff) & 0x07] | ZilogZ80.overFlowAdd[UInt8(lookup & 0xff) >> 4] | ZilogZ80.sz53Table[value]
     }
     
     final func and(_ reg: Register) {
         value = value & reg.value
-        Z80.f.value = Z80.hBit | Z80.sz53pvTable[value]
+        ZilogZ80.f.value = ZilogZ80.hBit | ZilogZ80.sz53pvTable[value]
     }
     
     final func and(_ amount: UInt8) {
         value = value & amount
-        Z80.f.value = Z80.hBit | Z80.sz53pvTable[value]
+        ZilogZ80.f.value = ZilogZ80.hBit | ZilogZ80.sz53pvTable[value]
     }
     
     final func xor(_ reg: Register) {
         value = value ^ reg.value
-        Z80.f.value = Z80.sz53pvTable[value]
+        ZilogZ80.f.value = ZilogZ80.sz53pvTable[value]
     }
     
     final func xor(_ amount: UInt8) {
         value = value ^ amount
-        Z80.f.value = Z80.sz53pvTable[value]
+        ZilogZ80.f.value = ZilogZ80.sz53pvTable[value]
     }
     
     final func or(_ reg: Register) {
         value = value | reg.value
-        Z80.f.value = Z80.sz53pvTable[value]
+        ZilogZ80.f.value = ZilogZ80.sz53pvTable[value]
     }
     
     final func or(_ amount: UInt8) {
         value = value | amount
-        Z80.f.value = Z80.sz53pvTable[value]
+        ZilogZ80.f.value = ZilogZ80.sz53pvTable[value]
     }
     
     final func cp(_ reg: Register) {
@@ -69,12 +69,12 @@ class Accumulator : Register {
         
         let lookup = part1 | part2 | part3
         
-        let part4 = cpTemp & 0x100 > 0 ? Z80.cBit : (cpTemp > 0 ? 0 : Z80.zBit)
-        let part5 = Z80.halfCarrySub[lookup & 0x07]
-        let part6 = Z80.overFlowSub[lookup >> 4]
-        let part7 = amount & (Z80.threeBit | Z80.fiveBit) | (UInt8(cpTemp & 0xff) & Z80.sBit)
+        let part4 = cpTemp & 0x100 > 0 ? ZilogZ80.cBit : (cpTemp > 0 ? 0 : ZilogZ80.zBit)
+        let part5 = ZilogZ80.halfCarrySub[lookup & 0x07]
+        let part6 = ZilogZ80.overFlowSub[lookup >> 4]
+        let part7 = amount & (ZilogZ80.threeBit | ZilogZ80.fiveBit) | (UInt8(cpTemp & 0xff) & ZilogZ80.sBit)
         
-        Z80.f.value = part4 | Z80.nBit | part5 | part6 | part7
+        ZilogZ80.f.value = part4 | ZilogZ80.nBit | part5 | part6 | part7
     }
     
     final func sub(_ amount: UInt8) {
@@ -88,39 +88,39 @@ class Accumulator : Register {
         
         value = UInt8(subTemp & 0xff)
         
-        let part4 = subTemp & 0x100 > 0 ? Z80.cBit : 0
-        let part5 = Z80.halfCarrySub[lookup & 0x07]
-        let part6 = Z80.overFlowSub[lookup >> 4]
-        let part7 = Z80.sz53Table[value]
+        let part4 = subTemp & 0x100 > 0 ? ZilogZ80.cBit : 0
+        let part5 = ZilogZ80.halfCarrySub[lookup & 0x07]
+        let part6 = ZilogZ80.overFlowSub[lookup >> 4]
+        let part7 = ZilogZ80.sz53Table[value]
         
-        Z80.f.value = part4 | Z80.nBit | part5 | part6 | part7
+        ZilogZ80.f.value = part4 | ZilogZ80.nBit | part5 | part6 | part7
     }
     
     final func rlca() {
         value = (value << 1) | (value >> 7)
-        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & (Z80.cBit | Z80.threeBit | Z80.fiveBit))
+        ZilogZ80.f.value = (ZilogZ80.f.value & (ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | (value & (ZilogZ80.cBit | ZilogZ80.threeBit | ZilogZ80.fiveBit))
     }
     
     final func rrca() {
-        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & Z80.cBit)
+        ZilogZ80.f.value = (ZilogZ80.f.value & (ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | (value & ZilogZ80.cBit)
         value = (value >> 1) | (value << 7)
-        Z80.f.value |= (value & (Z80.threeBit | Z80.fiveBit))
+        ZilogZ80.f.value |= (value & (ZilogZ80.threeBit | ZilogZ80.fiveBit))
     }
     
     final func rra() {
         let rratemp = value
-        value = (value >> 1) | (Z80.f.value << 7)
-        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & (Z80.threeBit | Z80.fiveBit)) | (rratemp & Z80.cBit)
+        value = (value >> 1) | (ZilogZ80.f.value << 7)
+        ZilogZ80.f.value = (ZilogZ80.f.value & (ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | (value & (ZilogZ80.threeBit | ZilogZ80.fiveBit)) | (rratemp & ZilogZ80.cBit)
     }
     
     final func rla() {
         let rlatemp = value
-        value = (value << 1) | (Z80.f.value & Z80.cBit)
-        Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | (value & (Z80.threeBit | Z80.fiveBit)) | (rlatemp >> 7)
+        value = (value << 1) | (ZilogZ80.f.value & ZilogZ80.cBit)
+        ZilogZ80.f.value = (ZilogZ80.f.value & (ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | (value & (ZilogZ80.threeBit | ZilogZ80.fiveBit)) | (rlatemp >> 7)
     }
     
     final func adc(_ amount: UInt8) {
-        let adctemp:UInt16 = UInt16(value) &+ UInt16(amount) &+ UInt16(Z80.f.value & Z80.cBit)
+        let adctemp:UInt16 = UInt16(value) &+ UInt16(amount) &+ UInt16(ZilogZ80.f.value & ZilogZ80.cBit)
         let part1 = (value & 0x88) >> 3
         let part2 = (amount & 0x88) >> 2
         let part3 = (adctemp & 0x88) >> 1
@@ -128,11 +128,11 @@ class Accumulator : Register {
         
         value = UInt8(adctemp & 0xff)
         
-        Z80.f.value = (adctemp & 0x100 > 0 ? Z80.cBit : 0) | Z80.halfCarryAdd[lookup & 0x07] | Z80.overFlowAdd[lookup >> 4] | Z80.sz53Table[value]
+        ZilogZ80.f.value = (adctemp & 0x100 > 0 ? ZilogZ80.cBit : 0) | ZilogZ80.halfCarryAdd[lookup & 0x07] | ZilogZ80.overFlowAdd[lookup >> 4] | ZilogZ80.sz53Table[value]
     }
     
     final func sbc(_ amount: UInt8) {
-        let sbctemp = UInt16(value) &- UInt16(amount) &- UInt16((Z80.f.value & Z80.cBit))
+        let sbctemp = UInt16(value) &- UInt16(amount) &- UInt16((ZilogZ80.f.value & ZilogZ80.cBit))
         let part1 = (value & 0x88 ) >> 3
         let part2 = (amount & 0x88) >> 2
         let part3 = (sbctemp & 0x88) >> 1
@@ -140,7 +140,7 @@ class Accumulator : Register {
         
         value = UInt8(sbctemp & 0xff)
         
-        Z80.f.value = (sbctemp & 0x100 > 0 ? Z80.cBit : 0 ) | Z80.nBit | Z80.halfCarrySub[lookup & 0x07] | Z80.overFlowSub[lookup >> 4] | Z80.sz53Table[value]
+        ZilogZ80.f.value = (sbctemp & 0x100 > 0 ? ZilogZ80.cBit : 0 ) | ZilogZ80.nBit | ZilogZ80.halfCarrySub[lookup & 0x07] | ZilogZ80.overFlowSub[lookup >> 4] | ZilogZ80.sz53Table[value]
     }
     
     final func neg() {
@@ -151,9 +151,9 @@ class Accumulator : Register {
     
     func daa() {
         var rmeml: UInt8 = 0
-        var rmemh = Z80.f.value & Z80.cBit
+        var rmemh = ZilogZ80.f.value & ZilogZ80.cBit
         
-        if (Z80.f.value & Z80.hBit > 0) || (value & 0x0f > 9) {
+        if (ZilogZ80.f.value & ZilogZ80.hBit > 0) || (value & 0x0f > 9) {
             rmeml = 6
         }
         
@@ -165,18 +165,18 @@ class Accumulator : Register {
             rmemh = 1
         }
         
-        if Z80.f.value & Z80.nBit > 0 {
-            if ((Z80.f.value & Z80.hBit) > 0) && ((value & 0x0f) < 6) {
-                rmemh |= Z80.hBit
+        if ZilogZ80.f.value & ZilogZ80.nBit > 0 {
+            if ((ZilogZ80.f.value & ZilogZ80.hBit) > 0) && ((value & 0x0f) < 6) {
+                rmemh |= ZilogZ80.hBit
             }
             sub(rmeml)
         } else {
             if ((value & 0x0f) > 9) {
-                rmemh |= Z80.hBit
+                rmemh |= ZilogZ80.hBit
             }
             add(rmeml)
         }
         
-        Z80.f.value = (Z80.f.value & ~(Z80.cBit | Z80.pvBit | Z80.hBit)) | rmemh | Z80.parityBit[value]
+        ZilogZ80.f.value = (ZilogZ80.f.value & ~(ZilogZ80.cBit | ZilogZ80.pvBit | ZilogZ80.hBit)) | rmemh | ZilogZ80.parityBit[value]
     }    
 }

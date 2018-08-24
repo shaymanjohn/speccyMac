@@ -8,12 +8,13 @@
 
 import Foundation
 
-extension Z80 {
+extension ZilogZ80 {
     
 // swiftlint:disable cyclomatic_complexity
+// swiftlint:disable file_length
     final func unprefixed(opcode: UInt8, first: UInt8, second: UInt8) throws {
         
-        let instruction = unprefixedOps[opcode]
+        let instruction = instructionSet.unprefixed[opcode]
         var normalFlow = true
         let word16 = (UInt16(second) << 8) | UInt16(first)
 //        log(instruction)
@@ -124,7 +125,7 @@ extension Z80 {
             a.rra()
             
         case 0x20:  // jr nz, nn
-            if Z80.f.value & Z80.zBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
                 normalFlow = false
             } else {
                 setRelativePC(first)
@@ -152,7 +153,7 @@ extension Z80 {
             a.daa()
             
         case 0x28:  // jr z, nn
-            if Z80.f.value & Z80.zBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
                 setRelativePC(first)
             } else {
                 normalFlow = false
@@ -181,20 +182,20 @@ extension Z80 {
             a.cpl()
             
         case 0x30:  // jr nc, nn
-            if Z80.f.value & Z80.cBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
                 normalFlow = false
             } else {
                 setRelativePC(first)
             }
             
         case 0x31:  // ld sp, nn
-            Z80.sp = word16
+            ZilogZ80.sp = word16
             
         case 0x32:  // ld (nnnn), a
             memory.set(word16, reg: a)
             
         case 0x33:  // inc sp
-            Z80.sp = Z80.sp &+ 1
+            ZilogZ80.sp = ZilogZ80.sp &+ 1
             
         case 0x34:  // inc (hl)
             memory.inc(hl.value)
@@ -206,25 +207,25 @@ extension Z80 {
             memory.set(hl.value, byte: first)
             
         case 0x37:  // scf
-            Z80.f.value &= Z80.zBit | Z80.sBit | Z80.pvBit
-            Z80.f.value |= (a.value & (Z80.threeBit | Z80.fiveBit))
-            Z80.f.value |= Z80.cBit
+            ZilogZ80.f.value &= ZilogZ80.zBit | ZilogZ80.sBit | ZilogZ80.pvBit
+            ZilogZ80.f.value |= (a.value & (ZilogZ80.threeBit | ZilogZ80.fiveBit))
+            ZilogZ80.f.value |= ZilogZ80.cBit
             
         case 0x38:  // jr c, nn
-            if Z80.f.value & Z80.cBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
                 setRelativePC(first)
             } else {
                 normalFlow = false
             }
             
         case 0x39:  // add hl, sp
-            hl.add(Z80.sp)
+            hl.add(ZilogZ80.sp)
             
         case 0x3a:  // ld a, (nn)
             a.value = memory.get(word16)
             
         case 0x3b:  // dec sp
-            Z80.sp = Z80.sp &- 1
+            ZilogZ80.sp = ZilogZ80.sp &- 1
             
         case 0x3c:  // inc a
             a.inc()
@@ -236,7 +237,7 @@ extension Z80 {
             a.value = first
             
         case 0x3f:  // ccf
-            Z80.f.value = (Z80.f.value & (Z80.pvBit | Z80.zBit | Z80.sBit)) | ((Z80.f.value & Z80.cBit) > 0 ? Z80.hBit : Z80.cBit) | (a.value & (Z80.threeBit | Z80.fiveBit))
+            ZilogZ80.f.value = (ZilogZ80.f.value & (ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | ((ZilogZ80.f.value & ZilogZ80.cBit) > 0 ? ZilogZ80.hBit : ZilogZ80.cBit) | (a.value & (ZilogZ80.threeBit | ZilogZ80.fiveBit))
             
         case 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x47:  // ld b, reg
             b.value = [b, c, d, e, h, l, a, a][opcode - 0x40].value
@@ -336,7 +337,7 @@ extension Z80 {
             a.cp(memory.get(hl))
             
         case 0xc0:  // ret nz
-            if Z80.f.value & Z80.zBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
                 normalFlow = false
             } else {
                 pc = memory.pop()
@@ -347,7 +348,7 @@ extension Z80 {
             bc.value = memory.pop()
             
         case 0xc2:  // jp nz, nnnn
-            if Z80.f.value & Z80.zBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
                 normalFlow = false
             } else {
                 pc = word16
@@ -359,7 +360,7 @@ extension Z80 {
             pc = pc &- 3
             
         case 0xc4:  // call nz, nn
-            if Z80.f.value & Z80.zBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
                 normalFlow = false
             } else {
                 memory.push(pc &+ 3)
@@ -377,7 +378,7 @@ extension Z80 {
             rst(0x0000)
             
         case 0xc8:  // ret z
-            if Z80.f.value & Z80.zBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
                 pc = memory.pop()
                 pc = pc &- 1
             } else {
@@ -389,7 +390,7 @@ extension Z80 {
             pc = pc &- 1
             
         case 0xca:  // jp z, nn
-            if Z80.f.value & Z80.zBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
                 pc = word16
                 pc = pc &- 3
             } else {
@@ -397,7 +398,7 @@ extension Z80 {
             }
             
         case 0xcc:  // call z, nn
-            if Z80.f.value & Z80.zBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
                 memory.push(pc &+ 3)
                 pc = word16
                 pc = pc &- 3
@@ -417,7 +418,7 @@ extension Z80 {
             rst(0x0008)
             
         case 0xd0:  // ret nc
-            if Z80.f.value & Z80.cBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
                 normalFlow = false
             } else {
                 pc = memory.pop()
@@ -428,7 +429,7 @@ extension Z80 {
             de.value = memory.pop()
             
         case 0xd2:  // jp nc, nn
-            if Z80.f.value & Z80.cBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
                 normalFlow = false
             } else {
                 pc = word16
@@ -439,7 +440,7 @@ extension Z80 {
             machine?.output(first, byte: a.value)
             
         case 0xd4:  // call nc, nn
-            if Z80.f.value & Z80.cBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
                 normalFlow = false
             } else {
                 memory.push(pc &+ 3)
@@ -457,7 +458,7 @@ extension Z80 {
             rst(0x0010)
             
         case 0xd8:  // ret c
-            if Z80.f.value & Z80.cBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
                 pc = memory.pop()
                 pc = pc &- 1
             } else {
@@ -478,7 +479,7 @@ extension Z80 {
             exhl = temp
             
         case 0xda:  // jp c, nn
-            if Z80.f.value & Z80.cBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
                 pc = word16
                 pc = pc &- 3
             } else {
@@ -487,10 +488,10 @@ extension Z80 {
             
         case 0xdb:  // in a, (n)
             a.value = machine?.input(a.value, low: first) ?? 0
-            Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.sz53pvTable[a.value]
+            ZilogZ80.f.value = (ZilogZ80.f.value & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[a.value]
             
         case 0xdc:  // call c, nn
-            if Z80.f.value & Z80.cBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
                 memory.push(pc &+ 3)
                 pc = word16
                 pc = pc &- 3
@@ -505,7 +506,7 @@ extension Z80 {
             rst(0x0018)
             
         case 0xe0:  // ret po
-            if Z80.f.value & Z80.pvBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
                 normalFlow = false
             } else {
                 pc = memory.pop()
@@ -516,7 +517,7 @@ extension Z80 {
             hl.value = memory.pop()
             
         case 0xe2:  // jp po, nn
-            if Z80.f.value & Z80.pvBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
                 normalFlow = false
             } else {
                 pc = word16
@@ -524,16 +525,16 @@ extension Z80 {
             }
             
         case 0xe3:  // ex (sp), hl
-            let savesp = Z80.sp &+ 1
+            let savesp = ZilogZ80.sp &+ 1
             let byte1 = h.value
             let byte2 = l.value
-            l.value = memory.get(Z80.sp)
+            l.value = memory.get(ZilogZ80.sp)
             h.value = memory.get(savesp)
-            memory.set(Z80.sp, byte: byte2)
+            memory.set(ZilogZ80.sp, byte: byte2)
             memory.set(savesp, byte: byte1)
             
         case 0xe4:  // call po, nn
-            if Z80.f.value & Z80.pvBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
                 normalFlow = false
             } else {
                 memory.push(pc &+ 3)
@@ -551,7 +552,7 @@ extension Z80 {
             rst(0x0020)
             
         case 0xe8:  // ret pe
-            if Z80.f.value & Z80.pvBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
                 pc = memory.pop()
                 pc = pc &- 1
             } else {
@@ -563,7 +564,7 @@ extension Z80 {
             pc = pc &- 1
             
         case 0xea:  // jp pe, nn
-            if Z80.f.value & Z80.pvBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
                 pc = word16
                 pc = pc &- 3
             } else {
@@ -576,7 +577,7 @@ extension Z80 {
             hl.value = temp
             
         case 0xec:  // call pe, nn
-            if Z80.f.value & Z80.pvBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
                 memory.push(pc &+ 3)
                 pc = word16
                 pc = pc &- 3
@@ -591,7 +592,7 @@ extension Z80 {
             rst(0x0028)
             
         case 0xf0:  // ret p
-            if Z80.f.value & Z80.sBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
                 normalFlow = false
             } else {
                 pc = memory.pop()
@@ -602,7 +603,7 @@ extension Z80 {
             af.value = memory.pop()
             
         case 0xf2:  // jp p, nn
-            if Z80.f.value & Z80.sBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
                 normalFlow = false
             } else {
                 pc = word16
@@ -615,7 +616,7 @@ extension Z80 {
             iff2 = 2
             
         case 0xf4:  // call p, nn
-            if Z80.f.value & Z80.sBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
                 normalFlow = false
             } else {
                 memory.push(pc &+ 3)
@@ -633,7 +634,7 @@ extension Z80 {
             rst(0x0030)
             
         case 0xf8:  // ret m
-            if Z80.f.value & Z80.sBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
                 pc = memory.pop()
                 pc = pc &- 1
             } else {
@@ -641,10 +642,10 @@ extension Z80 {
             }
             
         case 0xf9:  // ld sp, hl
-            Z80.sp = hl.value
+            ZilogZ80.sp = hl.value
             
         case 0xfa:  // jp m, nn
-            if Z80.f.value & Z80.sBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
                 pc = word16
                 pc = pc &- 3
             } else {
@@ -657,7 +658,7 @@ extension Z80 {
             iff2 = 1
             
         case 0xfc:  // call m, nn
-            if Z80.f.value & Z80.sBit > 0 {
+            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
                 memory.push(pc &+ 3)
                 pc = word16
                 pc = pc &- 3
@@ -672,12 +673,12 @@ extension Z80 {
             rst(0x0038)
             
         default:
-            throw NSError(domain: "z80 unprefixed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
+            throw NSError(domain: "z80 unprefixed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])
         }                
         
         pc = pc &+ instruction.length
 
-        incCounters(normalFlow ? instruction.tStates : instruction.altTStates)        
+        incCounters(normalFlow ? instruction.tstates : instruction.alttstates)        
         r.inc()
     }
     

@@ -18,3 +18,14 @@ extension Array {
         return self[Int(ix)]
     }
 }
+
+extension ContiguousArray {
+
+    subscript(_ ix: UInt8) -> Element {
+        return self[Int(ix)]
+    }
+
+    subscript(_ ix: UInt16) -> Element {
+        return self[Int(ix)]
+    }
+}

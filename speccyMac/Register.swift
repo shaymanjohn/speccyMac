@@ -14,53 +14,53 @@ class Register {
     
     final func inc() {
         value = value &+ 1        
-        Z80.f.value = (Z80.f.value & Z80.cBit) | (value == 0x80 ? Z80.pvBit : 0) | (value & 0x0f > 0 ? 0 : Z80.hBit) | Z80.sz53Table[value]
+        ZilogZ80.f.value = (ZilogZ80.f.value & ZilogZ80.cBit) | (value == 0x80 ? ZilogZ80.pvBit : 0) | (value & 0x0f > 0 ? 0 : ZilogZ80.hBit) | ZilogZ80.sz53Table[value]
     }
     
     final func dec() {
-        Z80.f.value = (Z80.f.value & Z80.cBit) | (value & 0x0f > 0 ? 0 : Z80.hBit) | Z80.nBit
+        ZilogZ80.f.value = (ZilogZ80.f.value & ZilogZ80.cBit) | (value & 0x0f > 0 ? 0 : ZilogZ80.hBit) | ZilogZ80.nBit
         value = value &- 1
-        Z80.f.value |= (value == 0x7f ? Z80.pvBit : 0) | Z80.sz53Table[value]
+        ZilogZ80.f.value |= (value == 0x7f ? ZilogZ80.pvBit : 0) | ZilogZ80.sz53Table[value]
     }
     
     final func rlc() {
         value = (value << 1) | (value >> 7)
-        Z80.f.value = (value & Z80.cBit) | Z80.sz53pvTable[value]
+        ZilogZ80.f.value = (value & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[value]
     }
     
     final func bit(_ number: UInt8) {
-        Z80.f.value = (Z80.f.value & Z80.cBit) | Z80.hBit | ( value & ( Z80.threeBit | Z80.fiveBit))
+        ZilogZ80.f.value = (ZilogZ80.f.value & ZilogZ80.cBit) | ZilogZ80.hBit | ( value & ( ZilogZ80.threeBit | ZilogZ80.fiveBit))
         if value & (1 << number) == 0 {
-            Z80.f.value |= Z80.pvBit | Z80.zBit
+            ZilogZ80.f.value |= ZilogZ80.pvBit | ZilogZ80.zBit
         }
         
         if number == 7 && (value & 0x80) > 0 {
-            Z80.f.value |= Z80.sBit
+            ZilogZ80.f.value |= ZilogZ80.sBit
         }
     }
     
     final func srl() {
-        Z80.f.value = value & Z80.cBit
+        ZilogZ80.f.value = value & ZilogZ80.cBit
         value = value >> 1
-        Z80.f.value |= Z80.sz53pvTable[value]
+        ZilogZ80.f.value |= ZilogZ80.sz53pvTable[value]
     }
     
     final func sla() {
-        Z80.f.value = value >> 7
+        ZilogZ80.f.value = value >> 7
         value = value << 1
-        Z80.f.value |= Z80.sz53pvTable[value]
+        ZilogZ80.f.value |= ZilogZ80.sz53pvTable[value]
     }
     
     final func rr() {
         let rrtemp = value
-        value = (value >> 1) | (Z80.f.value << 7)
-        Z80.f.value = (rrtemp & Z80.cBit) | Z80.sz53pvTable[value]
+        value = (value >> 1) | (ZilogZ80.f.value << 7)
+        ZilogZ80.f.value = (rrtemp & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[value]
     }
     
     final func rl() {
         let rltemp = value
-        value = (value << 1) | (Z80.f.value & Z80.cBit)
-        Z80.f.value = (rltemp >> 7) | Z80.sz53pvTable[value]
+        value = (value << 1) | (ZilogZ80.f.value & ZilogZ80.cBit)
+        ZilogZ80.f.value = (rltemp >> 7) | ZilogZ80.sz53pvTable[value]
     }
     
     final func set(_ bit: UInt8) {
@@ -72,14 +72,14 @@ class Register {
     }
     
     final func rrc() {
-        Z80.f.value = value & Z80.cBit
+        ZilogZ80.f.value = value & ZilogZ80.cBit
         value = (value >> 1) | (value << 7)
-        Z80.f.value |= Z80.sz53pvTable[value]
+        ZilogZ80.f.value |= ZilogZ80.sz53pvTable[value]
     }
     
     final func sra() {
-        Z80.f.value = value & Z80.cBit
+        ZilogZ80.f.value = value & ZilogZ80.cBit
         value = (value & 0x80) | (value >> 1)
-        Z80.f.value |= Z80.sz53pvTable[value]
+        ZilogZ80.f.value |= ZilogZ80.sz53pvTable[value]
     }
 }

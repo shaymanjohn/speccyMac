@@ -11,12 +11,12 @@ import XCTest
 
 class RegisterTests: XCTestCase {
 
-    var z80: Z80 = Z80(memory: Memory("48.rom"))
+    var z80: ZilogZ80 = ZilogZ80(memory: Memory("48.rom"))
     
     override func setUp() {
         super.setUp()
         
-        z80 = Z80(memory: Memory("48.rom"))
+        z80 = ZilogZ80(memory: Memory("48.rom"))
     }
     
     override func tearDown() {
@@ -63,52 +63,52 @@ class RegisterTests: XCTestCase {
     func testBit() {
         z80.b.value = 0x01
         z80.b.bit(0)
-        XCTAssert(Z80.f.value & Z80.zBit == 0, "Bit test failed")
+        XCTAssert(ZilogZ80.f.value & ZilogZ80.zBit == 0, "Bit test failed")
         
         z80.b.value = 0x00
         z80.b.bit(0)
-        XCTAssert(Z80.f.value & Z80.zBit != 0, "Bit test failed")
+        XCTAssert(ZilogZ80.f.value & ZilogZ80.zBit != 0, "Bit test failed")
     }
     
     func testSrl() {
         z80.b.value = 0xff
         
-        Z80.f.value = 0
+        ZilogZ80.f.value = 0
         z80.b.srl()
         
         XCTAssert(z80.b.value == 0x7f, "srl failed")
-        XCTAssert(Z80.f.value & Z80.cBit > 0, "srl failed")
+        XCTAssert(ZilogZ80.f.value & ZilogZ80.cBit > 0, "srl failed")
         
         z80.b.value = 0xfe
         z80.b.srl()
         XCTAssert(z80.b.value == 0x7f, "srl failed")
-        XCTAssert(Z80.f.value & Z80.cBit == 0, "srl failed")
+        XCTAssert(ZilogZ80.f.value & ZilogZ80.cBit == 0, "srl failed")
     }
     
     func testSla() {
         z80.b.value = 0xff
         
-        Z80.f.value = 0
+        ZilogZ80.f.value = 0
         z80.b.sla()
         
         XCTAssert(z80.b.value == 0xfe, "sla failed")
-        XCTAssert(Z80.f.value & Z80.cBit > 0, "sla failed")
+        XCTAssert(ZilogZ80.f.value & ZilogZ80.cBit > 0, "sla failed")
         
         z80.b.value = 0x7f
         z80.b.sla()
         XCTAssert(z80.b.value == 0xfe, "sla failed")
-        XCTAssert(Z80.f.value & Z80.cBit == 0, "sla failed")
+        XCTAssert(ZilogZ80.f.value & ZilogZ80.cBit == 0, "sla failed")
     }
     
     func testRr() {
-        let c = Z80.f.value & Z80.cBit
+        let c = ZilogZ80.f.value & ZilogZ80.cBit
         z80.b.value = 0xff
         z80.b.rr()
         XCTAssert(z80.b.value == 0x7f | (c << 7), "rr failed")
     }
     
     func testRl() {
-        let c = Z80.f.value & Z80.cBit
+        let c = ZilogZ80.f.value & ZilogZ80.cBit
         z80.b.value = 0xff
         z80.b.rl()
         XCTAssert(z80.b.value == 0xfe | c, "rl failed")

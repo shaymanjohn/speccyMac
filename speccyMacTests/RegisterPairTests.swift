@@ -11,12 +11,12 @@ import XCTest
 
 class RegisterPairTests: XCTestCase {
 
-    var z80: Z80 = Z80(memory: Memory("48.rom"))
+    var z80: ZilogZ80 = ZilogZ80(memory: Memory("48.rom"))
     
     override func setUp() {
         super.setUp()
         
-        z80 = Z80(memory: Memory("48.rom"))
+        z80 = ZilogZ80(memory: Memory("48.rom"))
     }
     
     override func tearDown() {
@@ -63,7 +63,7 @@ class RegisterPairTests: XCTestCase {
         let otherPair = RegisterPair(hi: d, lo: e)
         otherPair.value = 5
         
-        Z80.f.value = 0
+        ZilogZ80.f.value = 0
         
         z80.hl.sbc(otherPair)
         XCTAssert(z80.hl.value == 1229, "sbc no carry failed, producing result \(z80.hl.value)")
@@ -77,7 +77,7 @@ class RegisterPairTests: XCTestCase {
         let otherPair = RegisterPair(hi: d, lo: e)
         otherPair.value = 0xffff
         
-        Z80.f.value = 0
+        ZilogZ80.f.value = 0
         
         z80.hl.sbc(otherPair)
         XCTAssert(z80.hl.value == 0x2346, "sbc no carry negative failed, producing result \(z80.hl.value)")
@@ -91,7 +91,7 @@ class RegisterPairTests: XCTestCase {
         let otherPair = RegisterPair(hi: d, lo: e)
         otherPair.value = 0x0004
         
-        Z80.f.value = Z80.cBit
+        ZilogZ80.f.value = ZilogZ80.cBit
         
         z80.hl.sbc(otherPair)
         XCTAssert(z80.hl.value == 0x2340, "sbc no carry failed, producing result \(z80.hl.value)")
@@ -105,7 +105,7 @@ class RegisterPairTests: XCTestCase {
         let otherPair = RegisterPair(hi: d, lo: e)
         otherPair.value = 0xffff
         
-        Z80.f.value = Z80.cBit
+        ZilogZ80.f.value = ZilogZ80.cBit
         
         z80.hl.sbc(otherPair)
         XCTAssert(z80.hl.value == 2001, "sbc no carry negative failed, producing result \(z80.hl.value)")

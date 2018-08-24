@@ -8,11 +8,11 @@
 
 import Foundation
 
-extension Z80 {
+extension ZilogZ80 {
         
     final func ddcbprefix(opcode: UInt8, first: UInt8) throws {
         
-        let instruction = cbprefixedOps[opcode]
+        let instruction = instructionSet.cbprefix[opcode]
         let offsetAddress = first > 127 ? ixy.value &- (UInt16(256) - UInt16(first)) : ixy.value &+ UInt16(first)
 //        log(instruction)
         
@@ -40,11 +40,11 @@ extension Z80 {
             memory.indexSet(bitValue, address: offsetAddress)            
             
         default:
-            throw NSError(domain: "z80+ddcb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opCode, "pc" : pc])
+            throw NSError(domain: "z80+ddcb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])
         }
 
         pc = pc &+ instruction.length + 2
-        incCounters(instruction.tStates + 8)
+        incCounters(instruction.tstates + 8)
         
         r.inc()
         r.inc()

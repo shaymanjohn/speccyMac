@@ -42,7 +42,7 @@
 		6FE5147A1F372D96004F0751 /* RegisterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE514791F372D96004F0751 /* RegisterTests.swift */; };
 		6FE5147C1F3732A3004F0751 /* RegisterPairTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FE5147B1F3732A3004F0751 /* RegisterPairTests.swift */; };
 		6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90C1F2238A500F9AD93 /* Memory.swift */; };
-		6FEFA90F1F2238C200F9AD93 /* Z80.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90E1F2238C200F9AD93 /* Z80.swift */; };
+		6FEFA90F1F2238C200F9AD93 /* ZilogZ80.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA90E1F2238C200F9AD93 /* ZilogZ80.swift */; };
 		6FEFA91E1F223B5A00F9AD93 /* z80ops.json in Resources */ = {isa = PBXBuildFile; fileRef = 6FEFA91B1F223AA400F9AD93 /* z80ops.json */; };
 		6FEFA91F1F223B5E00F9AD93 /* 48.rom in Resources */ = {isa = PBXBuildFile; fileRef = 6FEFA91D1F223B3A00F9AD93 /* 48.rom */; };
 		6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA9211F223FCE00F9AD93 /* Loader.swift */; };
@@ -110,7 +110,7 @@
 		6FE514791F372D96004F0751 /* RegisterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterTests.swift; sourceTree = "<group>"; };
 		6FE5147B1F3732A3004F0751 /* RegisterPairTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterPairTests.swift; sourceTree = "<group>"; };
 		6FEFA90C1F2238A500F9AD93 /* Memory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Memory.swift; sourceTree = "<group>"; };
-		6FEFA90E1F2238C200F9AD93 /* Z80.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z80.swift; sourceTree = "<group>"; };
+		6FEFA90E1F2238C200F9AD93 /* ZilogZ80.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZilogZ80.swift; sourceTree = "<group>"; };
 		6FEFA91B1F223AA400F9AD93 /* z80ops.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = z80ops.json; sourceTree = SOURCE_ROOT; };
 		6FEFA91D1F223B3A00F9AD93 /* 48.rom */ = {isa = PBXFileReference; lastKnownFileType = file; path = 48.rom; sourceTree = SOURCE_ROOT; };
 		6FEFA9211F223FCE00F9AD93 /* Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Loader.swift; sourceTree = "<group>"; };
@@ -248,7 +248,7 @@
 				6FFC9E091F35CFB200B9322C /* RegisterPair.swift */,
 				6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */,
 				6F7421E01F36FDFF00C056EA /* RefreshReg.swift */,
-				6FEFA90E1F2238C200F9AD93 /* Z80.swift */,
+				6FEFA90E1F2238C200F9AD93 /* ZilogZ80.swift */,
 				6FEFA92B1F22503000F9AD93 /* Z80+unprefixed.swift */,
 				6FEFA9271F224FC000F9AD93 /* Z80+dd.swift */,
 				6FEFA9291F224FF500F9AD93 /* Z80+ed.swift */,
@@ -317,16 +317,22 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0900;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 1000;
 				ORGANIZATIONNAME = "John Ward";
 				TargetAttributes = {
 					6FE5146E1F372CF1004F0751 = {
 						CreatedOnToolsVersion = 9.0;
+						LastSwiftMigration = 1000;
 						TestTargetID = 6FFB314F1F22379B00C15CD7;
 					};
 					6FFB314F1F22379B00C15CD7 = {
 						CreatedOnToolsVersion = 9.0;
-						LastSwiftMigration = 0900;
+						LastSwiftMigration = 1000;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 0;
+							};
+						};
 					};
 				};
 			};
@@ -478,7 +484,7 @@
 				6FFC9E0C1F35D65C00B9322C /* Accumulator.swift in Sources */,
 				6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */,
 				6FFB31561F22379B00C15CD7 /* Emulator.swift in Sources */,
-				6FEFA90F1F2238C200F9AD93 /* Z80.swift in Sources */,
+				6FEFA90F1F2238C200F9AD93 /* ZilogZ80.swift in Sources */,
 				6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */,
 				6FFC9E081F35CFA400B9322C /* Register.swift in Sources */,
 				6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */,
@@ -530,7 +536,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/speccyMac.app/Contents/MacOS/speccyMac";
 			};
 			name = Debug;
@@ -545,7 +551,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/speccyMac.app/Contents/MacOS/speccyMac";
 			};
 			name = Release;
@@ -564,6 +570,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -571,6 +578,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -623,6 +631,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -630,6 +639,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -666,7 +676,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = speccyMac/speccyMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				INFOPLIST_FILE = speccyMac/Info.plist;
@@ -675,7 +684,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -685,7 +694,6 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = speccyMac/speccyMac.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				INFOPLIST_FILE = speccyMac/Info.plist;
@@ -693,7 +701,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};

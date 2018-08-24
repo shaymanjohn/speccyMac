@@ -14,7 +14,7 @@ class MemoryTests: XCTestCase {
     let memory = Memory("48.rom")
     
     override func setUp() {
-        let _ = Z80(memory: memory)
+        let _ = ZilogZ80(memory: memory)
         
         super.setUp()
     }
@@ -40,8 +40,8 @@ class MemoryTests: XCTestCase {
     }
     
     func testPushAndPop() {
-        let _ = Z80(memory: memory)
-        Z80.sp = 32768
+        let _ = ZilogZ80(memory: memory)
+        ZilogZ80.sp = 32768
         
         memory.push(5678)
         let value = memory.pop()
