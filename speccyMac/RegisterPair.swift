@@ -28,7 +28,7 @@ class RegisterPair {
         self.hi = hi
         self.lo = lo
         
-        self.value = 0xffff
+        value = 0xffff
     }
     
     final func add(_ amount: UInt16) {

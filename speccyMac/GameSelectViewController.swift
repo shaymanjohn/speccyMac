@@ -16,7 +16,7 @@ class GameSelectViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.sortedGames = machine.games.sorted(by: { (game1 : Game, game2 : Game) -> Bool in
+        sortedGames = machine.games.sorted(by: { (game1 : Game, game2 : Game) -> Bool in
             return game1.name < game2.name
         })
     }
@@ -46,7 +46,7 @@ extension GameSelectViewController: NSTableViewDelegate {
                 let selectedGame = sortedGames[tv.selectedRow]
                 machine.loadGame(selectedGame.file)
                 
-                self.dismiss(self)
+                dismiss(self)
             }
         }
     }

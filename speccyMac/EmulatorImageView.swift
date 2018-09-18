@@ -12,7 +12,7 @@ class EmulatorImageView: NSImageView {
 
     override func draw(_ dirtyRect: NSRect) {
         
-        NSGraphicsContext.current?.imageInterpolation = .low   // none, low, medium, high
+        NSGraphicsContext.current?.imageInterpolation = .none   // none, low, medium, high
         super.draw(dirtyRect)
     }
     

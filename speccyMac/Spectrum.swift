@@ -147,13 +147,13 @@ class Spectrum: Machine {
     final func frameCompleted() {
         
         if processor.lateFrames > 1 {
-            self.lateLabel?.stringValue = "Late \(processor.lateFrames)"
-            self.lateLabel?.isHidden = false
+            lateLabel?.stringValue = "Late \(processor.lateFrames)"
+            lateLabel?.isHidden = false
         } else {
-            self.lateLabel?.isHidden = true
+            lateLabel?.isHidden = true
         }
         
-        self.emulatorView?.layer?.backgroundColor = CGColor(red: borderColour.rf, green: borderColour.gf, blue: borderColour.bf, alpha: 1.0)
+        emulatorView?.layer?.backgroundColor = CGColor(red: borderColour.rf, green: borderColour.gf, blue: borderColour.bf, alpha: 1.0)
         
         flashCounter += 1   
         if flashCounter == 16 {
@@ -284,7 +284,7 @@ class Spectrum: Machine {
             if videoRow >= 64 && videoRow <= 255 {
                 if ula >= 24 && ula <= 152 {
                     let rowNum = videoRow - 64
-                    let attribAddress = self.attributeAddress + ((rowNum >> 3) << 5)
+                    let attribAddress = attributeAddress + ((rowNum >> 3) << 5)
                     let col = (ula - 24) >> 2
                     byte = memory.get(attribAddress + UInt16(col & 0xffff))
                 }

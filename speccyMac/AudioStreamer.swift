@@ -100,7 +100,7 @@ class AudioStreamer {
         sample -= sample / 8
         sample += amplitude / 8
 
-        let offset: Int = (Int(counter) * kSamplesPerFrame) / machine.ticksPerFrame;
+        let offset: Int = (Int(counter) * kSamplesPerFrame) / machine.ticksPerFrame
         if offset < kSamplesPerFrame {
             audioData[offset] = sample
         }
@@ -123,7 +123,7 @@ class AudioStreamer {
     }
 }
 
-private func AudioStreamerOuputCallback(userData: Optional<UnsafeMutableRawPointer>, queueRef: AudioQueueRef, buffer: AudioQueueBufferRef) {
+private func AudioStreamerOuputCallback(userData: UnsafeMutableRawPointer?, queueRef: AudioQueueRef, buffer: AudioQueueBufferRef) {
     // recover AudioStreamer instance from void * userData
     let this = Unmanaged<AudioStreamer>.fromOpaque(userData!).takeUnretainedValue()
     var ptr = buffer.pointee.mAudioData.assumingMemoryBound(to: AudioDataElement.self)

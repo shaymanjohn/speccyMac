@@ -19,21 +19,21 @@ class Emulator: NSViewController {
         
         super.viewDidLoad()
         
-        self.view.wantsLayer = true
+        view.wantsLayer = true
                 
         machine = Spectrum()
-        machine.emulatorView = self.view as? EmulatorInputView
-        machine.emulatorScreen = self.emulatorScreen
-        machine.lateLabel = self.lateLabel
+        machine.emulatorView = view as? EmulatorInputView
+        machine.emulatorScreen = emulatorScreen
+        machine.lateLabel = lateLabel
         
-        self.machine.start()
+        machine.start()
     }
     
     @IBAction func changeGame(_ sender: NSButton) {
         
-        if let gameSelect = self.storyboard?.instantiateController(withIdentifier: "gameSelect") as? GameSelectViewController {
+        if let gameSelect = storyboard?.instantiateController(withIdentifier: "gameSelect") as? GameSelectViewController {
             gameSelect.machine = machine
-            self.presentAsModalWindow(gameSelect)
+            presentAsModalWindow(gameSelect)
         }
     }
 }

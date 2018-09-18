@@ -99,7 +99,7 @@ class ZilogZ80 : Processor {
 
         func log(_ pc: UInt16) {
             //            if pc >= 0x4000 {
-            print("pc: ", String(pc, radix: 16, uppercase: true), self.opcode)
+            print("pc: ", String(pc, radix: 16, uppercase: true), opcode)
             //            }
         }
     }
@@ -209,7 +209,7 @@ class ZilogZ80 : Processor {
                     }
                 }
                 
-                self.machine?.tick()                
+                machine?.tick()                
             }
         }
     }
