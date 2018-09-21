@@ -63,7 +63,7 @@ class Memory {
         set(address &+ 1, byte: regPair.hi.value)
     }
     
-    final func inc(_ address: UInt16) {
+    @inline(__always) final func inc(_ address: UInt16) {
         var value = get(address)
         value = value &+ 1
         ZilogZ80.f.value = (ZilogZ80.f.value & ZilogZ80.cBit) | (value == 0x80 ? ZilogZ80.pvBit : 0) | (value & 0x0f > 0 ? 0 : ZilogZ80.hBit) | ZilogZ80.sz53Table[value]
@@ -71,7 +71,7 @@ class Memory {
         set(address, byte: value)
     }
     
-    final func dec(_ address: UInt16) {
+    @inline(__always) final func dec(_ address: UInt16) {
         var value = get(address)
         
         ZilogZ80.f.value = (ZilogZ80.f.value & ZilogZ80.cBit) | (value & 0x0f > 0 ? 0 : ZilogZ80.hBit ) | ZilogZ80.nBit
@@ -81,7 +81,7 @@ class Memory {
         set(address, byte: value)
     }    
     
-    final func pop() -> UInt16 {
+    @inline(__always) final func pop() -> UInt16 {
         let lo = get(ZilogZ80.sp)
         let hi = get(ZilogZ80.sp + 1)
         ZilogZ80.sp = ZilogZ80.sp &+ 2
@@ -89,31 +89,31 @@ class Memory {
         return (UInt16(hi) << 8) | UInt16(lo)
     }
     
-    final func push(_ regPair: RegisterPair) {
+    @inline(__always) final func push(_ regPair: RegisterPair) {
         set(ZilogZ80.sp &- 1, byte: regPair.hi.value)
         set(ZilogZ80.sp &- 2, byte: regPair.lo.value)
         ZilogZ80.sp = ZilogZ80.sp &- 2
     }
     
-    final func push(_ word: UInt16) {
+    @inline(__always) final func push(_ word: UInt16) {
         set(ZilogZ80.sp &- 1, byte: UInt8((word & 0xff00) >> 8))
         set(ZilogZ80.sp &- 2, byte: UInt8(word & 0x00ff))
         ZilogZ80.sp = ZilogZ80.sp &- 2
     }
     
-    final func indexSet(_ num: UInt8, address: UInt16) {
+    @inline(__always) final func indexSet(_ num: UInt8, address: UInt16) {
         var byte = get(address)
         byte = byte | (1 << num)
         set(address, byte: byte)
     }
     
-    final func indexRes(_ num: UInt8, address: UInt16) {
+    @inline(__always) final func indexRes(_ num: UInt8, address: UInt16) {
         var byte = get(address)
         byte = byte & ~(1 << num)
         set(address, byte: byte)
     }
     
-    final func indexBit(_ num: UInt8, address: UInt16) {
+    @inline(__always) final func indexBit(_ num: UInt8, address: UInt16) {
         let value = get(address)
         ZilogZ80.f.value = (ZilogZ80.f.value & ZilogZ80.cBit ) | ZilogZ80.hBit | ((value >> 8) & (ZilogZ80.threeBit | ZilogZ80.fiveBit))
         
@@ -126,7 +126,7 @@ class Memory {
         }
     }
     
-    final func sla(_ regPair: RegisterPair) {
+    @inline(__always) final func sla(_ regPair: RegisterPair) {
         var value = get(regPair.value)
         ZilogZ80.f.value = value >> 7
         value = value << 1
@@ -134,7 +134,7 @@ class Memory {
         set(regPair.value, byte: value)
     }
       
-    final func rl(_ regPair: RegisterPair) {
+    @inline(__always) final func rl(_ regPair: RegisterPair) {
         var byte = get(regPair.value)
         
         let rltemp = byte
@@ -144,7 +144,7 @@ class Memory {
         set(regPair.value, byte: byte)
     }
     
-    final func rr(_ regPair: RegisterPair) {
+    @inline(__always) final func rr(_ regPair: RegisterPair) {
         var byte = get(regPair.value)
         
         let rrtemp = byte
@@ -154,7 +154,7 @@ class Memory {
         set(regPair.value, byte: byte)
     }
     
-    final func sra(_ address: UInt16) {
+    @inline(__always) final func sra(_ address: UInt16) {
         var value = get(address)
         ZilogZ80.f.value = value & ZilogZ80.cBit
         value = (value & 0x80) | (value >> 1)
@@ -162,7 +162,7 @@ class Memory {
         set(address, byte: value)
     }
     
-    final func srl(_ regPair: RegisterPair) {
+    @inline(__always) final func srl(_ regPair: RegisterPair) {
         var value = get(regPair.value)
         ZilogZ80.f.value = value & ZilogZ80.cBit
         value = value >> 1
@@ -170,7 +170,7 @@ class Memory {
         set(regPair.value, byte: value)
     }
     
-    final func rrc(_ address: UInt16) {
+    @inline(__always) final func rrc(_ address: UInt16) {
         var value = get(address)
         ZilogZ80.f.value = value & ZilogZ80.cBit
         value = (value >> 1) | (value << 7)
@@ -178,7 +178,7 @@ class Memory {
         set(address, byte: value)
     }
     
-    final func rlc(_ address: UInt16) {
+    @inline(__always) final func rlc(_ address: UInt16) {
         var value = get(address)
         value = (value << 1) | (value >> 7)
         ZilogZ80.f.value = (value & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[value]
