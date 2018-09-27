@@ -14,7 +14,7 @@ class Spectrum: Machine {
     var processor: Processor
     var memory:    Memory
     
-    var ticksPerFrame:   Int = 69888
+    var ticksPerFrame: Int = 69888
     
     var clicks: UInt8 = 0
     
@@ -122,7 +122,7 @@ class Spectrum: Machine {
         }
         
         borderColourIndex = 255
-        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 4, releaseData: {
+        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: {
             (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> Void in
         })!
         
