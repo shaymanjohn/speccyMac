@@ -13,7 +13,7 @@ Performance:<br>
 Pretty good when running a release build (quite a bit slower on a debug build).<br>
 Sound tends to be a bit scratchy, don't know why yet.
 
-Kempston joystick is emulated on cursor keys and tilda (key between shift and Z) to fire
+Kempston joystick is emulated on cursor keys and tilde (key between shift and Z) to fire
 
 Lots of things still to do:<br>
 Joypad support<br>
