@@ -36,4 +36,10 @@ class Emulator: NSViewController {
             presentAsModalWindow(gameSelect)
         }
     }
+
+    @IBAction func toggleMode(_ sender: NSButton) {
+
+        emulatorScreen.changeImageMode()
+    }
+    
 }

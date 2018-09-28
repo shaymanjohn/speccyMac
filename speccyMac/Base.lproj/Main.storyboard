@@ -262,11 +262,11 @@
                                         </tableView>
                                     </subviews>
                                 </clipView>
-                                <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="Xca-8z-bRo">
+                                <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="Xca-8z-bRo">
                                     <rect key="frame" x="1" y="348" width="271" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
-                                <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="2r4-l8-ryP">
+                                <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="2r4-l8-ryP">
                                     <rect key="frame" x="224" y="17" width="15" height="102"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
@@ -324,13 +324,28 @@
                                     <action selector="changeGame:" target="XfG-lQ-9wD" id="igO-wa-mCt"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hJV-iW-liq">
+                                <rect key="frame" x="4" y="512" width="75" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="E0b-8K-FI3"/>
+                                </constraints>
+                                <buttonCell key="cell" type="push" title="Mode" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KXA-GW-qxY">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toggleMode:" target="XfG-lQ-9wD" id="Fg4-Ja-1vv"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <constraints>
                             <constraint firstItem="q1X-na-ykB" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="10" id="0iy-oA-rQR"/>
                             <constraint firstAttribute="trailing" secondItem="q1X-na-ykB" secondAttribute="trailing" constant="10" id="2vK-K6-3wD"/>
+                            <constraint firstItem="hJV-iW-liq" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="10" id="AcR-b3-KTn"/>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="centerY" secondItem="m2S-Jp-Qdl" secondAttribute="centerY" id="QA9-hk-KIl"/>
                             <constraint firstItem="q1X-na-ykB" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="TOm-Ug-kr6"/>
                             <constraint firstAttribute="trailing" secondItem="aMG-Oy-uFV" secondAttribute="trailing" constant="10" id="Ui0-Y1-fwb"/>
+                            <constraint firstItem="hJV-iW-liq" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="10" id="Wmn-TI-jiR"/>
                             <constraint firstAttribute="bottom" secondItem="aMG-Oy-uFV" secondAttribute="bottom" constant="10" id="eVV-Rj-dfp"/>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="fwy-wg-1dG"/>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="width" relation="lessThanOrEqual" secondItem="m2S-Jp-Qdl" secondAttribute="width" priority="750" constant="-40" id="l3d-Df-vpK"/>
