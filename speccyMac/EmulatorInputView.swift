@@ -19,27 +19,22 @@ class EmulatorInputView: NSView {
     }
     
     override var acceptsFirstResponder : Bool {
-        
         return true
     }
     
     func clearKeysWhenGettingFocus() {
-        
         keyStates = [:]
     }
     
     override func keyDown(with event: NSEvent) {
-        
         keyStates[event.keyCode] = true
     }
     
     override func keyUp(with event: NSEvent) {
-        
         keyStates[event.keyCode] = false
     }
     
-    override func flagsChanged(with event: NSEvent) {
-        
+    override func flagsChanged(with event: NSEvent) {        
         if event.keyCode == 0 {
             return
         }

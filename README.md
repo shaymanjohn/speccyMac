@@ -1,5 +1,5 @@
 # SpeccyMac
-ZX Spectrum emulator for OSX (currently 48K only), written in Swift 4
+ZX Spectrum emulator for OSX (currently 48K only), written in Swift 5
 
 Requires Xcode 9 to build
 

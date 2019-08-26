@@ -59,7 +59,6 @@
 		6FFC9E0A1F35CFB200B9322C /* RegisterPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E091F35CFB200B9322C /* RegisterPair.swift */; };
 		6FFC9E0C1F35D65C00B9322C /* Accumulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */; };
 		6FFE6FC21F376BEF00EBCC3B /* MemoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFE6FC11F376BEF00EBCC3B /* MemoryTests.swift */; };
-		9DA50D134820D5CC3C303277 /* Pods_speccyMac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE25E0AD770ECA0DDF43229E /* Pods_speccyMac.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +93,7 @@
 		6F93325D1F4F6B2B000CA284 /* chuckie.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = chuckie.sna; sourceTree = "<group>"; };
 		6FA031651F5460CA00CD636E /* AudioStreamer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioStreamer.swift; sourceTree = "<group>"; };
 		6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorInputView.swift; sourceTree = "<group>"; };
+		6FB18B4E236493C100E33924 /* Jenkinsfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Jenkinsfile; sourceTree = SOURCE_ROOT; };
 		6FC90B4E1F5295AA002506DC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccumulatorTests.swift; sourceTree = "<group>"; };
 		6FCC17C61F3EDDED00B867E1 /* hypersports.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = hypersports.sna; sourceTree = "<group>"; };
@@ -130,9 +130,6 @@
 		6FFC9E091F35CFB200B9322C /* RegisterPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterPair.swift; sourceTree = "<group>"; };
 		6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accumulator.swift; sourceTree = "<group>"; };
 		6FFE6FC11F376BEF00EBCC3B /* MemoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryTests.swift; sourceTree = "<group>"; };
-		83ED0AD371BEE5CDA945919A /* Pods-speccyMac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-speccyMac.debug.xcconfig"; path = "Pods/Target Support Files/Pods-speccyMac/Pods-speccyMac.debug.xcconfig"; sourceTree = "<group>"; };
-		B0F0CC4DE112CA6D51E3E9AB /* Pods-speccyMac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-speccyMac.release.xcconfig"; path = "Pods/Target Support Files/Pods-speccyMac/Pods-speccyMac.release.xcconfig"; sourceTree = "<group>"; };
-		DE25E0AD770ECA0DDF43229E /* Pods_speccyMac.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_speccyMac.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -147,30 +144,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9DA50D134820D5CC3C303277 /* Pods_speccyMac.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		11D2DE442431D07CF4B378F9 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				83ED0AD371BEE5CDA945919A /* Pods-speccyMac.debug.xcconfig */,
-				B0F0CC4DE112CA6D51E3E9AB /* Pods-speccyMac.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
-		6F37E1B81F46CC62005A4976 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				DE25E0AD770ECA0DDF43229E /* Pods_speccyMac.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		6F8BE3D4215198D300F2357D /* z80 */ = {
 			isa = PBXGroup;
 			children = (
@@ -235,8 +214,6 @@
 				6FFB31521F22379B00C15CD7 /* speccyMac */,
 				6FE514701F372CF1004F0751 /* speccyMacTests */,
 				6FFB31511F22379B00C15CD7 /* Products */,
-				6F37E1B81F46CC62005A4976 /* Frameworks */,
-				11D2DE442431D07CF4B378F9 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -272,6 +249,7 @@
 				6FFB31591F22379B00C15CD7 /* Main.storyboard */,
 				6FFB315C1F22379B00C15CD7 /* Info.plist */,
 				6FFB315D1F22379B00C15CD7 /* speccyMac.entitlements */,
+				6FB18B4E236493C100E33924 /* Jenkinsfile */,
 			);
 			path = speccyMac;
 			sourceTree = "<group>";
@@ -301,7 +279,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 6FFB31601F22379B00C15CD7 /* Build configuration list for PBXNativeTarget "speccyMac" */;
 			buildPhases = (
-				8AD38389EC8D4E01E4BF928D /* [CP] Check Pods Manifest.lock */,
 				6FFB314C1F22379B00C15CD7 /* Sources */,
 				6FFB314D1F22379B00C15CD7 /* Frameworks */,
 				6FFB314E1F22379B00C15CD7 /* Resources */,
@@ -334,6 +311,7 @@
 					6FFB314F1F22379B00C15CD7 = {
 						CreatedOnToolsVersion = 9.0;
 						LastSwiftMigration = 1030;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 0;
@@ -417,25 +395,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/SwiftLint/swiftlint\"";
-		};
-		8AD38389EC8D4E01E4BF928D /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-speccyMac-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -590,7 +550,7 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -645,13 +605,12 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
 		6FFB31611F22379B00C15CD7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 83ED0AD371BEE5CDA945919A /* Pods-speccyMac.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -664,6 +623,7 @@
 				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -672,7 +632,6 @@
 		};
 		6FFB31621F22379B00C15CD7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B0F0CC4DE112CA6D51E3E9AB /* Pods-speccyMac.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -685,6 +644,7 @@
 				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;

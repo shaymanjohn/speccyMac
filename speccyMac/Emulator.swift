@@ -16,7 +16,6 @@ class Emulator: NSViewController {
     let machine: Machine = Spectrum()
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
 
         machine.emulatorView = view as? EmulatorInputView
@@ -27,7 +26,6 @@ class Emulator: NSViewController {
     }
     
     @IBAction func changeGame(_ sender: NSButton) {
-        
         if let gameSelect = storyboard?.instantiateController(withIdentifier: "gameSelect") as? GameSelectViewController {
             gameSelect.machine = machine
             presentAsModalWindow(gameSelect)
@@ -35,7 +33,6 @@ class Emulator: NSViewController {
     }
 
     @IBAction func toggleMode(_ sender: NSButton) {
-
         emulatorScreen.changeImageMode()
     }
     

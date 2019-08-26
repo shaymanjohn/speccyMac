@@ -25,7 +25,6 @@ class GameSelectViewController: NSViewController {
 extension GameSelectViewController: NSTableViewDataSource {
     
     func numberOfRows(in tableView: NSTableView) -> Int {
-        
         return sortedGames.count
     }
 }
@@ -33,14 +32,12 @@ extension GameSelectViewController: NSTableViewDataSource {
 extension GameSelectViewController: NSTableViewDelegate {
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        
         let game = sortedGames[row]
         let tf = NSTextField(labelWithString: game.name)        
         return tf
     }
     
-    func tableViewSelectionDidChange(_ notification: Notification) {
-        
+    func tableViewSelectionDidChange(_ notification: Notification) {        
         if let tv = notification.object as? NSTableView {
             if tv.selectedRow >= 0 {
                 let selectedGame = sortedGames[tv.selectedRow]

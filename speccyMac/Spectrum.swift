@@ -10,59 +10,59 @@ import Foundation
 import Cocoa
 
 class Spectrum: Machine {
-    
+
     var processor: Processor
     var memory:    Memory
-    
+
     var ticksPerFrame: Int = 69888
-    
+
     var clicks: UInt8 = 0
-    
+
     var ula:      UInt32 = 0
     var videoRow: UInt16 = 0
-    
+
     weak var emulatorView:   EmulatorInputView?
     weak var emulatorScreen: NSImageView?
     weak var lateLabel:      NSTextField?
-    
+
     let brightBit: UInt8 = 0x40
     let flashBit:  UInt8 = 0x80
     let attributeAddress: UInt16 = 22528
-    
+
     var provider: CGDataProvider!
     let colourSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo  = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
-    
+
     var flashCounter = 0
     var invertFlashColours = false
     var borderColourIndex: UInt8 = 0
     var borderColour: Colour!
-    
+
     let beeper = AudioStreamer()
-    
+
     var colours = ContiguousArray<UInt32>(repeating: 0, count: 16)
-    
+
     // Precalculated screen and attribute rows
     var screenRowAddress    = ContiguousArray<UInt16>(repeating: 0, count: 192)
     var attributeRowAddress = ContiguousArray<UInt16>(repeating: 0, count: 24)
-    
+
     // Screen image
     var screenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
     var saveScreenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
-    
+
     // Attribute image - save colour per row (not 8 rows) to allow hi-colour effects
     var colourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
     var saveColourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
-    
+
     // Bmp pool to render image
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 192)
-    
+
     // 8 Spectrum RGB values, plus addition 8 for bright mode.
     let colourTable = [Colour(0x000000), Colour(0x0000cd), Colour(0xcd0000), Colour(0xcd00cd),
                        Colour(0x00cd00), Colour(0x00cdcd), Colour(0xcdcd00), Colour(0xcdcdcd),
                        Colour(0x000000), Colour(0x0000ff), Colour(0xff0000), Colour(0xff00ff),
                        Colour(0x00ff00), Colour(0x00ffff), Colour(0xffff00), Colour(0xffffff)]
-    
+
     // Mac key code to spectrum key code
     let keyMap: [UInt16] = [0xfd01, 0xfd02, 0xfd04, 0xfd08, 0xbf10, 0xfd10, 0xfe02, 0xfe04, 0xfe08, 0xfe10,
                             0x0000, 0x7f10, 0xfb01, 0xfb02, 0xfb04, 0xfb08, 0xdf10, 0xfb10, 0xf701, 0xf702,
@@ -71,7 +71,7 @@ class Spectrum: Machine {
                             0xbf04, 0x0000, 0x0000, 0x7f02, 0x0000, 0x7f08, 0x7f04, 0x0000, 0x0000, 0x7f01,
                             0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0xfe01, 0x0000, 0x0000, 0x0000,
                             0xfe01]
-    
+
     let games = [Game(file: "manic.sna", name: "Manic Miner"),
                  Game(file: "brucelee.sna", name: "Bruce Lee"),
                  Game(file: "deathchase.sna", name: "Deathchase"),
@@ -93,14 +93,14 @@ class Spectrum: Machine {
                  Game(file: "chuckie.sna", name: "Chuckie Egg"),
                  Game(file: "batty.sna", name: "Batty"),
                  Game(file: "batman.sna", name: "Batman")
-    ]    
+    ]
 
     let borderAdjustmentFactor: CGFloat = 0.95
 
     init() {
         memory = Memory("48.rom")
         processor = ZilogZ80(memory: memory)
-        
+
         // Populate colour tables
         for (colourIndex, colour) in colourTable.enumerated() {
             let rComp = UInt32(colour.r) << 8
@@ -108,47 +108,45 @@ class Spectrum: Machine {
             let bComp = UInt32(colour.b) << 24
             colours[colourIndex] = rComp | gComp | bComp | UInt32(0xff)
         }
-        
+
         // Precalculate screen and colour row addresses
         var rowNum = 0
         for row in 0..<24 {
             for pixelRow in 0..<8 {
                 let dataByteHigh = 0x40 | (row & 0x18) | (pixelRow % 8)
                 let dataByteLow  = ((row & 0x7) << 5)
-                
+
                 let address:UInt16 = UInt16((dataByteHigh) << 8) + UInt16(dataByteLow)
                 screenRowAddress[rowNum] = address
 
                 rowNum += 1
             }
-            
+
             attributeRowAddress[row] = attributeAddress + (32 * UInt16(row))
         }
-        
+
         borderColourIndex = 255
         provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: { _, _, _ in
         })!
-        
+
         beeper.machine = self
     }
-    
+
     final func captureRow(_ row: UInt16) {
         var pixelAddress  = screenRowAddress[row]
         var colourAddress = attributeRowAddress[row >> 3]
-        
-        var index = Int(row << 5)
-        for _ in 0..<32 {
-            screenBuffer[index] = memory.get(pixelAddress)
-            colourBuffer[index] = memory.get(colourAddress)
-            
+
+        let index = Int(row << 5)
+        for ix in index..<index+32 {
+            screenBuffer[ix] = memory.get(pixelAddress)
+            colourBuffer[ix] = memory.get(colourAddress)
+
             pixelAddress  += 1
             colourAddress += 1
-            index += 1
         }
     }
-    
+
     final func frameCompleted() {
-        
         if processor.lateFrames > 1 {
             lateLabel?.stringValue = "Late \(processor.lateFrames)"
             lateLabel?.isHidden = false
@@ -160,13 +158,13 @@ class Spectrum: Machine {
                                                        green: borderColour.gf * borderAdjustmentFactor,
                                                        blue: borderColour.bf * borderAdjustmentFactor,
                                                        alpha: 1.0)
-        
-        flashCounter += 1   
+
+        flashCounter += 1
         if flashCounter == 16 {
             invertFlashColours = !invertFlashColours
             flashCounter = 0
         }
-        
+
         var bmpIndex = 0
 
         var ink:   UInt32 = 0
@@ -208,43 +206,43 @@ class Spectrum: Machine {
 
             bmpIndex += 8
         }
-        
+
         if let image = CGImage(width: 256, height: 192, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 1024, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) {
             emulatorScreen?.image = NSImage(cgImage: image, size: .zero)
         }
     }
-    
+
     func soundFrameCompleted() {
         beeper.endFrame()
     }
-    
+
 // swiftlint:disable cyclomatic_complexity
     final func input(_ high: UInt8, low: UInt8) -> UInt8 {
         var byte: UInt8 = 0x00
-        
+
         if low == 0xfe {            // keyboard port
-            let downKeys = emulatorView?.keysDown ?? []            
-            
+            let downKeys = emulatorView?.keysDown ?? []
+
             var keysDown: [UInt16] = []
             for key in downKeys {
                 if key < keyMap.count && keyMap[key] > 0 {
                     keysDown.append(keyMap[key])
                 }
             }
-            
+
             var keys: [UInt8] = [0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf, 0xbf]
-            
+
             for key in keysDown {
                 let row: UInt8 = UInt8(key >> 8)
                 let val: UInt8 = UInt8(key & 0xff)
-                
+
                 if let keyNum = [0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f].firstIndex(of: row) {
                     var thisKey: UInt8 = keys[keyNum]
                     thisKey &= ~val
                     keys[keyNum] = thisKey
                 }
             }
-            
+
             switch high {
             case 0xfe:
                 byte = keys[0]
@@ -270,7 +268,7 @@ class Spectrum: Machine {
                 byte = 0xbf
                 let value = high ^ 0xff
                 var bit: UInt8 = 0x01
-                
+
                 for key in keys {
                     if value & bit > 0 {
                         byte = byte & key
@@ -280,10 +278,10 @@ class Spectrum: Machine {
             }
         } else if low == 0x1f {     // kempston port
             let downKeys = emulatorView?.keysDown ?? []
-            
+
             let padKeys: [UInt16] = [124, 123, 125, 126, 50]  // cursor keys and ` (to the left of Z key)
             var bit: UInt8 = 0x01
-            
+
             for key in padKeys {
                 if downKeys.contains(key) {
                     byte |= bit
@@ -303,44 +301,44 @@ class Spectrum: Machine {
         } else {
             byte = 0xff
         }
-        
+
         return byte
     }
-    
+
     final func output(_ port: UInt8, byte: UInt8) {
         if port == 0xfe {
             if borderColourIndex != (byte & 0x07) {
                 borderColourIndex = byte & 0x07
                 borderColour = colourTable[borderColourIndex]
             }
-            
+
             clicks = byte
         }
     }
-    
+
     func tick() {
         beeper.updateSample(processor.counter, beep: clicks)
-        
+
         if ula >= 224 {
             switch videoRow {
             case 64...255:
                 captureRow(videoRow - 64)
-                
+
             case 311:
                 soundFrameCompleted()
                 DispatchQueue.main.async {
                     self.frameCompleted()
                 }
-                
+
             default:
                 break
             }
-            
+
             ula -= 224
             videoRow += 1
         }
     }
-    
+
     func loadGame(_ game: String) {
         processor.pause()
         clicks = 0

@@ -40,7 +40,6 @@ protocol Machine : class {
 extension Machine {
     
     func start() {
-        
         processor.machine = self
         
         DispatchQueue.global().async {
@@ -48,8 +47,7 @@ extension Machine {
         }
     }
     
-    func reportProblem(_ error: Error) {
-        
+    func reportProblem(_ error: Error) {        
         let err = error as NSError
         
         if let instruction = err.userInfo["instruction"] as? String,
