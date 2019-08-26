@@ -13,15 +13,12 @@ class Emulator: NSViewController {
     @IBOutlet weak var emulatorScreen: EmulatorImageView!
     @IBOutlet weak var lateLabel:      NSTextField!
     
-    var machine: Machine!
+    let machine: Machine = Spectrum()
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
-        view.wantsLayer = true
-                
-        machine = Spectrum()
+
         machine.emulatorView = view as? EmulatorInputView
         machine.emulatorScreen = emulatorScreen
         machine.lateLabel = lateLabel

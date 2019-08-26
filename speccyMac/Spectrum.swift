@@ -48,9 +48,11 @@ class Spectrum: Machine {
     
     // Screen image
     var screenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
+    var saveScreenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
     
     // Attribute image - save colour per row (not 8 rows) to allow hi-colour effects
     var colourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
+    var saveColourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
     
     // Bmp pool to render image
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 192)
@@ -92,7 +94,9 @@ class Spectrum: Machine {
                  Game(file: "batty.sna", name: "Batty"),
                  Game(file: "batman.sna", name: "Batman")
     ]    
-    
+
+    let borderAdjustmentFactor: CGFloat = 0.95
+
     init() {
         memory = Memory("48.rom")
         processor = ZilogZ80(memory: memory)
@@ -152,8 +156,11 @@ class Spectrum: Machine {
         } else {
             lateLabel?.isHidden = true
         }
-        
-        emulatorView?.layer?.backgroundColor = CGColor(red: borderColour.rf, green: borderColour.gf, blue: borderColour.bf, alpha: 1.0)
+
+        emulatorView?.layer?.backgroundColor = CGColor(red: borderColour.rf * borderAdjustmentFactor,
+                                                       green: borderColour.gf * borderAdjustmentFactor,
+                                                       blue: borderColour.bf * borderAdjustmentFactor,
+                                                       alpha: 1.0)
         
         flashCounter += 1   
         if flashCounter == 16 {
@@ -175,26 +182,31 @@ class Spectrum: Machine {
             byte      = screenBuffer[index]
             attribute = colourBuffer[index]
 
-            colourOffset = attribute & brightBit > 0 ? 8 : 0
-            
-            ink   = colours[(attribute & 0x07) + colourOffset]
-            paper = colours[((attribute & 0x38) >> 3) + colourOffset]
-            
-            if invertFlashColours && attribute & flashBit > 0 {
-                temp = paper
-                paper = ink
-                ink = temp
+            if byte != saveScreenBuffer[index] || attribute != saveColourBuffer[index] || flashCounter == 1 {
+                saveScreenBuffer[index] = byte
+                saveColourBuffer[index] = attribute
+
+                colourOffset = attribute & brightBit > 0 ? 8 : 0
+
+                ink   = colours[(attribute & 0x07) + colourOffset]
+                paper = colours[((attribute & 0x38) >> 3) + colourOffset]
+
+                if invertFlashColours && attribute & flashBit > 0 {
+                    temp = paper
+                    paper = ink
+                    ink = temp
+                }
+
+                bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
+                bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
+                bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
+                bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
+                bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
+                bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
+                bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
+                bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
             }
-            
-            bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
-            bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
-            bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
-            bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
-            bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
-            bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
-            bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
-            bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
-            
+
             bmpIndex += 8
         }
         
@@ -227,7 +239,7 @@ class Spectrum: Machine {
                 let row: UInt8 = UInt8(key >> 8)
                 let val: UInt8 = UInt8(key & 0xff)
                 
-                if let keyNum = [0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f].index(of: row) {
+                if let keyNum = [0xfe, 0xfd, 0xfb, 0xf7, 0xef, 0xdf, 0xbf, 0x7f].firstIndex(of: row) {
                     var thisKey: UInt8 = keys[keyNum]
                     thisKey &= ~val
                     keys[keyNum] = thisKey
