@@ -126,8 +126,7 @@ class Spectrum: Machine {
         }
         
         borderColourIndex = 255
-        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: {
-            (info: UnsafeMutableRawPointer?, data: UnsafeRawPointer, size: Int) -> Void in
+        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: { _, _, _ in
         })!
         
         beeper.machine = self
