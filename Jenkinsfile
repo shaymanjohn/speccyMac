@@ -10,7 +10,7 @@ node('mac') {
         extensions: [], submoduleCfg: [],
         userRemoteConfigs: [[
             name: 'github',
-            url: 'git@github.com:shaymanjohn/speccyMac.git'
+            url: 'https://github.com/shaymanjohn/speccyMac.git'
         ]]
     ])
 
