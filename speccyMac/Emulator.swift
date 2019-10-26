@@ -13,15 +13,11 @@ class Emulator: NSViewController {
     @IBOutlet weak var emulatorScreen: EmulatorImageView!
     @IBOutlet weak var lateLabel:      NSTextField!
     
-    var machine: Machine!
+    let machine: Machine = Spectrum()
     
     override func viewDidLoad() {
-        
         super.viewDidLoad()
-        
-        view.wantsLayer = true
-                
-        machine = Spectrum()
+
         machine.emulatorView = view as? EmulatorInputView
         machine.emulatorScreen = emulatorScreen
         machine.lateLabel = lateLabel
@@ -30,10 +26,14 @@ class Emulator: NSViewController {
     }
     
     @IBAction func changeGame(_ sender: NSButton) {
-        
         if let gameSelect = storyboard?.instantiateController(withIdentifier: "gameSelect") as? GameSelectViewController {
             gameSelect.machine = machine
             presentAsModalWindow(gameSelect)
         }
     }
+
+    @IBAction func toggleMode(_ sender: NSButton) {
+        emulatorScreen.changeImageMode()
+    }
+    
 }

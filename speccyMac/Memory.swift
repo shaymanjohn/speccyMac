@@ -15,8 +15,7 @@ class Memory {
     var romSize: UInt16 = 0
     var memory = ContiguousArray<UInt8>(repeating: 0, count: 65536)
 
-    init(_ rom: String) {
-        
+    init(_ rom: String) {        
         if let romUrl = Bundle.main.url(forResource: rom, withExtension: "") {
             let romData: Data?
             
@@ -83,7 +82,7 @@ class Memory {
     
     @inline(__always) final func pop() -> UInt16 {
         let lo = get(ZilogZ80.sp)
-        let hi = get(ZilogZ80.sp + 1)
+        let hi = get(ZilogZ80.sp &+ 1)
         ZilogZ80.sp = ZilogZ80.sp &+ 2
         
         return (UInt16(hi) << 8) | UInt16(lo)

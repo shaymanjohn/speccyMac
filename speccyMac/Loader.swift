@@ -12,8 +12,7 @@ class Loader {
     
     var z80: ZilogZ80
     
-    init?(_ game: String, z80: ZilogZ80) {
-        
+    init?(_ game: String, z80: ZilogZ80) {        
         self.z80 = z80
         
         let gameType = (game as NSString).pathExtension.lowercased()

@@ -19,8 +19,7 @@ protocol Processor: class {
     var lateFrames: Int { get }
 }
 
-class ZilogZ80 : Processor {
-    
+class ZilogZ80 : Processor {    
     let a = Accumulator()
     let b = Register()
     let c = Register()
