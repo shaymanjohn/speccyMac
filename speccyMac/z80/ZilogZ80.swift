@@ -270,14 +270,12 @@ class ZilogZ80 : Processor {
         let timeNow = Date.timeIntervalSinceReferenceDate
         let thisFrameTime = timeNow - lastFrame
         
-        if thisFrameTime < frameTime {
+        if thisFrameTime <= frameTime {
             lastFrame += frameTime
             Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
-        } else if thisFrameTime > frameTime {
+        } else {
             lateFrames += 1
             lastFrame = timeNow
-        } else {
-            lastFrame += frameTime
         }
         
         counter -= UInt32(machine?.ticksPerFrame ?? 0)
