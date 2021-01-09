@@ -5,7 +5,7 @@ node('mac') {
     // Checkout files.
     checkout([
         $class: 'GitSCM',
-        branches: [[name: 'master']],
+        branches: [[name: env.BRANCH_NAME]],
         doGenerateSubmoduleConfigurations: false,
         extensions: [], submoduleCfg: [],
         userRemoteConfigs: [[
