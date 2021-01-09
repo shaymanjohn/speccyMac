@@ -375,7 +375,7 @@ extension ZilogZ80 {
             a.add(first)
             
         case 0xc7:  // rst $00
-            rst(0x0000)
+            rst(0x00)
             
         case 0xc8:  // ret z
             if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
@@ -415,7 +415,7 @@ extension ZilogZ80 {
             a.adc(first)
             
         case 0xcf:  // rst $08
-            rst(0x0008)
+            rst(0x08)
             
         case 0xd0:  // ret nc
             if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
@@ -455,7 +455,7 @@ extension ZilogZ80 {
             a.sub(first)
             
         case 0xd7:  // rst $10
-            rst(0x0010)
+            rst(0x10)
             
         case 0xd8:  // ret c
             if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
@@ -503,7 +503,7 @@ extension ZilogZ80 {
             a.sbc(first)
             
         case 0xdf:  // rst 18
-            rst(0x0018)
+            rst(0x18)
             
         case 0xe0:  // ret po
             if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
@@ -549,7 +549,7 @@ extension ZilogZ80 {
             a.and(first)
             
         case 0xe7:  // rst 20
-            rst(0x0020)
+            rst(0x20)
             
         case 0xe8:  // ret pe
             if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
@@ -589,7 +589,7 @@ extension ZilogZ80 {
             a.xor(first)
             
         case 0xef:  // rst 28
-            rst(0x0028)
+            rst(0x28)
             
         case 0xf0:  // ret p
             if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
@@ -631,7 +631,7 @@ extension ZilogZ80 {
             a.or(first)
             
         case 0xf7:  // rst 30
-            rst(0x0030)
+            rst(0x30)
             
         case 0xf8:  // ret m
             if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
@@ -670,7 +670,7 @@ extension ZilogZ80 {
             a.cp(first)
             
         case 0xff:  // rst 38
-            rst(0x0038)
+            rst(0x38)
             
         default:
             throw NSError(domain: "z80 unprefixed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])

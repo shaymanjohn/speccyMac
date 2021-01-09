@@ -272,7 +272,7 @@ class ZilogZ80 : Processor {
         
         if thisFrameTime < frameTime {
             lastFrame += frameTime
-            Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
+//            Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
         } else if thisFrameTime > frameTime {
             lateFrames += 1
             lastFrame = timeNow

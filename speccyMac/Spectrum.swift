@@ -14,7 +14,7 @@ class Spectrum: Machine {
     var processor: Processor
     var memory:    Memory
 
-    var ticksPerFrame: Int = 69888
+    let ticksPerFrame: Int = 69888
 
     var clicks: UInt8 = 0
 
