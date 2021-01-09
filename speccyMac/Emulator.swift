@@ -20,7 +20,7 @@ class Emulator: NSViewController {
 
         machine.emulatorView = view as? EmulatorInputView
         machine.emulatorScreen = emulatorScreen
-        machine.lateLabel = lateLabel
+        machine.lateLabel = lateLabel_x
         
         machine.start()
     }
