@@ -1,7 +1,7 @@
 pipeline {
   agent { label 'mac' }
   options {
-    skipStagesAfterFailure()
+    skipStagesAfterUnstable()
   }
   stages {
     stage('Checkout') {
@@ -17,6 +17,9 @@ pipeline {
     }
   }
   post {
+    always {
+      slackSend channel: '#build', message: 'speccyMac build result:', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
+    }
     success {
       slackSend channel: '#build', message: 'speccyMac - build and test success.', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
     }
