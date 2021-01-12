@@ -1,4 +1,5 @@
-node('mac') {
+pipeline {
+  agent 'mac'
   stages {
     stage('Checkout/Build/Test') {
     // Checkout files.
@@ -34,5 +35,4 @@ node('mac') {
       slackSend channel: '#build', message: 'speccyMac - unstable.', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
     }
   }
-  
 }
