@@ -15,7 +15,7 @@ pipeline {
     stage('Build & test') {
       steps {
         sh './BuildScripts/build-for-validating.sh ${appScheme}'
-        step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
+//        step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
       }
     }
   }
