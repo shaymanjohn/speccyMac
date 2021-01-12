@@ -1,5 +1,5 @@
 pipeline {
-  agent 'mac'
+  agent any
   stages {
     stage('Checkout/Build/Test') {
     // Checkout files.
