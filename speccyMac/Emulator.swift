@@ -17,6 +17,8 @@ class Emulator: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        jmwWasHere()
 
         machine.emulatorView = view as? EmulatorInputView
         machine.emulatorScreen = emulatorScreen
