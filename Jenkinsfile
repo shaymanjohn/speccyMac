@@ -1,18 +1,12 @@
 pipeline {
-  agent any
+
+  agent { label 'mac' }
+
   stages {
+
     stage('Checkout') {
       steps {
-        checkout([
-          $class: 'GitSCM',
-          branches: [[name: env.BRANCH_NAME]],
-          doGenerateSubmoduleConfigurations: false,
-          extensions: [], submoduleCfg: [],
-          userRemoteConfigs: [[
-            name: 'github',
-            url: 'git@github.com:shaymanjohn/speccyMac.git'
-            ]]
-          ])
+        checkout scm
         }
     }
 
@@ -22,6 +16,7 @@ pipeline {
         step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
       }
     }
+    
   }
 
   post {
