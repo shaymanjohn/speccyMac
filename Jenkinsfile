@@ -3,6 +3,9 @@ pipeline {
   options {
     skipStagesAfterUnstable()
   }
+  environment {
+    appScheme = 'speccyMac'
+  }
   stages {
     stage('Checkout') {
       steps {
@@ -11,7 +14,7 @@ pipeline {
     }
     stage('Build & test') {
       steps {
-        sh 'xcodebuild -scheme "speccyMac" -configuration "Debug" build test -destination "platform=macOS,arch=x86_64" | /usr/local/bin/xcpretty -r junit'
+        sh './BuildScripts/build-for-validating-sh {appScheme}'
         step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
       }
     }
