@@ -26,23 +26,23 @@ pipeline {
     }
     post {
         always {
-            slackSend(channel: "#build", message: "speccyMac build result:")
+            slackSend(message: "speccyMac build result:")
         }
         success {
             echo 'Success.'
-            slackSend(channel: "#build", message: "speccyMac - build and test success.")
+            slackSend(message: "speccyMac - build and test success.")
         }
         failure {
             echo 'Failure.'
-            slackSend(channel: "#build", message: "speccyMac - build failure.")
+            slackSend(message: "speccyMac - build failure.")
         }
         aborted {
             echo 'Aborted.'
-            slackSend(channel: "#build", message: "speccyMac - build aborted.")
+            slackSend(message: "speccyMac - build aborted.")
         }
         unstable {
             echo 'Unstable.'
-            slackSend(channel: "#build", message: "speccyMac - unstable.")
+            slackSend(message: "speccyMac - unstable.")
         }
     }
 }
