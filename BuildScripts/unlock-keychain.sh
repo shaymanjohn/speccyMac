@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+echo $PATH
+
 if which jenkins_unlock_keychain >/dev/null; then
     jenkins_unlock_keychain
 else
