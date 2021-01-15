@@ -12,6 +12,11 @@ pipeline {
                 checkout scm
                 }
             }
+        stage('Unlock keychain') {
+            steps {
+                sh './BuildScripts/unlock-keychain.sh'
+            }
+        }
         stage('Build & test') {
             steps {
                 sh './BuildScripts/jenkins-build.sh ${scheme}'
