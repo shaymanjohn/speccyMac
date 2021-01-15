@@ -4,7 +4,7 @@ pipeline {
         skipStagesAfterUnstable()
     }
     environment {
-        appScheme = 'speccyMac'
+        scheme = 'speccyMac'
     }
     stages {
         stage('Checkout') {
@@ -14,7 +14,7 @@ pipeline {
             }
         stage('Build & test') {
             steps {
-                sh './BuildScripts/jenkins-build.sh ${appScheme}'
+                sh './BuildScripts/jenkins-build.sh ${scheme}'
 //              step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
             }
         }
@@ -24,7 +24,7 @@ pipeline {
             slackSend channel: '#build', message: 'speccyMac build result:', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
         }
         success {
-            echo 'Great success.'
+            echo 'Success.'
             slackSend channel: '#build', message: 'speccyMac - build and test success.', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
         }
         failure {

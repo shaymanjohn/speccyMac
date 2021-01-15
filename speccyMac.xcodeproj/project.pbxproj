@@ -89,6 +89,7 @@
 		6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = uridium.sna; sourceTree = "<group>"; };
 		6F8E153F1F3B2ED800A34AB4 /* techted.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = techted.sna; sourceTree = "<group>"; };
 		6F8E15401F3B2F1600A34AB4 /* jetsetw.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = jetsetw.sna; sourceTree = "<group>"; };
+		6F8FFC0C25B194AC00908502 /* BuildScripts */ = {isa = PBXFileReference; lastKnownFileType = text; path = BuildScripts; sourceTree = SOURCE_ROOT; };
 		6F93325C1F4F6B2A000CA284 /* batty.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = batty.sna; sourceTree = "<group>"; };
 		6F93325D1F4F6B2B000CA284 /* chuckie.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = chuckie.sna; sourceTree = "<group>"; };
 		6FA031651F5460CA00CD636E /* AudioStreamer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioStreamer.swift; sourceTree = "<group>"; };
@@ -250,6 +251,7 @@
 				6FFB315C1F22379B00C15CD7 /* Info.plist */,
 				6FFB315D1F22379B00C15CD7 /* speccyMac.entitlements */,
 				6FB18B4E236493C100E33924 /* Jenkinsfile */,
+				6F8FFC0C25B194AC00908502 /* BuildScripts */,
 			);
 			path = speccyMac;
 			sourceTree = "<group>";
