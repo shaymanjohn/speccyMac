@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# show path
+# show path...
 echo $PATH
 
 if which jenkins_unlock_keychain >/dev/null; then
