@@ -26,23 +26,23 @@ pipeline {
     }
     post {
         always {
-            slackSend channel: '#build', message: 'speccyMac build result:', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
+            slackSend(channel: "#build", message: "speccyMac build result:")
         }
         success {
             echo 'Success.'
-            slackSend channel: '#build', message: 'speccyMac - build and test success.', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
+            slackSend(channel: "#build", message: "speccyMac - build and test success.")
         }
         failure {
             echo 'Failure.'
-            slackSend channel: '#build', message: 'speccyMac - build failure.', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
+            slackSend(channel: "#build", message: "speccyMac - build failure.")
         }
         aborted {
             echo 'Aborted.'
-            slackSend channel: '#build', message: 'speccyMac - build aborted.', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
+            slackSend(channel: "#build", message: "speccyMac - build aborted.")
         }
         unstable {
             echo 'Unstable.'
-            slackSend channel: '#build', message: 'speccyMac - unstable.', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
+            slackSend(channel: "#build", message: "speccyMac - unstable.")
         }
     }
 }
