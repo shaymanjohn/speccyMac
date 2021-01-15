@@ -20,7 +20,7 @@ pipeline {
         stage('Build & test') {
             steps {
                 sh './BuildScripts/jenkins-build.sh ${scheme}'
-                step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
+//              step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
             }
         }
     }
