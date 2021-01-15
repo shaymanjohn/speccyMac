@@ -1,11 +1,9 @@
 #!/bin/bash
 set -e
 
-# show path...
-echo $PATH
-
-if which jenkins_unlock_keychain >/dev/null; then
-    jenkins_unlock_keychain
+if which swiftlint >/dev/null; then
+    echo "skip unlock keychain"
 else
-    echo "unlock-keychain: not running from Jenkins"
+    echo "running unlock keychain"
+    ./~/scripts/jenkins_unlock_keychain
 fi
