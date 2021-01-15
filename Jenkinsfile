@@ -1,6 +1,7 @@
 pipeline {
     agent { label 'mac' }
     options {
+        skipDefaultCheckout true
         skipStagesAfterUnstable()
     }
     environment {
