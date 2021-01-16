@@ -11,7 +11,7 @@ import Cocoa
 class EmulatorImageView: NSImageView {
 
     var modeIndex = 1
-    let allImageModes: [NSImageInterpolation] = [.none, .low] //, .medium, .high]
+    let allImageModes: [NSImageInterpolation] = [.none, .low, .medium, .high]
 
     override func draw(_ dirtyRect: NSRect) {
         NSGraphicsContext.current?.imageInterpolation = allImageModes[modeIndex]
