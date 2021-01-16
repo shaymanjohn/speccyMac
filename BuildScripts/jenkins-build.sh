@@ -8,8 +8,6 @@ rm -rf build
 BUILD_SCRIPTS_DIR=$(dirname "${BASH_SOURCE[0]}")
 cd "$BUILD_SCRIPTS_DIR/.."
 
-rm -rf build
-
 echo "=== Building speccyMac ==="
 set -o pipefail && xcodebuild -scheme $SCHEME -configuration Debug build -destination "platform=macOS,arch=x86_64"
 
