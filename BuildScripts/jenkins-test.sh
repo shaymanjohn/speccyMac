@@ -3,7 +3,7 @@ set -e
 
 SCHEME=$1
 
-#rm -rf build
+rm -rf build
 
 BUILD_SCRIPTS_DIR=$(dirname "${BASH_SOURCE[0]}")
 cd "$BUILD_SCRIPTS_DIR/.."
