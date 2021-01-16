@@ -18,10 +18,15 @@ pipeline {
                 sh './BuildScripts/unlock-keychain.sh'
             }
         }
-        stage('Build & test') {
+        stage('Build') {
             steps {
                 sh './BuildScripts/jenkins-build.sh ${scheme}'
-//              step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
+            }
+        }
+        stage('Test') {
+            steps {
+                sh './BuildScripts/jenkins-test.sh ${scheme}'
+                step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
             }
         }
     }

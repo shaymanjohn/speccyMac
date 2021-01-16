@@ -11,6 +11,6 @@ cd "$BUILD_SCRIPTS_DIR/.."
 rm -rf build
 
 echo "=== Building speccyMac ==="
-set -o pipefail && xcodebuild -scheme $SCHEME -configuration Debug build -destination "platform=macOS,arch=x86_64"
+set -o pipefail && xcodebuild -scheme $SCHEME -configuration Debug test -destination "platform=macOS,arch=x86_64" | /usr/local/bin/xcpretty -r junit
 
 cd - >> /dev/null
