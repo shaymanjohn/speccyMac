@@ -23,12 +23,12 @@ pipeline {
                 sh './BuildScripts/jenkins-build.sh ${scheme}'
             }
         }
-//        stage('Test') {
-//            steps {
-//                sh './BuildScripts/jenkins-test.sh ${scheme}'
-//                step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
-//            }
-//        }
+        stage('Test') {
+            steps {
+                sh './BuildScripts/jenkins-test.sh ${scheme}'
+                step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
+            }
+        }
     }
     post {
         always {
