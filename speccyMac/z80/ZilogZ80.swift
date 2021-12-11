@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol Processor: class {
+protocol Processor: AnyObject {
     
     func start()
     func pause()
