@@ -9,7 +9,7 @@
 import Foundation
 import Cocoa
 
-protocol Machine : class {
+protocol Machine : AnyObject {
     
     func start()
     func tick()
