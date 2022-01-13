@@ -9,9 +9,9 @@
 import Foundation
 import AudioToolbox
 
-//let kTicsPerLine = 224
-//let kScreenLines = 312 // 64 + 192 + 56
-//let kTicsPerFrame = kTicsPerLine * kScreenLines
+// let kTicsPerLine = 224
+// let kScreenLines = 312 // 64 + 192 + 56
+// let kTicsPerFrame = kTicsPerLine * kScreenLines
 
 private let kSampleRate = 48000.0
 private let kSamplesPerFrame = Int(kSampleRate) / 50
