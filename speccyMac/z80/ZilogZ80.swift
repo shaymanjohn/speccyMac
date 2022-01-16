@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol Processor: class {
+protocol Processor: AnyObject {
     
     func start()
     func pause()
@@ -208,7 +208,7 @@ class ZilogZ80 : Processor {
                     }
                 }
                 
-                machine?.tick()                
+                machine?.tick()
             }
         }
     }
@@ -272,7 +272,7 @@ class ZilogZ80 : Processor {
         
         if thisFrameTime < frameTime {
             lastFrame += frameTime
-//            Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
+            Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
         } else if thisFrameTime > frameTime {
             lateFrames += 1
             lastFrame = timeNow
