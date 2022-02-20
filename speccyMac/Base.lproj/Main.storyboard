@@ -237,9 +237,11 @@
                                                             <rect key="frame" x="1" y="1" width="268" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Ebs-JU-vp5">
+                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Ebs-JU-vp5">
                                                                     <rect key="frame" x="0.0" y="0.0" width="268" height="17"/>
-                                                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                                                    <constraints>
+                                                                        <constraint firstAttribute="height" constant="17" id="xd0-IL-Fzt"/>
+                                                                    </constraints>
                                                                     <textFieldCell key="cell" lineBreakMode="truncatingTail" sendsActionOnEndEditing="YES" title="Table View Cell" id="aNZ-2Z-SJ1">
                                                                         <font key="font" metaFont="system"/>
                                                                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
@@ -247,6 +249,11 @@
                                                                     </textFieldCell>
                                                                 </textField>
                                                             </subviews>
+                                                            <constraints>
+                                                                <constraint firstItem="Ebs-JU-vp5" firstAttribute="leading" secondItem="jFu-Nl-GfK" secondAttribute="leading" constant="2" id="G5Z-j9-tOk"/>
+                                                                <constraint firstItem="Ebs-JU-vp5" firstAttribute="centerY" secondItem="jFu-Nl-GfK" secondAttribute="centerY" id="q8U-EH-QAb"/>
+                                                                <constraint firstItem="Ebs-JU-vp5" firstAttribute="centerX" secondItem="jFu-Nl-GfK" secondAttribute="centerX" id="vmb-aV-m6n"/>
+                                                            </constraints>
                                                             <connections>
                                                                 <outlet property="textField" destination="Ebs-JU-vp5" id="uES-5r-WsH"/>
                                                             </connections>
@@ -344,6 +351,7 @@
                             <constraint firstItem="q1X-na-ykB" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="TOm-Ug-kr6"/>
                             <constraint firstAttribute="trailing" secondItem="aMG-Oy-uFV" secondAttribute="trailing" constant="10" id="Ui0-Y1-fwb"/>
                             <constraint firstItem="hJV-iW-liq" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="10" id="Wmn-TI-jiR"/>
+                            <constraint firstItem="q1X-na-ykB" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="hJV-iW-liq" secondAttribute="trailing" constant="12" symbolic="YES" id="e6f-tM-hKm"/>
                             <constraint firstAttribute="bottom" secondItem="aMG-Oy-uFV" secondAttribute="bottom" constant="10" id="eVV-Rj-dfp"/>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="centerX" secondItem="m2S-Jp-Qdl" secondAttribute="centerX" id="fwy-wg-1dG"/>
                             <constraint firstItem="UOb-xd-KSE" firstAttribute="width" relation="lessThanOrEqual" secondItem="m2S-Jp-Qdl" secondAttribute="width" priority="750" constant="-40" id="l3d-Df-vpK"/>
