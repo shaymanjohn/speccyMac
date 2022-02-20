@@ -95,8 +95,6 @@ class Spectrum: Machine {
                  Game(file: "batman.sna", name: "Batman")
     ]
 
-    let borderAdjustmentFactor: CGFloat = 0.95
-
     init() {
         memory = Memory("48.rom")
         processor = ZilogZ80(memory: memory)
@@ -315,13 +313,10 @@ class Spectrum: Machine {
         if ula >= 224 {
 //            print("Row: \(videoRow), borderColourIndex \(borderColourIndex)")
             
-            let borderColour = colourTable[self.borderColourIndex]
             DispatchQueue.main.async {
+                let borderColour = self.colourTable[self.borderColourIndex]
                 let borderLine = self.border?.arrangedSubviews[self.videoRow]
-                borderLine?.layer?.backgroundColor = CGColor(red: borderColour.rf * self.borderAdjustmentFactor,
-                                                             green: borderColour.gf * self.borderAdjustmentFactor,
-                                                             blue: borderColour.bf * self.borderAdjustmentFactor,
-                                                             alpha: 1.0)
+                borderLine?.layer?.backgroundColor = borderColour.cgColour
             }
                 
             switch videoRow {
