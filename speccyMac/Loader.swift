@@ -13,6 +13,7 @@ class Loader {
     var z80: ZilogZ80
     
     init?(_ game: String, z80: ZilogZ80) {        
+        var valid = false
         self.z80 = z80
         
         let gameType = (game as NSString).pathExtension.lowercased()
@@ -26,8 +27,6 @@ class Loader {
             do {
                 try gameData = Data.init(contentsOf: gameUrl)
                 
-                var valid = false
-                
                 if let data = gameData {
                     switch gameType {
                         
@@ -35,29 +34,29 @@ class Loader {
                         valid = loadSna(data)
                         
                     default:
-                        return nil
+                        break
                     }
                 }
                 
-                if !valid {
-                    return nil
+                if valid {
+                    z80.counter = 0
+                    z80.lateFrames = 0
+                    z80.halted = false
+                    
+                    if z80.interrupts {
+                        z80.iff1 = 1
+                        z80.iff2 = 1
+                    } else {
+                        z80.iff1 = 0
+                        z80.iff2 = 0
+                    }
                 }
                 
-                z80.counter = 0
-                z80.lateFrames = 0
-                z80.halted = false
-                
-                if z80.interrupts {
-                    z80.iff1 = 1
-                    z80.iff2 = 1
-                } else {
-                    z80.iff1 = 0
-                    z80.iff2 = 0
-                }                
-                
             } catch {
-                return nil
             }
+        }
+        if !valid {
+            return nil
         }
     }
     
