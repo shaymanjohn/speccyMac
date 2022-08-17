@@ -351,7 +351,9 @@ class Spectrum: Machine {
             processor.counter = 0
             processor.unpause()
         } else {
-            print("couldnt load \(game)")
+            let alert = NSAlert()
+            alert.messageText = "Couldn't load:\n\n\(game)"
+            alert.runModal()
         }
     }
 }
