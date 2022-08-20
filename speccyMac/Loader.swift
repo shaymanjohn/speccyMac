@@ -262,20 +262,14 @@ class Loader {
                     return false
                 }
 
-                //let b = data[Int(dat + i)]
                 let b = data[Int(i)]
 
-                //if isCompressed && b == 0x00 && left >= 4 && data[Int(dat + i + 1)] == 0xed
-                //    && data[Int(dat + i + 2)] == 0xed && data[Int(dat + i + 3)] == 0x00 {
                 if isCompressed && b == 0x00 && left >= 4 && data[Int(i + 1)] == 0xed
                     && data[Int(i + 2)] == 0xed && data[Int(i + 3)] == 0x00 {
                     print("    data terminator")
                     loop = false
                     i += 4
-                //} else if isCompressed && b == 0xed && left >= 4 && data[Int(dat + i + 1)] == 0xed {
                 } else if isCompressed && b == 0xed && left >= 4 && data[Int(i + 1)] == 0xed {
-                    //let n = data[Int(dat + i + 2)]
-                    //let v = data[Int(dat + i + 3)]
                     let n = data[Int(i + 2)]
                     let v = data[Int(i + 3)]
 
