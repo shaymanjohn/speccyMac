@@ -15,9 +15,12 @@ class Z80Loader: GameLoaderProtocol {
         self.z80 = z80
     }
     
+    private enum Constants {
+        static let v1HeaderLen: UInt16 = 30
+    }
+    
     func load(data: Data) -> Bool {
-        let v1HeaderLen: UInt16 = 30
-        if data.count < v1HeaderLen {
+        if data.count < Constants.v1HeaderLen {
             print(".z80 file too short")
             return false
         }
@@ -88,8 +91,8 @@ class Z80Loader: GameLoaderProtocol {
             // prepare ram
             let ram = z80.memory.romSize
             let ramlen = 64 * 1024 // can change if 16k support is added
-            let datlen: UInt16 = UInt16(data.count) - v1HeaderLen
-            var i: UInt16 = v1HeaderLen
+            let datlen: UInt16 = UInt16(data.count) - Constants.v1HeaderLen
+            var i: UInt16 = Constants.v1HeaderLen
             var o: UInt16 = 0
 
             var loop = true
@@ -149,7 +152,7 @@ class Z80Loader: GameLoaderProtocol {
             v2.length = UInt16(data[30]) + (UInt16(data[31]) << 8)
             v2.pc = UInt16(data[32]) + (UInt16(data[33]) << 8)
 
-            print("  header length", v2.length, "+ 30 =", v1HeaderLen + v2.length, "offset:", String(format :"%02Xh", v1HeaderLen + v2.length))
+            print("  header length", v2.length, "+ 30 =", Constants.v1HeaderLen + v2.length, "offset:", String(format :"%02Xh", Constants.v1HeaderLen + v2.length))
 
             if v2.length == 23 {
                 print("    version 2")

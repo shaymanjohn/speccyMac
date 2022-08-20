@@ -19,6 +19,8 @@ struct Colour {
     let rf: CGFloat
     let gf: CGFloat
     let bf: CGFloat
+    
+    let cgColour: CGColor
             
     init(_ hex: UInt32) {
         self.hex = hex
@@ -30,6 +32,8 @@ struct Colour {
         rf = CGFloat(r) / 255.0
         gf = CGFloat(g) / 255.0
         bf = CGFloat(b) / 255.0
+        
+        cgColour = CGColor(red: rf * 0.95, green: gf * 0.95, blue: bf * 0.95, alpha: 1.0)
     }
 }
 

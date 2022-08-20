@@ -8,8 +8,7 @@
 
 import Foundation
 
-protocol GameLoaderProtocol {
-    
+protocol GameLoaderProtocol {    
     init(z80: ZilogZ80)
     func load(data: Data) -> Bool
 }

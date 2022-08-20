@@ -35,6 +35,7 @@ protocol Machine : AnyObject {
     var emulatorScreen: NSImageView? { get set }
     var emulatorView:   EmulatorInputView? { get set }
     var lateLabel:      NSTextField? { get set }
+    var border:         NSStackView? { get set }
 }
 
 extension Machine {
@@ -42,7 +43,7 @@ extension Machine {
     func start() {
         processor.machine = self
         
-        DispatchQueue.global().async {
+        DispatchQueue.global(qos: .userInitiated).async {
             self.processor.start()
         }
     }

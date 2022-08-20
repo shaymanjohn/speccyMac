@@ -14,7 +14,7 @@ class Spectrum: Machine {
     var processor: Processor
     var memory:    Memory
 
-    var ticksPerFrame: Int = 69888
+    let ticksPerFrame: Int = 69888
 
     var clicks: UInt8 = 0
 
@@ -24,6 +24,7 @@ class Spectrum: Machine {
     weak var emulatorView:   EmulatorInputView?
     weak var emulatorScreen: NSImageView?
     weak var lateLabel:      NSTextField?
+    weak var border:         NSStackView?
 
     let brightBit: UInt8 = 0x40
     let flashBit:  UInt8 = 0x80
@@ -35,8 +36,7 @@ class Spectrum: Machine {
 
     var flashCounter = 0
     var invertFlashColours = false
-    var borderColourIndex: UInt8 = 0
-    var borderColour: Colour!
+    var borderColourIndex: UInt8 = 7
 
     let beeper = AudioStreamer()
 
@@ -95,8 +95,6 @@ class Spectrum: Machine {
                  Game(file: "batman.sna", name: "Batman")
     ]
 
-    let borderAdjustmentFactor: CGFloat = 0.95
-
     init() {
         memory = Memory("48.rom")
         processor = ZilogZ80(memory: memory)
@@ -125,7 +123,6 @@ class Spectrum: Machine {
             attributeRowAddress[row] = attributeAddress + (32 * UInt16(row))
         }
 
-        borderColourIndex = 255
         provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: { _, _, _ in
         })!
 
@@ -153,11 +150,6 @@ class Spectrum: Machine {
         } else {
             lateLabel?.isHidden = true
         }
-
-        emulatorView?.layer?.backgroundColor = CGColor(red: borderColour.rf * borderAdjustmentFactor,
-                                                       green: borderColour.gf * borderAdjustmentFactor,
-                                                       blue: borderColour.bf * borderAdjustmentFactor,
-                                                       alpha: 1.0)
 
         flashCounter += 1
         if flashCounter == 16 {
@@ -309,7 +301,6 @@ class Spectrum: Machine {
         if port == 0xfe {
             if borderColourIndex != (byte & 0x07) {
                 borderColourIndex = byte & 0x07
-                borderColour = colourTable[borderColourIndex]
             }
 
             clicks = byte
@@ -320,6 +311,14 @@ class Spectrum: Machine {
         beeper.updateSample(processor.counter, beep: clicks)
 
         if ula >= 224 {
+//            print("Row: \(videoRow), borderColourIndex \(borderColourIndex)")
+            
+            DispatchQueue.main.async {
+                let borderColour = self.colourTable[self.borderColourIndex]
+                let borderLine = self.border?.arrangedSubviews[self.videoRow]
+                borderLine?.layer?.backgroundColor = borderColour.cgColour
+            }
+                
             switch videoRow {
             case 64...255:
                 captureRow(videoRow - 64)

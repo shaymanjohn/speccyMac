@@ -9,9 +9,9 @@
 import Foundation
 import AudioToolbox
 
-let kTicsPerLine = 224
-let kScreenLines = 312 // 64 + 192 + 56
-let kTicsPerFrame = kTicsPerLine * kScreenLines
+// let kTicsPerLine = 224
+// let kScreenLines = 312 // 64 + 192 + 56
+// let kTicsPerFrame = kTicsPerLine * kScreenLines
 
 private let kSampleRate = 48000.0
 private let kSamplesPerFrame = Int(kSampleRate) / 50
@@ -35,7 +35,7 @@ class AudioStreamer {
     private let semaphore = DispatchSemaphore(value: 0)
 
     init() {
-        self.audioData = AudioData(repeating: 0.0, count: kSamplesPerFrame)
+        self.audioData = AudioData(repeating: 0.0, count: kSamplesPerFrame + 1)
         var streamBasicDescription = AudioStreamBasicDescription(
             mSampleRate: kSampleRate,
             mFormatID: kAudioFormatLinearPCM,
@@ -101,9 +101,7 @@ class AudioStreamer {
         sample += amplitude / 8
 
         let offset: Int = (Int(counter) * kSamplesPerFrame) / machine.ticksPerFrame
-        if offset < kSamplesPerFrame {
-            audioData[offset] = sample
-        }
+        audioData[offset] = sample
     }
 
     func audioDataProcessed() {

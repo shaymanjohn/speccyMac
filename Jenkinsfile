@@ -22,16 +22,55 @@ node('mac') {
     }
 
     stage('Analytics') {
-    
+
     // Generate Checkstyle report
     sh '/usr/local/bin/swiftlint lint --reporter checkstyle > checkstyle.xml || true'
 
     // Publish checkstyle result
     step([$class: 'CheckStylePublisher', canComputeNew: false, defaultEncoding: '', healthy: '', pattern: 'checkstyle.xml', unHealthy: ''])
     }
-
-    stage ('Notify') {
-        // Send slack notification
-        slackSend channel: '#build', message: 'speccyMac - build and test success.', teamDomain: 'karmatoad', token: 'swhGys1CY11kbCNtmypRvGL0'
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+                }
+            }
+        stage('Unlock keychain') {
+            steps {
+                sh './BuildScripts/unlock-keychain.sh'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh './BuildScripts/jenkins-build.sh ${scheme}'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh './BuildScripts/jenkins-test.sh ${scheme}'
+                step([$class: 'JUnitResultArchiver', allowEmptyResults: true, testResults: 'build/reports/junit.xml'])
+            }
+        }
+    }
+    post {
+        always {
+            slackSend(message: "speccyMac build result:")
+        }
+        success {
+            echo 'Success.'
+            slackSend(message: "speccyMac - build and test success.")
+        }
+        failure {
+            echo 'Failure.'
+            slackSend(message: "speccyMac - build failure.")
+        }
+        aborted {
+            echo 'Aborted.'
+            slackSend(message: "speccyMac - build aborted.")
+        }
+        unstable {
+            echo 'Unstable.'
+            slackSend(message: "speccyMac - unstable.")
+        }
     }
 }

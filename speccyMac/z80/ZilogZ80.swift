@@ -208,7 +208,7 @@ class ZilogZ80 : Processor {
                     }
                 }
                 
-                machine?.tick()                
+                machine?.tick()
             }
         }
     }

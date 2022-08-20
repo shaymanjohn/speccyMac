@@ -23,7 +23,6 @@ enum SupportedGameTypes: String, CaseIterable {
 }
 
 class Loader {
-    
     init?(_ game: String, z80: ZilogZ80) {
         let gameType = (game as NSString).pathExtension.lowercased()
         
