@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5482246B28B3E90E00B3E933 /* brucelee.z80 in Resources */ = {isa = PBXBuildFile; fileRef = 5482246928B3E90D00B3E933 /* brucelee.z80 */; };
+		5482246C28B3E90E00B3E933 /* technted.z80 in Resources */ = {isa = PBXBuildFile; fileRef = 5482246A28B3E90D00B3E933 /* technted.z80 */; };
 		6F036DBD1F44C210005A16D0 /* Structs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F036DBC1F44C210005A16D0 /* Structs.swift */; };
 		6F036DBF1F44C68D005A16D0 /* Spectrum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F036DBE1F44C68D005A16D0 /* Spectrum.swift */; };
 		6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1792091F31B0D700A984F0 /* Array+extensions.swift */; };
@@ -75,6 +77,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		5482246928B3E90D00B3E933 /* brucelee.z80 */ = {isa = PBXFileReference; lastKnownFileType = file; path = brucelee.z80; sourceTree = "<group>"; };
+		5482246A28B3E90D00B3E933 /* technted.z80 */ = {isa = PBXFileReference; lastKnownFileType = file; path = technted.z80; sourceTree = "<group>"; };
 		6F036DBC1F44C210005A16D0 /* Structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structs.swift; sourceTree = "<group>"; };
 		6F036DBE1F44C68D005A16D0 /* Spectrum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spectrum.swift; sourceTree = "<group>"; };
 		6F1792091F31B0D700A984F0 /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
@@ -206,6 +210,8 @@
 				6F33B9251F38F55200B886CD /* spacies.sna */,
 				6F33B9241F38F55200B886CD /* thehobbit.sna */,
 				6F8E15381F3B14E100A34AB4 /* testz80.sna */,
+				5482246928B3E90D00B3E933 /* brucelee.z80 */,
+				5482246A28B3E90D00B3E933 /* technted.z80 */,
 				6F8E15401F3B2F1600A34AB4 /* jetsetw.sna */,
 				6F8E153F1F3B2ED800A34AB4 /* techted.sna */,
 				6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */,
@@ -378,9 +384,11 @@
 				6FCC17D61F3EDE0700B867E1 /* dynadan.sna in Resources */,
 				6F33B92B1F38F56300B886CD /* deathchase.sna in Resources */,
 				6FFB31581F22379B00C15CD7 /* Assets.xcassets in Resources */,
+				5482246C28B3E90E00B3E933 /* technted.z80 in Resources */,
 				6FFB315B1F22379B00C15CD7 /* Main.storyboard in Resources */,
 				6FEFA91F1F223B5E00F9AD93 /* 48.rom in Resources */,
 				6FCC17D81F3EDE0D00B867E1 /* headoverheels.sna in Resources */,
+				5482246B28B3E90E00B3E933 /* brucelee.z80 in Resources */,
 				6F93325E1F4F6B35000CA284 /* chuckie.sna in Resources */,
 				6F33B92D1F38F56900B886CD /* monty.sna in Resources */,
 				6FCC17D51F3EDE0300B867E1 /* cybernoid2.sna in Resources */,
