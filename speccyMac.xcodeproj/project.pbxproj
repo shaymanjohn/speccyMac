@@ -10,6 +10,9 @@
 		6F036DBD1F44C210005A16D0 /* Structs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F036DBC1F44C210005A16D0 /* Structs.swift */; };
 		6F036DBF1F44C68D005A16D0 /* Spectrum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F036DBE1F44C68D005A16D0 /* Spectrum.swift */; };
 		6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F1792091F31B0D700A984F0 /* Array+extensions.swift */; };
+		6F2063AC28B127C9007A69FF /* GameLoaderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2063AB28B127C9007A69FF /* GameLoaderProtocol.swift */; };
+		6F2063AE28B12878007A69FF /* SNALoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2063AD28B12878007A69FF /* SNALoader.swift */; };
+		6F2063B028B1289E007A69FF /* Z80Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2063AF28B1289E007A69FF /* Z80Loader.swift */; };
 		6F28AA271F53F31A00FCAA58 /* manic.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F28AA261F53F31A00FCAA58 /* manic.sna */; };
 		6F33B92A1F38F56000B886CD /* brucelee.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9221F38F55200B886CD /* brucelee.sna */; };
 		6F33B92B1F38F56300B886CD /* deathchase.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9261F38F55200B886CD /* deathchase.sna */; };
@@ -75,6 +78,9 @@
 		6F036DBC1F44C210005A16D0 /* Structs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Structs.swift; sourceTree = "<group>"; };
 		6F036DBE1F44C68D005A16D0 /* Spectrum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spectrum.swift; sourceTree = "<group>"; };
 		6F1792091F31B0D700A984F0 /* Array+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+extensions.swift"; sourceTree = "<group>"; };
+		6F2063AB28B127C9007A69FF /* GameLoaderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLoaderProtocol.swift; sourceTree = "<group>"; };
+		6F2063AD28B12878007A69FF /* SNALoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SNALoader.swift; sourceTree = "<group>"; };
+		6F2063AF28B1289E007A69FF /* Z80Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z80Loader.swift; sourceTree = "<group>"; };
 		6F28AA261F53F31A00FCAA58 /* manic.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = manic.sna; sourceTree = "<group>"; };
 		6F33B9221F38F55200B886CD /* brucelee.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = brucelee.sna; sourceTree = "<group>"; };
 		6F33B9231F38F55200B886CD /* monty.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = monty.sna; sourceTree = "<group>"; };
@@ -151,6 +157,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6F2063AA28B1248E007A69FF /* Loaders */ = {
+			isa = PBXGroup;
+			children = (
+				6F2063AB28B127C9007A69FF /* GameLoaderProtocol.swift */,
+				6F2063AD28B12878007A69FF /* SNALoader.swift */,
+				6F2063AF28B1289E007A69FF /* Z80Loader.swift */,
+			);
+			path = Loaders;
+			sourceTree = "<group>";
+		};
 		6F8BE3D4215198D300F2357D /* z80 */ = {
 			isa = PBXGroup;
 			children = (
@@ -242,6 +258,7 @@
 				6FEFA9211F223FCE00F9AD93 /* Loader.swift */,
 				6F1792091F31B0D700A984F0 /* Array+extensions.swift */,
 				6F036DBC1F44C210005A16D0 /* Structs.swift */,
+				6F2063AA28B1248E007A69FF /* Loaders */,
 				6F8BE3D4215198D300F2357D /* z80 */,
 				6FEFA9101F2239AD00F9AD93 /* Games */,
 				6FEFA91D1F223B3A00F9AD93 /* 48.rom */,
@@ -302,7 +319,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0900;
-				LastUpgradeCheck = 1330;
+				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = "John Ward";
 				TargetAttributes = {
 					6FE5146E1F372CF1004F0751 = {
@@ -422,6 +439,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6F036DBD1F44C210005A16D0 /* Structs.swift in Sources */,
+				6F2063AC28B127C9007A69FF /* GameLoaderProtocol.swift in Sources */,
+				6F2063B028B1289E007A69FF /* Z80Loader.swift in Sources */,
 				6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */,
 				6FFC9E0C1F35D65C00B9322C /* Accumulator.swift in Sources */,
 				6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */,
@@ -439,6 +458,7 @@
 				6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */,
 				6F036DBF1F44C68D005A16D0 /* Spectrum.swift in Sources */,
 				6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */,
+				6F2063AE28B12878007A69FF /* SNALoader.swift in Sources */,
 				6F5217DF1F517C8C005063E5 /* EmulatorImageView.swift in Sources */,
 				6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */,
 				6F37E1BE1F46F25F005A4976 /* GameSelectViewController.swift in Sources */,
@@ -710,7 +730,6 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
-				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
