@@ -221,6 +221,12 @@ class ZilogZ80 : Processor {
     final func unpause() {
         counter = 0
         paused = false
+
+        if !running {
+            DispatchQueue.global(qos: .userInitiated).async {
+                self.start()
+            }
+        }
     }
     
     final func incCounters(_ amount: UInt32) {
