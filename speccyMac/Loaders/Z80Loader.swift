@@ -40,8 +40,6 @@ class Z80Loader: GameLoaderProtocol {
     }
     
     func load(data: Data) -> Bool {
-        // if we need to view the data bytes in the debugger
-        print((data as NSData).bytes)
 
         let v1HeaderLen: UInt16 = 30
         if data.count < v1HeaderLen {
@@ -87,7 +85,6 @@ class Z80Loader: GameLoaderProtocol {
             let isCompressed = v1.flags1 & (1 << 5) != 0
             print("  \(!isCompressed ? "un" : "")compressed data")
 
-
             // prepare CPU and hardware
 
             z80.i = v1.i
@@ -129,47 +126,42 @@ class Z80Loader: GameLoaderProtocol {
             let ram = z80.memory.romSize
             let ramlen = 64 * 1024 // can change if 16k support is added
             let datlen: UInt16 = UInt16(data.count) - v1HeaderLen
-            var i: UInt16 = v1HeaderLen
-            var o: UInt16 = 0
+            var from: UInt16 = v1HeaderLen
+            var to: UInt16 = 0
 
             var loop = true
             while loop {
-                let left = datlen - i // TODO can overflow?
+                let left = datlen - from // TODO can overflow?
                 if left == 0 {
-                    print("    end of data")
                     break
                 }
-                if UInt(ram) + UInt(o) >= ramlen {
-                    print("    end of ram")
+                if UInt(ram) + UInt(to) >= ramlen {
                     return false
                 }
 
-                let b = data[Int(i)]
+                let byte = data[Int(from)]
 
-                if isCompressed && b == 0x00 && left >= 4 && data[Int(i + 1)] == 0xed
-                    && data[Int(i + 2)] == 0xed && data[Int(i + 3)] == 0x00 {
-                    print("    data terminator")
+                if isCompressed && byte == 0x00 && left >= 4 && data[Int(from + 1)] == 0xed
+                    && data[Int(from + 2)] == 0xed && data[Int(from + 3)] == 0x00 {
                     loop = false
-                    i += 4
-                } else if isCompressed && b == 0xed && left >= 4 && data[Int(i + 1)] == 0xed {
-                    let n = data[Int(i + 2)]
-                    let v = data[Int(i + 3)]
+                    from += 4
+                } else if isCompressed && byte == 0xed && left >= 4 && data[Int(from + 1)] == 0xed {
+                    let length = data[Int(from + 2)]
+                    let value = data[Int(from + 3)]
 
-                    for _ in 0..<n {
-                        z80.memory.set(ram + o, byte:v)
+                    for _ in 0..<length {
+                        z80.memory.set(ram + to, byte:value)
 
-                        o += 1
+                        to += 1
                     }
-                    i += 4
+                    from += 4
                 } else {
-                    z80.memory.set(ram + o, byte:b)
+                    z80.memory.set(ram + to, byte:byte)
 
-                    i += 1
-                    o += 1
+                    from += 1
+                    to += 1
                 }
             }
-
-            // start CPU
 
             z80.pc = v1.pc
 
