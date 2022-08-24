@@ -95,7 +95,7 @@ class Z80Loader: GameLoaderProtocol {
             z80.exhl = v1.exhl
             z80.exde = v1.exde
             z80.exbc = v1.exbc
-            z80.exaf = UInt16(v1.exa) + (UInt16(v1.exf) << 8)
+            z80.exaf = (UInt16(v1.exa) << 8) + UInt16(v1.exf)
 
             z80.hl.value = v1.hl
             z80.de.value = v1.de
@@ -103,8 +103,8 @@ class Z80Loader: GameLoaderProtocol {
             z80.iy = v1.iy
             z80.ix = v1.ix
 
-            // sna[19].00010000 = z80[29].00000001
-            if v1.flags2 & 0x04 > 0 {
+            // z80[27] =  sna[19].00001000
+            if v1.iff != 0 {
                 z80.interrupts = true
                 z80.iff1 = 1
                 z80.iff2 = 1
@@ -116,7 +116,7 @@ class Z80Loader: GameLoaderProtocol {
 
             z80.r.value = v1.r
 
-            z80.af.value = UInt16(v1.a) + (UInt16(v1.f) << 8)
+            z80.af.value = (UInt16(v1.a) << 8) + UInt16(v1.f)
             ZilogZ80.sp = v1.sp
 
             // sna[25].00000011 = z80[29].00000011
@@ -171,15 +171,7 @@ class Z80Loader: GameLoaderProtocol {
 
             // start CPU
 
-            let lo = z80.memory.get(ZilogZ80.sp)
-            ZilogZ80.sp = ZilogZ80.sp &+ 1
-            let hi = z80.memory.get(ZilogZ80.sp)
-            ZilogZ80.sp = ZilogZ80.sp &+ 1
-
-            z80.pc = (UInt16(hi) << 8) + UInt16(lo)
-
-            z80.memory.set(ZilogZ80.sp &- 1, byte: 0)
-            z80.memory.set(ZilogZ80.sp &- 2, byte: 0)
+            z80.pc = v1.pc
 
             return true
         } else {
