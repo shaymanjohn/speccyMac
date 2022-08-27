@@ -45,46 +45,4 @@ class EmulatorInputView: NSView {
             keyStates[event.keyCode] = true
         }
     }
-    
-    override func awakeFromNib() {
-        print("HIPP awake")
-        super.awakeFromNib()
-
-        let types = NSFilePromiseReceiver.readableDraggedTypes.map {
-            NSPasteboard.PasteboardType(rawValue: $0) }
-        registerForDraggedTypes(types)
-        registerForDraggedTypes([.png, .tiff, .fileURL])
-    }
-
-    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
-        print("HIPP drag enter", sender)
-        super.draggingEntered(sender)
-        return .copy
-    }
-
-    override func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        print("HIPP prepare drag")
-        return true
-    }
-
-    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        print("HIPP perform drag")
-        let pasteboard = sender.draggingPasteboard//()
-
-        let typeStrs = pasteboard.types?
-            .map { $0.rawValue }
-            .joined(separator: "\n")
-        print("🔵 pasteboard.types: -----------------------------------")
-        print("\(typeStrs!) \n")
-
-        let objects = pasteboard
-            .readObjects(
-                forClasses: [NSFilePromiseReceiver.self],
-                options: nil)
-        print("🔵 objects: -----------------------------------")
-        print("\(objects!) \n")
-
-        return true
-    }
-
 }
