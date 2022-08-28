@@ -341,12 +341,12 @@ class Spectrum: Machine {
         }
     }
 
-    func loadGame(_ game: String) {
+    func loadGame(_ game: String, _ isFromDragDrop: Bool = false) {
         processor.pause()
         clicks = 0
 
         if let z80 = processor as? ZilogZ80,
-            Loader(game, z80: z80) != nil {
+            Loader(game, z80: z80, isFromDragDrop) != nil {
             print("loaded \(game)")
             videoRow = 0
             ula = 0

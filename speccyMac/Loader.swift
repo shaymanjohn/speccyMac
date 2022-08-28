@@ -23,18 +23,41 @@ enum SupportedGameTypes: String, CaseIterable {
 }
 
 class Loader {
-    init?(_ game: String, z80: ZilogZ80) {
+    init?(_ game: String, z80: ZilogZ80, _ isFromDragDrop: Bool = false) {
+        if isFromDragDrop {
+            print("try to load game dropped on emulator window")
+        } else {
+            print("load game built into emulator")
+        }
+        
         let gameType = (game as NSString).pathExtension.lowercased()
         
         guard let gameType = SupportedGameTypes.allCases.first(where: { $0.rawValue == gameType }) else {
             return nil
         }
-        
-        guard let gameUrl = Bundle.main.url(forResource: game, withExtension: ""),
-              let gameData = try? Data.init(contentsOf: gameUrl) else {
-            return nil
+
+        var gameData: Data
+        if isFromDragDrop {
+            do {
+                gameData = try Data.init(contentsOf: URL(fileURLWithPath: game))
+            } catch {
+                // should be impossible unless file was deleted after we dragged and drop
+                print("error initing game data from drag and drop")
+                return nil
+            }
+        } else {
+            guard let gameUrl = Bundle.main.url(forResource: game, withExtension: "") else {
+                print("didn't get gameUrl or gameData")
+                return nil
+            }
+            do {
+                gameData = try Data.init(contentsOf: gameUrl)
+            } catch {
+                print("error initing game data from built-in")
+                return nil
+            }
         }
-        
+
         let gameLoader = gameType.loader.init(z80: z80)
         
         if gameLoader.load(data: gameData) {

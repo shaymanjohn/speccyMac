@@ -24,31 +24,29 @@ class EmulatorImageView: NSImageView {
             modeIndex = 0
         }
     }
-    
+
     required init?(coder: NSCoder) {
         super.init(coder: coder)
-        
+
         // is it possible to get the file contents directly in a drag? or a URL?
         registerForDraggedTypes([.fileURL, .fileContents, .URL])
     }
-    
+
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
-        print("HIPP drag enter")
         // I can't get this to work with .fileContents or .URL for registered drag types
         // probably because NSFilenamesPboardType specifically means .fileURL
         // but then why is it a string and not an URL as its name implies?
         // I think maybe because the code I found is using converters from old Cocoa methods to new ones?
-        if let board = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray, let paths = board as? [String] {//}, let urls = board as? [URL] {
+        if let board = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray, let paths = board as? [String] {
 
-            //print("paths count, urls count:", paths.count, urls.count)
             // it doesn't make sense to load two snapshots, so take the first one
             // or we could take the first valid one?
             if paths.count != 1 {
                 return []
             }
-            
+
             let path = paths[0]
-            
+
             let url = NSURL(fileURLWithPath: path)
             if let fileExtension = url.pathExtension?.lowercased() {
                 // there are no trivial checks on these types
@@ -71,27 +69,24 @@ class EmulatorImageView: NSImageView {
                 }
             }
         }
-        
+
         return []
     }
-    
-    // dragANDdrop exmple app uses draggingUpdated but not prepareForDragOperation
 
     override func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        print("HIPP prepare drag")
         return true
     }
 
     override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        print("HIPP perform")
         if let board = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray, let filePath = board[0] as? String {
-            // why can't I get URL to work above?
-            
-            print("dropped:", filePath)
+            // is there a way to use URL above instead of String?
+
+            let emulator = (self.window?.windowController?.contentViewController) as? Emulator
+            emulator?.machine.loadGame(filePath, true)
+
 
             return true
         }
         return false
     }
-
 }
