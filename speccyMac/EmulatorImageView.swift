@@ -50,7 +50,7 @@ class EmulatorImageView: NSImageView {
             let url = NSURL(fileURLWithPath: path)
             if let fileExtension = url.pathExtension?.lowercased() {
                 // there are no trivial checks on these types
-                if ["z80", "zip"].contains(fileExtension) {
+                if (fileExtension == "z80") {
                     return .copy
                 }
 
