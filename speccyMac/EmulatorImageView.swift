@@ -29,7 +29,7 @@ class EmulatorImageView: NSImageView {
         super.init(coder: coder)
 
         // is it possible to get the file contents directly in a drag? or a URL?
-        registerForDraggedTypes([.fileURL, .fileContents, .URL])
+        registerForDraggedTypes([.fileURL])
     }
 
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
@@ -47,6 +47,10 @@ class EmulatorImageView: NSImageView {
 
             let path = paths[0]
 
+            // I tried to change this to URL() but that gave me two errors when
+            // checking the file size below that I can't fix
+            // Cannot infer contextual base in reference to member 'fileSizeKey'
+            // Value of type 'URLResourceValues' has no subscripts
             let url = NSURL(fileURLWithPath: path)
             if let fileExtension = url.pathExtension?.lowercased() {
                 // there are no trivial checks on these types
@@ -57,7 +61,6 @@ class EmulatorImageView: NSImageView {
                 // 48k .sna can only be one size
                 if (fileExtension == "sna") {
                     do {
-                        // I can't get .fileSizeKey to work
                         let resVals = try url.resourceValues(forKeys: [.fileSizeKey])
 
                         if case let size as Int = resVals[.fileSizeKey], size == 49179 {
@@ -83,7 +86,6 @@ class EmulatorImageView: NSImageView {
 
             let emulator = (self.window?.windowController?.contentViewController) as? Emulator
             emulator?.machine.loadGame(filePath, true)
-
 
             return true
         }

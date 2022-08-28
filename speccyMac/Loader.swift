@@ -57,7 +57,7 @@ class Loader {
                 return nil
             }
         }
-
+        
         let gameLoader = gameType.loader.init(z80: z80)
         
         if gameLoader.load(data: gameData) {

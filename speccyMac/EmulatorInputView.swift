@@ -45,4 +45,5 @@ class EmulatorInputView: NSView {
             keyStates[event.keyCode] = true
         }
     }
+
 }
