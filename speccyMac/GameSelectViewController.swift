@@ -41,7 +41,9 @@ extension GameSelectViewController: NSTableViewDelegate {
         if let tv = notification.object as? NSTableView {
             if tv.selectedRow >= 0 {
                 let selectedGame = sortedGames[tv.selectedRow]
-                machine.loadGame(selectedGame.file, false)
+                if let gameUrl = Bundle.main.url(forResource: selectedGame.file, withExtension: "") {
+                    machine.loadGame(gameUrl.absoluteString)
+                }
                 
                 dismiss(self)
             }

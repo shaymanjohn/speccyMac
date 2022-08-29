@@ -95,7 +95,7 @@ class Spectrum: Machine {
                  Game(file: "batman.sna", name: "Batman"),
                  
                  Game(file: "brucelee.z80", name: "Bruce Lee (.z80)"),      // v1 compressed
-                 Game(file: "technted.z80", name: "Technician Ted (.z80)"), // v1 compressed
+                 Game(file: "technted.z80", name: "Technician Ted (.z80)")  // v1 compressed
     ]
 
     init() {
@@ -341,20 +341,19 @@ class Spectrum: Machine {
         }
     }
 
-    func loadGame(_ game: String, _ isFromDragDrop: Bool = false) {
+    func loadGame(_ gameUrl: String) {
         processor.pause()
         clicks = 0
 
         if let z80 = processor as? ZilogZ80,
-            Loader(game, z80: z80, isFromDragDrop) != nil {
-            print("loaded \(game)")
+            Loader(gameUrl, z80: z80) != nil {
             videoRow = 0
             ula = 0
             processor.counter = 0
             processor.unpause()
         } else {
             let alert = NSAlert()
-            alert.messageText = "Couldn't load:\n\n\(game)"
+            alert.messageText = "Couldn't load:\n\n\(gameUrl)"
             alert.runModal()
         }
     }

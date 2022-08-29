@@ -12,6 +12,8 @@ class EmulatorImageView: NSImageView {
 
     var modeIndex = 1
     let allImageModes: [NSImageInterpolation] = [.none, .low, .medium, .high]
+    
+    weak var dragDelegate: DragDelegate?
 
     override func draw(_ dirtyRect: NSRect) {
         NSGraphicsContext.current?.imageInterpolation = allImageModes[modeIndex]
@@ -28,51 +30,20 @@ class EmulatorImageView: NSImageView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
 
-        // is it possible to get the file contents directly in a drag? or a URL?
         registerForDraggedTypes([.fileURL])
     }
 
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
-        // I can't get this to work with .fileContents or .URL for registered drag types
-        // probably because NSFilenamesPboardType specifically means .fileURL
-        // but then why is it a string and not an URL as its name implies?
-        // I think maybe because the code I found is using converters from old Cocoa methods to new ones?
-        if let board = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray, let paths = board as? [String] {
-
-            // it doesn't make sense to load two snapshots, so take the first one
-            // or we could take the first valid one?
-            if paths.count != 1 {
-                return []
-            }
-
-            let path = paths[0]
-
-            // I tried to change this to URL() but that gave me two errors when
-            // checking the file size below that I can't fix
-            // Cannot infer contextual base in reference to member 'fileSizeKey'
-            // Value of type 'URLResourceValues' has no subscripts
-            let url = NSURL(fileURLWithPath: path)
-            if let fileExtension = url.pathExtension?.lowercased() {
-                // there are no trivial checks on these types
-                if (fileExtension == "z80") {
-                    return .copy
-                }
-
-                // 48k .sna can only be one size
-                if (fileExtension == "sna") {
-                    do {
-                        let resVals = try url.resourceValues(forKeys: [.fileSizeKey])
-
-                        if case let size as Int = resVals[.fileSizeKey], size == 49179 {
-                            return .copy
-                        }
-                    } catch {
-                        print("error:", error)
-                    }
-                }
+        if let board = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
+           let paths = board as? [String],
+           let path = paths.first {
+            
+            let fileExtension = (path as NSString).pathExtension.lowercased()
+            if SupportedGameTypes.allCases.first(where: { $0.rawValue == fileExtension }) != nil {
+                return .copy
             }
         }
-
+        
         return []
     }
 
@@ -81,14 +52,12 @@ class EmulatorImageView: NSImageView {
     }
 
     override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        if let board = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray, let filePath = board[0] as? String {
-            // is there a way to use URL above instead of String?
-
-            let emulator = (self.window?.windowController?.contentViewController) as? Emulator
-            emulator?.machine.loadGame(filePath, true)
-
+        if let board = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
+           let filePath = board.firstObject as? String {
+            dragDelegate?.loadGame("file://" + filePath)
             return true
         }
+        
         return false
     }
 }
