@@ -33,9 +33,7 @@ class Loader {
         var gameData: Data
         do {
             gameData = try Data.init(contentsOf: game)
-            print("success launching game \(game.lastPathComponent)")
         } catch {
-            print("error launching game \(game.lastPathComponent)")
             return nil
         }
         
