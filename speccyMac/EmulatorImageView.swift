@@ -54,7 +54,7 @@ class EmulatorImageView: NSImageView {
     override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
         if let board = sender.draggingPasteboard.propertyList(forType: NSPasteboard.PasteboardType(rawValue: "NSFilenamesPboardType")) as? NSArray,
            let filePath = board.firstObject as? String {
-            dragDelegate?.loadGame("file://" + filePath)
+            dragDelegate?.loadGame(filePath)
             return true
         }
         
