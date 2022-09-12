@@ -14,7 +14,7 @@ protocol Machine : AnyObject {
     func start()
     func tick()
     
-    func loadGame(_ gameUrl: String)
+    func loadGame(_ gameUrl: URL)
     
     func input(_ high: UInt8, low: UInt8) -> UInt8
     func output(_ port: UInt8, byte: UInt8)

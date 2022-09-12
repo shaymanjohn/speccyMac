@@ -23,21 +23,19 @@ enum SupportedGameTypes: String, CaseIterable {
 }
 
 class Loader {
-    init?(_ game: String, z80: ZilogZ80) {
-        let gameType = (game as NSString).pathExtension.lowercased()
+    init?(_ game: URL, z80: ZilogZ80) {
+        let gameType = game.pathExtension.lowercased()
         
         guard let gameType = SupportedGameTypes.allCases.first(where: { $0.rawValue == gameType }) else {
             return nil
         }
 
-        let fileUrl = URL(fileURLWithPath: game)
-        
         var gameData: Data
         do {
-            gameData = try Data.init(contentsOf: fileUrl)
-            print("success launching game \(game)")
+            gameData = try Data.init(contentsOf: game)
+            print("success launching game \(game.lastPathComponent)")
         } catch {
-            print("error launching game \(game)")
+            print("error launching game \(game.lastPathComponent)")
             return nil
         }
         

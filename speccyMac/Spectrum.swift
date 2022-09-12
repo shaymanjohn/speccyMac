@@ -341,7 +341,7 @@ class Spectrum: Machine {
         }
     }
 
-    func loadGame(_ gameUrl: String) {
+    func loadGame(_ gameUrl: URL) {
         processor.pause()
         clicks = 0
 

@@ -9,7 +9,7 @@
 import Cocoa
 
 protocol DragDelegate: AnyObject {
-    func loadGame(_ filePath: String)
+    func loadGame(_ fileUrl: URL)
 }
 
 class Emulator: NSViewController, DragDelegate {
@@ -65,7 +65,7 @@ class Emulator: NSViewController, DragDelegate {
         emulatorScreen.changeImageMode()
     }
     
-    func loadGame(_ filePath: String) {
-        machine.loadGame(filePath)
+    func loadGame(_ fileURL: URL) {
+        machine.loadGame(fileURL)
     }
 }
