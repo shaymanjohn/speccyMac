@@ -8,7 +8,11 @@
 
 import Cocoa
 
-class Emulator: NSViewController {
+protocol DragDelegate: AnyObject {
+    func loadGame(_ fileUrl: URL)
+}
+
+class Emulator: NSViewController, DragDelegate {
     
     @IBOutlet weak var emulatorScreen: EmulatorImageView!
     @IBOutlet weak var lateLabel:      NSTextField!
@@ -17,6 +21,8 @@ class Emulator: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        emulatorScreen.dragDelegate = self
         
         let stack = NSStackView()
         stack.translatesAutoresizingMaskIntoConstraints = false
@@ -59,4 +65,7 @@ class Emulator: NSViewController {
         emulatorScreen.changeImageMode()
     }
     
+    func loadGame(_ fileURL: URL) {
+        machine.loadGame(fileURL)
+    }
 }
