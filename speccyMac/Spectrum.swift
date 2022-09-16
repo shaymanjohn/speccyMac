@@ -23,7 +23,6 @@ class Spectrum: Machine {
 
     weak var emulatorView:   EmulatorInputView?
     weak var emulatorScreen: NSImageView?
-    weak var lateLabel:      NSTextField?
     weak var border:         NSStackView?
 
     let brightBit: UInt8 = 0x40
@@ -48,11 +47,12 @@ class Spectrum: Machine {
 
     // Screen image
     var screenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
-    var saveScreenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
 
     // Attribute image - save colour per row (not 8 rows) to allow hi-colour effects
     var colourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
-    var saveColourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
+    
+    // Border colour per line
+    var borderBuffer = ContiguousArray<UInt8>(repeating: 0, count: 1024)
 
     // Bmp pool to render image
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 192)
@@ -126,10 +126,13 @@ class Spectrum: Machine {
             attributeRowAddress[row] = attributeAddress + (32 * UInt16(row))
         }
 
-        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: { _, _, _ in
-        })!
-
+        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: { _, _, _ in })!
         beeper.machine = self
+        
+        // Useful for slow machines, show how many late counts after 10 seconds elapsed.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            print("Late count is \(self.processor.lateFrames)")
+        }
     }
 
     final func captureRow(_ row: UInt16) {
@@ -147,13 +150,6 @@ class Spectrum: Machine {
     }
 
     final func frameCompleted() {
-        if processor.lateFrames > 1 {
-            lateLabel?.stringValue = "Late \(processor.lateFrames)"
-            lateLabel?.isHidden = false
-        } else {
-            lateLabel?.isHidden = true
-        }
-
         flashCounter += 1
         if flashCounter == 16 {
             invertFlashColours = !invertFlashColours
@@ -174,36 +170,35 @@ class Spectrum: Machine {
             byte      = screenBuffer[index]
             attribute = colourBuffer[index]
 
-            if byte != saveScreenBuffer[index] || attribute != saveColourBuffer[index] || flashCounter == 1 {
-                saveScreenBuffer[index] = byte
-                saveColourBuffer[index] = attribute
-
-                colourOffset = attribute & brightBit > 0 ? 8 : 0
-
-                ink   = colours[(attribute & 0x07) + colourOffset]
-                paper = colours[((attribute & 0x38) >> 3) + colourOffset]
-
-                if invertFlashColours && attribute & flashBit > 0 {
-                    temp = paper
-                    paper = ink
-                    ink = temp
-                }
-
-                bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
-                bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
-                bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
-                bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
-                bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
-                bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
-                bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
-                bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
+            colourOffset = attribute & brightBit > 0 ? 8 : 0
+            ink   = colours[(attribute & 0x07) + colourOffset]
+            paper = colours[((attribute & 0x38) >> 3) + colourOffset]
+            
+            if invertFlashColours && (attribute & flashBit) > 0 {
+                temp = paper
+                paper = ink
+                ink = temp
             }
+            
+            bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
+            bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
+            bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
+            bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
+            bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
+            bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
+            bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
+            bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
 
             bmpIndex += 8
         }
 
         if let image = CGImage(width: 256, height: 192, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 1024, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) {
             emulatorScreen?.image = NSImage(cgImage: image, size: .zero)
+        }
+        
+        // Set the border per line based on the border buffer
+        for (index, line) in (border?.arrangedSubviews ?? []).enumerated() {
+            line.layer?.backgroundColor = colourTable[borderBuffer[index]].cgColour
         }
     }
 
@@ -302,10 +297,7 @@ class Spectrum: Machine {
 
     final func output(_ port: UInt8, byte: UInt8) {
         if port == 0xfe {
-            if borderColourIndex != (byte & 0x07) {
-                borderColourIndex = byte & 0x07
-            }
-
+            borderColourIndex = byte & 0x07
             clicks = byte
         }
     }
@@ -314,13 +306,7 @@ class Spectrum: Machine {
         beeper.updateSample(processor.counter, beep: clicks)
 
         if ula >= 224 {
-//            print("Row: \(videoRow), borderColourIndex \(borderColourIndex)")
-            
-            DispatchQueue.main.async {
-                let borderColour = self.colourTable[self.borderColourIndex]
-                let borderLine = self.border?.arrangedSubviews[self.videoRow]
-                borderLine?.layer?.backgroundColor = borderColour.cgColour
-            }
+            borderBuffer[Int(videoRow)] = borderColourIndex
                 
             switch videoRow {
             case 64...255:

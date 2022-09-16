@@ -15,7 +15,6 @@ protocol DragDelegate: AnyObject {
 class Emulator: NSViewController, DragDelegate {
     
     @IBOutlet weak var emulatorScreen: EmulatorImageView!
-    @IBOutlet weak var lateLabel:      NSTextField!
     
     let machine: Machine = Spectrum()
     
@@ -48,7 +47,6 @@ class Emulator: NSViewController, DragDelegate {
 
         machine.emulatorView = view as? EmulatorInputView
         machine.emulatorScreen = emulatorScreen
-        machine.lateLabel = lateLabel
         machine.border = stack
         
         machine.start()
