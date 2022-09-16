@@ -53,6 +53,9 @@ class Spectrum: Machine {
     // Attribute image - save colour per row (not 8 rows) to allow hi-colour effects
     var colourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
     var saveColourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
+    
+    // Border colour per line
+    var borderBuffer = ContiguousArray<UInt8>(repeating: 0, count: 1024)
 
     // Bmp pool to render image
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 192)
@@ -205,6 +208,15 @@ class Spectrum: Machine {
         if let image = CGImage(width: 256, height: 192, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 1024, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) {
             emulatorScreen?.image = NSImage(cgImage: image, size: .zero)
         }
+        
+        // Set the border per line based on the border buffer
+        var ix = 0
+        for line in border?.arrangedSubviews ?? [] {
+            let borderColourIndex = borderBuffer[ix]
+            let borderColour = colourTable[borderColourIndex]
+            line.layer?.backgroundColor = borderColour.cgColour
+            ix += 1
+        }
     }
 
     func soundFrameCompleted() {
@@ -302,10 +314,7 @@ class Spectrum: Machine {
 
     final func output(_ port: UInt8, byte: UInt8) {
         if port == 0xfe {
-            if borderColourIndex != (byte & 0x07) {
-                borderColourIndex = byte & 0x07
-            }
-
+            borderColourIndex = byte & 0x07
             clicks = byte
         }
     }
@@ -314,13 +323,7 @@ class Spectrum: Machine {
         beeper.updateSample(processor.counter, beep: clicks)
 
         if ula >= 224 {
-//            print("Row: \(videoRow), borderColourIndex \(borderColourIndex)")
-            
-            DispatchQueue.main.async {
-                let borderColour = self.colourTable[self.borderColourIndex]
-                let borderLine = self.border?.arrangedSubviews[self.videoRow]
-                borderLine?.layer?.backgroundColor = borderColour.cgColour
-            }
+            self.borderBuffer[Int(self.videoRow)] = self.borderColourIndex
                 
             switch videoRow {
             case 64...255:
