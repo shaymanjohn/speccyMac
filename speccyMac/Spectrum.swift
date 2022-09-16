@@ -323,7 +323,7 @@ class Spectrum: Machine {
         beeper.updateSample(processor.counter, beep: clicks)
 
         if ula >= 224 {
-            self.borderBuffer[Int(self.videoRow)] = self.borderColourIndex
+            borderBuffer[Int(videoRow)] = borderColourIndex
                 
             switch videoRow {
             case 64...255:
