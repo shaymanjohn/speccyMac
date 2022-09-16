@@ -23,7 +23,6 @@ class Spectrum: Machine {
 
     weak var emulatorView:   EmulatorInputView?
     weak var emulatorScreen: NSImageView?
-    weak var lateLabel:      NSTextField?
     weak var border:         NSStackView?
 
     let brightBit: UInt8 = 0x40
@@ -48,11 +47,9 @@ class Spectrum: Machine {
 
     // Screen image
     var screenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
-    var saveScreenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
 
     // Attribute image - save colour per row (not 8 rows) to allow hi-colour effects
     var colourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
-    var saveColourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
     
     // Border colour per line
     var borderBuffer = ContiguousArray<UInt8>(repeating: 0, count: 1024)
@@ -129,10 +126,13 @@ class Spectrum: Machine {
             attributeRowAddress[row] = attributeAddress + (32 * UInt16(row))
         }
 
-        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: { _, _, _ in
-        })!
-
+        provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: { _, _, _ in })!
         beeper.machine = self
+        
+        // Useful for slow machines, show how many late counts after 10 seconds elapsed.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+            print("Late count is \(self.processor.lateFrames)")
+        }
     }
 
     final func captureRow(_ row: UInt16) {
@@ -150,13 +150,6 @@ class Spectrum: Machine {
     }
 
     final func frameCompleted() {
-        if processor.lateFrames > 1 {
-            lateLabel?.stringValue = "Late \(processor.lateFrames)"
-            lateLabel?.isHidden = false
-        } else {
-            lateLabel?.isHidden = true
-        }
-
         flashCounter += 1
         if flashCounter == 16 {
             invertFlashColours = !invertFlashColours
@@ -177,30 +170,24 @@ class Spectrum: Machine {
             byte      = screenBuffer[index]
             attribute = colourBuffer[index]
 
-            if byte != saveScreenBuffer[index] || attribute != saveColourBuffer[index] || flashCounter == 1 {
-                saveScreenBuffer[index] = byte
-                saveColourBuffer[index] = attribute
-
-                colourOffset = attribute & brightBit > 0 ? 8 : 0
-
-                ink   = colours[(attribute & 0x07) + colourOffset]
-                paper = colours[((attribute & 0x38) >> 3) + colourOffset]
-
-                if invertFlashColours && attribute & flashBit > 0 {
-                    temp = paper
-                    paper = ink
-                    ink = temp
-                }
-
-                bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
-                bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
-                bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
-                bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
-                bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
-                bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
-                bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
-                bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
+            colourOffset = attribute & brightBit > 0 ? 8 : 0
+            ink   = colours[(attribute & 0x07) + colourOffset]
+            paper = colours[((attribute & 0x38) >> 3) + colourOffset]
+            
+            if invertFlashColours && (attribute & flashBit) > 0 {
+                temp = paper
+                paper = ink
+                ink = temp
             }
+            
+            bmpData[bmpIndex + 0] = (byte & 0x80) > 0 ? ink : paper
+            bmpData[bmpIndex + 1] = (byte & 0x40) > 0 ? ink : paper
+            bmpData[bmpIndex + 2] = (byte & 0x20) > 0 ? ink : paper
+            bmpData[bmpIndex + 3] = (byte & 0x10) > 0 ? ink : paper
+            bmpData[bmpIndex + 4] = (byte & 0x08) > 0 ? ink : paper
+            bmpData[bmpIndex + 5] = (byte & 0x04) > 0 ? ink : paper
+            bmpData[bmpIndex + 6] = (byte & 0x02) > 0 ? ink : paper
+            bmpData[bmpIndex + 7] = (byte & 0x01) > 0 ? ink : paper
 
             bmpIndex += 8
         }
@@ -210,12 +197,8 @@ class Spectrum: Machine {
         }
         
         // Set the border per line based on the border buffer
-        var ix = 0
-        for line in border?.arrangedSubviews ?? [] {
-            let borderColourIndex = borderBuffer[ix]
-            let borderColour = colourTable[borderColourIndex]
-            line.layer?.backgroundColor = borderColour.cgColour
-            ix += 1
+        for (index, line) in (border?.arrangedSubviews ?? []).enumerated() {
+            line.layer?.backgroundColor = colourTable[borderBuffer[index]].cgColour
         }
     }
 
