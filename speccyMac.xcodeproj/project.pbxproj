@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -33,6 +33,7 @@
 		6F93325F1F4F6B38000CA284 /* batty.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F93325C1F4F6B2A000CA284 /* batty.sna */; };
 		6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA031651F5460CA00CD636E /* AudioStreamer.swift */; };
 		6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */; };
+		6FBB5FFC29A249F100F369A8 /* aquaplane.z80 in Resources */ = {isa = PBXBuildFile; fileRef = 6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */; };
 		6FC90B4F1F5295AA002506DC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC90B4E1F5295AA002506DC /* README.md */; };
 		6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */; };
 		6FCC17D21F3EDDF900B867E1 /* batman.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6FCC17CA1F3EDDEE00B867E1 /* batman.sna */; };
@@ -105,6 +106,7 @@
 		6FA031651F5460CA00CD636E /* AudioStreamer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioStreamer.swift; sourceTree = "<group>"; };
 		6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorInputView.swift; sourceTree = "<group>"; };
 		6FB18B4E236493C100E33924 /* Jenkinsfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Jenkinsfile; sourceTree = SOURCE_ROOT; };
+		6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */ = {isa = PBXFileReference; lastKnownFileType = file; path = aquaplane.z80; sourceTree = "<group>"; };
 		6FC90B4E1F5295AA002506DC /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 		6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccumulatorTests.swift; sourceTree = "<group>"; };
 		6FCC17C61F3EDDED00B867E1 /* hypersports.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = hypersports.sna; sourceTree = "<group>"; };
@@ -203,6 +205,7 @@
 		6FEFA9101F2239AD00F9AD93 /* Games */ = {
 			isa = PBXGroup;
 			children = (
+				6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */,
 				6F28AA261F53F31A00FCAA58 /* manic.sna */,
 				6F33B9221F38F55200B886CD /* brucelee.sna */,
 				6F33B9261F38F55200B886CD /* deathchase.sna */,
@@ -390,6 +393,7 @@
 				6FCC17D81F3EDE0D00B867E1 /* headoverheels.sna in Resources */,
 				5482246B28B3E90E00B3E933 /* brucelee.z80 in Resources */,
 				6F93325E1F4F6B35000CA284 /* chuckie.sna in Resources */,
+				6FBB5FFC29A249F100F369A8 /* aquaplane.z80 in Resources */,
 				6F33B92D1F38F56900B886CD /* monty.sna in Resources */,
 				6FCC17D51F3EDE0300B867E1 /* cybernoid2.sna in Resources */,
 				6FCC17D21F3EDDF900B867E1 /* batman.sna in Resources */,
@@ -412,6 +416,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		6FA6CAD625B2CCFF0077BDFF /* Swiftlint */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -503,7 +508,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				INFOPLIST_FILE = speccyMacTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -518,7 +527,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				INFOPLIST_FILE = speccyMacTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -601,7 +614,10 @@
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = speccyMac/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -619,7 +635,11 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				INFOPLIST_FILE = speccyMacTests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -758,7 +778,10 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INFOPLIST_FILE = speccyMac/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -781,7 +804,10 @@
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = speccyMac/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
 				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";

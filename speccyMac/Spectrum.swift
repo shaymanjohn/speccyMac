@@ -95,7 +95,8 @@ class Spectrum: Machine {
                  Game(file: "batman.sna", name: "Batman"),
                  
                  Game(file: "brucelee.z80", name: "Bruce Lee (.z80)"),      // v1 compressed
-                 Game(file: "technted.z80", name: "Technician Ted (.z80)")  // v1 compressed
+                 Game(file: "technted.z80", name: "Technician Ted (.z80)"), // v1 compressed
+                 Game(file: "aquaplane.z80", name: "Aquaplane (.z80)")
     ]
 
     init() {
