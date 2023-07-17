@@ -39,20 +39,20 @@ class Spectrum: Machine {
 
     let beeper = AudioStreamer()
 
-    var colours = ContiguousArray<UInt32>(repeating: 0, count: 16)
+    let colours = UnsafeMutablePointer<UInt32>.allocate(capacity: 16)
 
     // Precalculated screen and attribute rows
-    var screenRowAddress    = ContiguousArray<UInt16>(repeating: 0, count: 192)
-    var attributeRowAddress = ContiguousArray<UInt16>(repeating: 0, count: 24)
+    let screenRowAddress    = UnsafeMutablePointer<UInt16>.allocate(capacity: 192)
+    let attributeRowAddress = UnsafeMutablePointer<UInt16>.allocate(capacity: 24)
 
     // Screen image
-    var screenBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
+    let screenBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 32 * 192)
 
     // Attribute image - save colour per row (not 8 rows) to allow hi-colour effects
-    var colourBuffer = ContiguousArray<UInt8>(repeating: 0, count: 32 * 192)
+    let colourBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 32 * 192)
     
     // Border colour per line
-    var borderBuffer = ContiguousArray<UInt8>(repeating: 0, count: 1024)
+    let borderBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 1024)
 
     // Bmp pool to render image
     var bmpData = [UInt32](repeating: 0, count: 32 * 8 * 192)
@@ -110,6 +110,10 @@ class Spectrum: Machine {
             let bComp = UInt32(colour.b) << 24
             colours[colourIndex] = rComp | gComp | bComp | UInt32(0xff)
         }
+        
+        for ix in 0..<1024 {
+            borderBuffer[ix] = 0
+        }
 
         // Precalculate screen and colour row addresses
         var rowNum = 0
@@ -137,8 +141,8 @@ class Spectrum: Machine {
     }
 
     final func captureRow(_ row: UInt16) {
-        var pixelAddress  = screenRowAddress[row]
-        var colourAddress = attributeRowAddress[row >> 3]
+        var pixelAddress  = screenRowAddress[Int(row)]
+        var colourAddress = attributeRowAddress[Int(row >> 3)]
 
         let index = Int(row << 5)
         for ix in index..<index+32 {
@@ -172,8 +176,8 @@ class Spectrum: Machine {
             attribute = colourBuffer[index]
 
             colourOffset = attribute & brightBit > 0 ? 8 : 0
-            ink   = colours[(attribute & 0x07) + colourOffset]
-            paper = colours[((attribute & 0x38) >> 3) + colourOffset]
+            ink   = colours[Int((attribute & 0x07) + colourOffset)]
+            paper = colours[Int(((attribute & 0x38) >> 3) + colourOffset)]
             
             if invertFlashColours && (attribute & flashBit) > 0 {
                 temp = paper

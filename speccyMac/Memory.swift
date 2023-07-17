@@ -13,9 +13,12 @@ import Foundation
 class Memory {
     
     var romSize: UInt16 = 0
-    var memory = ContiguousArray<UInt8>(repeating: 0, count: 65536)
+    let memory = UnsafeMutablePointer<UInt8>.allocate(capacity: 65536)
 
-    init(_ rom: String) {        
+    init(_ rom: String) {
+        for ix in 0..<65536 {
+            memory[ix] = 0
+        }
         if let romUrl = Bundle.main.url(forResource: rom, withExtension: "") {
             let romData: Data?
             

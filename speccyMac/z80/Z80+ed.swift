@@ -52,6 +52,9 @@ extension ZilogZ80 {
             d.value = machine?.input(b.value, low: c.value) ?? 0
             ZilogZ80.f.value = (ZilogZ80.f.value & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[d.value]
             
+        case 0x51: // out (c), d
+            machine?.output(c.value, byte: d.value)
+            
         case 0x52:  // sbc hl, de
             hl.sbc(de)
             

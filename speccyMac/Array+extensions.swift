@@ -9,7 +9,6 @@
 import Foundation
 
 extension Array {
-    
     subscript(_ ix: UInt8) -> Element {
         return self[Int(ix)]
     }
@@ -19,13 +18,12 @@ extension Array {
     }
 }
 
-extension ContiguousArray {
-
-    subscript(_ ix: UInt8) -> Element {
+extension UnsafeMutablePointer<UInt8> {
+    subscript(_ ix: UInt8) -> UInt8 {
         return self[Int(ix)]
     }
 
-    subscript(_ ix: UInt16) -> Element {
+    subscript(_ ix: UInt16) -> UInt8 {
         return self[Int(ix)]
     }
 }
