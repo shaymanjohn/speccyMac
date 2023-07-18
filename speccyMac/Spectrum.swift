@@ -203,7 +203,7 @@ class Spectrum: Machine {
         
         // Set the border per line based on the border buffer
         for (index, line) in (border?.arrangedSubviews ?? []).enumerated() {
-            line.layer?.backgroundColor = colourTable[borderBuffer[index]].cgColour
+            line.layer?.backgroundColor = colourTable[borderBuffer[index] & 0x1f].cgColour
         }
     }
 
