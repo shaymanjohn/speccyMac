@@ -230,8 +230,8 @@ class ZilogZ80 : Processor {
     }
     
     final func incCounters(_ amount: UInt32) {
-        counter += amount
-        machine!.ula = machine!.ula + amount
+        counter += amount        
+        machine!.ula += amount
     }
     
     final func parseInstructions() {
