@@ -9,7 +9,7 @@
 import Foundation
 import Cocoa
 
-class Spectrum: Machine {
+class Spectrum: @MainActor Machine {
 
     var processor: Processor
     var memory:    Memory
@@ -37,7 +37,7 @@ class Spectrum: Machine {
     var invertFlashColours = false
     var borderColourIndex: UInt8 = 7
 
-    let beeper = AudioStreamer()
+    let beeper: AudioStreamer? = nil // AudioStreamer()
 
     let colours = UnsafeMutablePointer<UInt32>.allocate(capacity: 16)
 
@@ -132,11 +132,11 @@ class Spectrum: Machine {
         }
 
         provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 192 * 1024, releaseData: { _, _, _ in })!
-        beeper.machine = self
+//        beeper?.machine = self
         
         // Useful for slow machines, show how many late counts after 10 seconds elapsed.
         DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
-            print("Late count is \(self.processor.lateFrames)")
+//            print("Late count is \(self.processor.lateFrames)")
         }
     }
 
@@ -208,7 +208,7 @@ class Spectrum: Machine {
     }
 
     func soundFrameCompleted() {
-        beeper.endFrame()
+        beeper?.endFrame()
     }
 
 // swiftlint:disable cyclomatic_complexity
@@ -307,8 +307,9 @@ class Spectrum: Machine {
         }
     }
 
+    @MainActor
     func tick() {
-        beeper.updateSample(processor.counter, beep: clicks)
+//        beeper.updateSample(processor.counter, beep: clicks)
 
         if ula >= 224 {
             borderBuffer[Int(videoRow)] = borderColourIndex
@@ -319,8 +320,8 @@ class Spectrum: Machine {
 
             case 311:
                 soundFrameCompleted()
-                DispatchQueue.main.async {
-                    self.frameCompleted()
+                Task { @MainActor in
+                    frameCompleted()
                 }
 
             default:

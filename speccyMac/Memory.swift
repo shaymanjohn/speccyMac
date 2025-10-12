@@ -13,7 +13,8 @@ import Foundation
 class Memory {
     
     var romSize: UInt16 = 0
-    let memory = UnsafeMutablePointer<UInt8>.allocate(capacity: 65536)
+//    let memory = UnsafeMutablePointer<UInt8>.allocate(capacity: 65536)
+    var memory: InlineArray<65536, UInt8> = .init(repeating: 0)
 
     init(_ rom: String) {
         for ix in 0..<65536 {

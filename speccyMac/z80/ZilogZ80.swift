@@ -26,7 +26,7 @@ class ZilogZ80 : Processor {
     let d = Register()
     let e = Register()
     
-    static let f = Register()
+    nonisolated(unsafe) static let f = Register()
     
     let h = Register()
     let l = Register()
@@ -44,7 +44,7 @@ class ZilogZ80 : Processor {
     var ix: UInt16 = 0
     var iy: UInt16 = 0
     
-    static var sp: UInt16 = 0
+    nonisolated(unsafe) static var sp: UInt16 = 0
     var pc: UInt16 = 0
     
     var r = RefreshReg()
@@ -81,9 +81,9 @@ class ZilogZ80 : Processor {
     static let zBit:     UInt8 = 1 << 6
     static let sBit:     UInt8 = 1 << 7
     
-    static var sz53pvTable: [UInt8] = []
-    static var sz53Table:   [UInt8] = []
-    static var parityBit:   [UInt8] = []
+    nonisolated(unsafe) static var sz53pvTable: [UInt8] = []
+    nonisolated(unsafe) static var sz53Table:   [UInt8] = []
+    nonisolated(unsafe) static var parityBit:   [UInt8] = []
     
     static let halfCarryAdd:  [UInt8] = [0, 1 << 4, 1 << 4, 1 << 4, 0, 0, 0, 1 << 4]
     static let halfCarrySub:  [UInt8] = [0, 0, 1 << 4, 0, 1 << 4, 0, 1 << 4, 1 << 4]
@@ -201,7 +201,7 @@ class ZilogZ80 : Processor {
                         }
                     } catch {
                         DispatchQueue.main.async {                  // instruction not emulated...
-                            self.machine?.reportProblem(error)
+//                            self.machine?.reportProblem(error)
                         }
                         
                         running = false

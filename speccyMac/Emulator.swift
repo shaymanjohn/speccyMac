@@ -12,7 +12,7 @@ protocol DragDelegate: AnyObject {
     func loadGame(_ fileUrl: URL)
 }
 
-class Emulator: NSViewController, DragDelegate {
+class Emulator: NSViewController, @MainActor DragDelegate {
     
     @IBOutlet weak var emulatorScreen: EmulatorImageView!
     
