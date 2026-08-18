@@ -11,10 +11,9 @@ import Foundation
 extension ZilogZ80 {
     
 // swiftlint:disable cyclomatic_complexity
-    final func ddprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
+    final func ddprefix(opcode: UInt8, first: UInt8, second: UInt8) {
         
         let word16 = (UInt16(second) << 8) | UInt16(first)
-        let instruction = instructionSet.ddprefix[opcode]
         
         let offsetAddress = first > 127 ? ixy &- (UInt16(256) - UInt16(first)) : ixy &+ UInt16(first)
         
@@ -188,11 +187,11 @@ extension ZilogZ80 {
             sp = ixy
             
         default:
-            throw NSError(domain: "z80+dd", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])
+            break
         }        
         
-        pc = pc &+ instruction.length        
-        incCounters(instruction.tstates)
+        pc = pc &+ ddLength[Int(opcode)]        
+        incCounters(ddTstates[Int(opcode)])
         
         incR()
         incR()

@@ -22,6 +22,10 @@ class Emulator: NSViewController, DragDelegate {
         super.viewDidLoad()
         
         emulatorScreen.dragDelegate = self
+        
+        // Black background around the emulator image
+        view.wantsLayer = true
+        view.layer?.backgroundColor = NSColor.gray.cgColor
 
         machine.emulatorView = view as? EmulatorInputView
         machine.emulatorScreen = emulatorScreen

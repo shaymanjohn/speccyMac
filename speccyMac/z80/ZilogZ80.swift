@@ -122,21 +122,17 @@ class ZilogZ80 : Processor {
     static let overFlowAdd:   [UInt8] = [0, 0, 0, 1 << 2, 1 << 2, 0, 0, 0]
     static let overFlowSub:   [UInt8] = [0, 1 << 2, 0, 0, 0, 0, 1 << 2, 0]
 
-    struct Instruction : Codable {
-        var opcode:     String
-        var tstates:    UInt32
-        var alttstates: UInt32
-        var length:     UInt16
-    }
-
-    struct Instructions : Codable {
-        var unprefixed: [Instruction]
-        var edprefix:   [Instruction]
-        var ddprefix:   [Instruction]
-        var cbprefix:   [Instruction]
-    }
-
-    var instructionSet: Instructions!
+    // Pre-extracted timing data (fix 7: avoids String refcounting from Instruction struct)
+    let unprefixedTstates    = UnsafeMutablePointer<UInt32>.allocate(capacity: 256)
+    let unprefixedAltTstates = UnsafeMutablePointer<UInt32>.allocate(capacity: 256)
+    let unprefixedLength     = UnsafeMutablePointer<UInt16>.allocate(capacity: 256)
+    let cbTstates            = UnsafeMutablePointer<UInt32>.allocate(capacity: 256)
+    let cbLength             = UnsafeMutablePointer<UInt16>.allocate(capacity: 256)
+    let ddTstates            = UnsafeMutablePointer<UInt32>.allocate(capacity: 256)
+    let ddLength             = UnsafeMutablePointer<UInt16>.allocate(capacity: 256)
+    let edTstates            = UnsafeMutablePointer<UInt32>.allocate(capacity: 256)
+    let edLength             = UnsafeMutablePointer<UInt16>.allocate(capacity: 256)
+    
     var log = false
     
     init(memory: Memory) {
@@ -175,49 +171,41 @@ class ZilogZ80 : Processor {
                 if counter >= machine.ticksPerFrame {
                     serviceInterrupts()
                 } else {
-                    do {
-                        opCode = memory.get(pc)
-                        byte1  = memory.get(pc &+ 1)
+                    opCode = memory.get(pc)
+                    byte1  = memory.get(pc &+ 1)
+                    
+                    switch opCode {
                         
-                        switch opCode {
-                            
-                        case 0xcb:
-                            try cbprefix(opcode: byte1)
-                            
-                        case 0xed:
-                            byte2 = memory.get(pc &+ 2)
-                            byte3 = memory.get(pc &+ 3)
-                            try edprefix(opcode: byte1, first: byte2, second: byte3)
-                            
-                        case 0xdd, 0xfd:
-                            byte2 = memory.get(pc &+ 2)
-                            byte3 = memory.get(pc &+ 3)
-                            
-                            let activeRegPair = opCode == 0xdd ? ix : iy
-                            ixy = activeRegPair
-                            
-                            if byte1 == 0xcb {
-                                try ddcbprefix(opcode: byte3, first: byte2)
-                            } else {
-                                try ddprefix(opcode: byte1, first: byte2, second: byte3)
-                            }
-                            
-                            if opCode == 0xdd {
-                                ix = ixy
-                            } else {
-                                iy = ixy
-                            }
-                            
-                        default:
-                            byte2 = memory.get(pc &+ 2)
-                            try unprefixed(opcode: opCode, first: byte1, second: byte2)
-                        }
-                    } catch {
-                        DispatchQueue.main.async {
-                            self.machine.reportProblem(error)
+                    case 0xcb:
+                        cbprefix(opcode: byte1)
+                        
+                    case 0xed:
+                        byte2 = memory.get(pc &+ 2)
+                        byte3 = memory.get(pc &+ 3)
+                        edprefix(opcode: byte1, first: byte2, second: byte3)
+                        
+                    case 0xdd, 0xfd:
+                        byte2 = memory.get(pc &+ 2)
+                        byte3 = memory.get(pc &+ 3)
+                        
+                        let activeRegPair = opCode == 0xdd ? ix : iy
+                        ixy = activeRegPair
+                        
+                        if byte1 == 0xcb {
+                            ddcbprefix(opcode: byte3, first: byte2)
+                        } else {
+                            ddprefix(opcode: byte1, first: byte2, second: byte3)
                         }
                         
-                        running = false
+                        if opCode == 0xdd {
+                            ix = ixy
+                        } else {
+                            iy = ixy
+                        }
+                        
+                    default:
+                        byte2 = memory.get(pc &+ 2)
+                        unprefixed(opcode: opCode, first: byte1, second: byte2)
                     }
                 }
                 
@@ -252,8 +240,34 @@ class ZilogZ80 : Processor {
             let json = try? String.init(contentsOfFile: path),
             let data = json.data(using: .utf8) {
 
+            struct Instruction: Codable {
+                var opcode: String
+                var tstates: UInt32
+                var alttstates: UInt32
+                var length: UInt16
+            }
+            struct Instructions: Codable {
+                var unprefixed: [Instruction]
+                var edprefix:   [Instruction]
+                var ddprefix:   [Instruction]
+                var cbprefix:   [Instruction]
+            }
+
             do {
-                instructionSet = try JSONDecoder().decode(Instructions.self, from: data)
+                let instructionSet = try JSONDecoder().decode(Instructions.self, from: data)
+                
+                // Extract timing data into flat arrays
+                for i in 0..<256 {
+                    unprefixedTstates[i]    = instructionSet.unprefixed[i].tstates
+                    unprefixedAltTstates[i] = instructionSet.unprefixed[i].alttstates
+                    unprefixedLength[i]     = instructionSet.unprefixed[i].length
+                    cbTstates[i]            = instructionSet.cbprefix[i].tstates
+                    cbLength[i]             = instructionSet.cbprefix[i].length
+                    ddTstates[i]            = instructionSet.ddprefix[i].tstates
+                    ddLength[i]             = instructionSet.ddprefix[i].length
+                    edTstates[i]            = instructionSet.edprefix[i].tstates
+                    edLength[i]             = instructionSet.edprefix[i].length
+                }
             } catch {
                 print("couldn't parse json")
             }
@@ -310,11 +324,20 @@ class ZilogZ80 : Processor {
             }
             
             memory.push(pc)
-            pc = 0x0038
+            incR()
             iff1 = 0
             iff2 = 0
             
-            incCounters(13)
+            if interruptMode < 2 {
+                pc = 0x0038
+                incCounters(13)
+            } else {
+                let vector = (UInt16(i) << 8) | 0xff
+                let loByte = memory.get(vector)
+                let hiByte = memory.get(vector &+ 1)
+                pc = (UInt16(hiByte) << 8) | UInt16(loByte)
+                incCounters(19)
+            }
         }
     }
     

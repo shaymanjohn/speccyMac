@@ -11,10 +11,9 @@ import Foundation
 extension ZilogZ80 {
     
 // swiftlint:disable cyclomatic_complexity
-    final func edprefix(opcode: UInt8, first: UInt8, second: UInt8) throws {
+    final func edprefix(opcode: UInt8, first: UInt8, second: UInt8) {
         
         let word16 = (UInt16(second) << 8) | UInt16(first)
-        let instruction = instructionSet.edprefix[opcode]
 
         switch opcode {
             
@@ -201,11 +200,11 @@ extension ZilogZ80 {
             de = de &- 1
             
         default:
-            throw NSError(domain: "z80+ed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])
+            break
         }        
         
-        pc = pc &+ instruction.length        
-        incCounters(instruction.tstates)
+        pc = pc &+ edLength[Int(opcode)]        
+        incCounters(edTstates[Int(opcode)])
         
         incR()
         incR()

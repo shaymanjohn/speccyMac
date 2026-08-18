@@ -12,9 +12,8 @@ extension ZilogZ80 {
     
 // swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
-    final func unprefixed(opcode: UInt8, first: UInt8, second: UInt8) throws {
+    final func unprefixed(opcode: UInt8, first: UInt8, second: UInt8) {
         
-        let instruction = instructionSet.unprefixed[opcode]
         var normalFlow = true
         let word16 = (UInt16(second) << 8) | UInt16(first)
 
@@ -726,12 +725,12 @@ extension ZilogZ80 {
             rst(0x38)
             
         default:
-            throw NSError(domain: "z80 unprefixed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])
+            break
         }                
         
-        pc = pc &+ instruction.length
+        pc = pc &+ unprefixedLength[Int(opcode)]
 
-        incCounters(normalFlow ? instruction.tstates : instruction.alttstates)        
+        incCounters(normalFlow ? unprefixedTstates[Int(opcode)] : unprefixedAltTstates[Int(opcode)])        
         incR()
     }
     
