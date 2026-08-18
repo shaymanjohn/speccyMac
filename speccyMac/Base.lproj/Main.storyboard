@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="21225" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="24765" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="21225"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="24765"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -208,13 +208,13 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <scrollView autohidesScrollers="YES" horizontalLineScroll="26" horizontalPageScroll="10" verticalLineScroll="26" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GgM-Ze-D5x">
-                                <rect key="frame" x="0.0" y="0.0" width="302" height="392"/>
+                                <rect key="frame" x="0.0" y="0.0" width="302" height="346"/>
                                 <clipView key="contentView" id="aou-9P-a1J">
-                                    <rect key="frame" x="1" y="1" width="300" height="390"/>
+                                    <rect key="frame" x="1" y="1" width="300" height="344"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" rowHeight="24" headerView="1hJ-2h-qmH" viewBased="YES" id="C24-3q-Ye9">
-                                            <rect key="frame" x="0.0" y="0.0" width="300" height="367"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="300" height="321"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <size key="intercellSpacing" width="3" height="2"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -237,7 +237,7 @@
                                                             <rect key="frame" x="1" y="1" width="239" height="17"/>
                                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                             <subviews>
-                                                                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Ebs-JU-vp5">
+                                                                <textField focusRingType="none" verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="Ebs-JU-vp5">
                                                                     <rect key="frame" x="0.0" y="0.0" width="239" height="17"/>
                                                                     <constraints>
                                                                         <constraint firstAttribute="height" constant="17" id="xd0-IL-Fzt"/>
@@ -309,27 +309,29 @@
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="dlD-Qb-5cS"/>
                             </imageView>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="q1X-na-ykB">
-                                <rect key="frame" x="653" y="512" width="64" height="33"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="v12-jb-iag"/>
-                                </constraints>
+                                <rect key="frame" x="656" y="519" width="54" height="21"/>
                                 <buttonCell key="cell" type="push" title="Load" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="xVt-VZ-oj9">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <color key="bezelColor" name="systemTealColor" catalog="System" colorSpace="catalog"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="v12-jb-iag"/>
+                                </constraints>
                                 <connections>
                                     <action selector="changeGame:" target="XfG-lQ-9wD" id="igO-wa-mCt"/>
                                 </connections>
                             </button>
                             <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hJV-iW-liq">
-                                <rect key="frame" x="3" y="512" width="70" height="33"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="21" id="E0b-8K-FI3"/>
-                                </constraints>
+                                <rect key="frame" x="10" y="519" width="59" height="21"/>
                                 <buttonCell key="cell" type="push" title="Mode" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KXA-GW-qxY">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                 </buttonCell>
+                                <color key="bezelColor" name="systemTealColor" catalog="System" colorSpace="catalog"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="21" id="E0b-8K-FI3"/>
+                                </constraints>
                                 <connections>
                                     <action selector="toggleMode:" target="XfG-lQ-9wD" id="Fg4-Ja-1vv"/>
                                 </connections>
