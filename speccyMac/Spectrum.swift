@@ -22,7 +22,7 @@ class Spectrum: Machine {
     var videoRow: UInt16 = 0
 
     weak var emulatorView:   EmulatorInputView?
-    weak var emulatorScreen: NSImageView?
+    weak var screenLayer:    CALayer?
 
     let brightBit: UInt8 = 0x40
     let flashBit:  UInt8 = 0x80
@@ -30,6 +30,7 @@ class Spectrum: Machine {
 
     let colourSpace = CGColorSpaceCreateDeviceRGB()
     let bitmapInfo  = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
+    var bitmapContext: CGContext!
 
     var flashCounter = 0
     var invertFlashColours = false
@@ -142,6 +143,13 @@ class Spectrum: Machine {
 
         beeper.machine = self
         
+        // Create bitmap context backed by bmpData (reused every frame)
+        let contextInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)
+        bitmapContext = CGContext(data: UnsafeMutableRawPointer(bmpData), width: 320, height: 288,
+                                  bitsPerComponent: 8, bytesPerRow: 320 * 4,
+                                  space: colourSpace, bitmapInfo: contextInfo.rawValue)
+        bitmapContext?.interpolationQuality = .none
+        
         // Useful for slow machines, show how many late counts after 10 seconds elapsed.
         DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
             print("Late count is \(self.processor.lateFrames)")
@@ -243,9 +251,8 @@ class Spectrum: Machine {
             }
         }
 
-        if let provider = CGDataProvider(dataInfo: nil, data: bmpData, size: 320 * 288 * 4, releaseData: { _, _, _ in }),
-           let image = CGImage(width: 320, height: 288, bitsPerComponent: 8, bitsPerPixel: 32, bytesPerRow: 320 * 4, space: colourSpace, bitmapInfo: bitmapInfo, provider: provider, decode: nil, shouldInterpolate: false, intent: .defaultIntent) {
-            emulatorScreen?.image = NSImage(cgImage: image, size: .zero)
+        if let image = bitmapContext.makeImage() {
+            screenLayer?.contents = image
         }
     }
 

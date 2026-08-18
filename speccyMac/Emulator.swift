@@ -26,9 +26,14 @@ class Emulator: NSViewController, DragDelegate {
         // Black background around the emulator image
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.gray.cgColor
+        
+        // Use the image view's layer directly for pixel rendering
+        emulatorScreen.wantsLayer = true
+        emulatorScreen.layer?.contentsGravity = .resizeAspect
+        emulatorScreen.layer?.magnificationFilter = .nearest
 
         machine.emulatorView = view as? EmulatorInputView
-        machine.emulatorScreen = emulatorScreen
+        machine.screenLayer = emulatorScreen.layer
         
         machine.start()
     }
@@ -41,7 +46,13 @@ class Emulator: NSViewController, DragDelegate {
     }
 
     @IBAction func toggleMode(_ sender: NSButton) {
-        emulatorScreen.changeImageMode()
+        if let layer = emulatorScreen.layer {
+            if layer.magnificationFilter == .nearest {
+                layer.magnificationFilter = .linear
+            } else {
+                layer.magnificationFilter = .nearest
+            }
+        }
     }
     
     func loadGame(_ fileURL: URL) {
