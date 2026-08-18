@@ -19,6 +19,7 @@ protocol Processor: AnyObject {
     var lateFrames: Int { get }
 }
 
+// swiftlint:disable:next type_body_length
 class ZilogZ80 : Processor {
     
     // Main registers as inline stored properties
