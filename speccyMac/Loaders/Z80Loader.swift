@@ -94,13 +94,12 @@ class Z80Loader: GameLoaderProtocol {
             z80.exbc = v1.exbc
             z80.exaf = (UInt16(v1.exa) << 8) + UInt16(v1.exf)
 
-            z80.hl.value = v1.hl
-            z80.de.value = v1.de
-            z80.bc.value = v1.bc
+            z80.hl = v1.hl
+            z80.de = v1.de
+            z80.bc = v1.bc
             z80.iy = v1.iy
             z80.ix = v1.ix
 
-            // z80[27] =  sna[19].00001000
             if v1.iff != 0 {
                 z80.interrupts = true
                 z80.iff1 = 1
@@ -111,27 +110,25 @@ class Z80Loader: GameLoaderProtocol {
                 z80.iff2 = 0
             }
 
-            z80.r.value = v1.r
+            z80.regR = v1.r
 
-            z80.af.value = (UInt16(v1.a) << 8) + UInt16(v1.f)
+            z80.af = (UInt16(v1.a) << 8) + UInt16(v1.f)
             ZilogZ80.sp = v1.sp
 
-            // sna[25].00000011 = z80[29].00000011
             z80.interruptMode = v1.flags2 & 0x03
-            // sna[26].00000111 = z80[12].00001110
-            z80.machine?.output(0xfe, byte: (v1.flags1 >> 1) & 0x07)
+            z80.machine.output(0xfe, byte: (v1.flags1 >> 1) & 0x07)
 
             // prepare ram
 
             let ram = z80.memory.romSize
-            let ramlen = 64 * 1024 // can change if 16k support is added
+            let ramlen = 64 * 1024
             let datlen: UInt16 = UInt16(data.count) - v1HeaderLen
             var from: UInt16 = v1HeaderLen
             var to: UInt16 = 0
 
             var loop = true
             while loop {
-                let left = datlen - from // TODO can overflow?
+                let left = datlen - from
                 if left == 0 {
                     break
                 }

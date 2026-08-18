@@ -22,32 +22,9 @@ class Emulator: NSViewController, DragDelegate {
         super.viewDidLoad()
         
         emulatorScreen.dragDelegate = self
-        
-        let stack = NSStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.orientation = .vertical
-        stack.alignment = .left
-        stack.distribution = .fillEqually
-        stack.spacing = 0.0
-        
-        for _ in 0..<313 {
-            let borderLine = NSView()
-            borderLine.wantsLayer = true
-            stack.addArrangedSubview(borderLine)
-        }
-        
-        view.addSubview(stack, positioned: .below, relativeTo: emulatorScreen)
-        
-        NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: view.topAnchor),
-            stack.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
 
         machine.emulatorView = view as? EmulatorInputView
         machine.emulatorScreen = emulatorScreen
-        machine.border = stack
         
         machine.start()
     }

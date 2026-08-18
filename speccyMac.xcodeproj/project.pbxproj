@@ -23,7 +23,6 @@
 		6F33B92F1F38F56E00B886CD /* thehobbit.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9241F38F55200B886CD /* thehobbit.sna */; };
 		6F37E1BE1F46F25F005A4976 /* GameSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F37E1BD1F46F25F005A4976 /* GameSelectViewController.swift */; };
 		6F5217DF1F517C8C005063E5 /* EmulatorImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F5217DE1F517C8C005063E5 /* EmulatorImageView.swift */; };
-		6F7421E11F36FDFF00C056EA /* RefreshReg.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7421E01F36FDFF00C056EA /* RefreshReg.swift */; };
 		6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7618D91F49697F00D793D7 /* Machine.swift */; };
 		6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */; };
 		6F8E15421F3B2F9900A34AB4 /* techted.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153F1F3B2ED800A34AB4 /* techted.sna */; };
@@ -61,9 +60,6 @@
 		6FFB31561F22379B00C15CD7 /* Emulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFB31551F22379B00C15CD7 /* Emulator.swift */; };
 		6FFB31581F22379B00C15CD7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FFB31571F22379B00C15CD7 /* Assets.xcassets */; };
 		6FFB315B1F22379B00C15CD7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FFB31591F22379B00C15CD7 /* Main.storyboard */; };
-		6FFC9E081F35CFA400B9322C /* Register.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E071F35CFA400B9322C /* Register.swift */; };
-		6FFC9E0A1F35CFB200B9322C /* RegisterPair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E091F35CFB200B9322C /* RegisterPair.swift */; };
-		6FFC9E0C1F35D65C00B9322C /* Accumulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */; };
 		6FFE6FC21F376BEF00EBCC3B /* MemoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFE6FC11F376BEF00EBCC3B /* MemoryTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -94,7 +90,6 @@
 		6F33B9261F38F55200B886CD /* deathchase.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = deathchase.sna; sourceTree = "<group>"; };
 		6F37E1BD1F46F25F005A4976 /* GameSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSelectViewController.swift; sourceTree = "<group>"; };
 		6F5217DE1F517C8C005063E5 /* EmulatorImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorImageView.swift; sourceTree = "<group>"; };
-		6F7421E01F36FDFF00C056EA /* RefreshReg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshReg.swift; sourceTree = "<group>"; };
 		6F7618D91F49697F00D793D7 /* Machine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Machine.swift; sourceTree = "<group>"; };
 		6F8E15381F3B14E100A34AB4 /* testz80.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = testz80.sna; sourceTree = "<group>"; };
 		6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = uridium.sna; sourceTree = "<group>"; };
@@ -139,9 +134,6 @@
 		6FFB315A1F22379B00C15CD7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6FFB315C1F22379B00C15CD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6FFB315D1F22379B00C15CD7 /* speccyMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = speccyMac.entitlements; sourceTree = "<group>"; };
-		6FFC9E071F35CFA400B9322C /* Register.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register.swift; sourceTree = "<group>"; };
-		6FFC9E091F35CFB200B9322C /* RegisterPair.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterPair.swift; sourceTree = "<group>"; };
-		6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Accumulator.swift; sourceTree = "<group>"; };
 		6FFE6FC11F376BEF00EBCC3B /* MemoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -177,10 +169,6 @@
 			isa = PBXGroup;
 			children = (
 				6FEFA90E1F2238C200F9AD93 /* ZilogZ80.swift */,
-				6FFC9E0B1F35D65C00B9322C /* Accumulator.swift */,
-				6FFC9E071F35CFA400B9322C /* Register.swift */,
-				6FFC9E091F35CFB200B9322C /* RegisterPair.swift */,
-				6F7421E01F36FDFF00C056EA /* RefreshReg.swift */,
 				6FEFA92B1F22503000F9AD93 /* Z80+unprefixed.swift */,
 				6FEFA9271F224FC000F9AD93 /* Z80+dd.swift */,
 				6FEFA9291F224FF500F9AD93 /* Z80+ed.swift */,
@@ -455,18 +443,14 @@
 				6F2063AC28B127C9007A69FF /* GameLoaderProtocol.swift in Sources */,
 				6F2063B028B1289E007A69FF /* Z80Loader.swift in Sources */,
 				6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */,
-				6FFC9E0C1F35D65C00B9322C /* Accumulator.swift in Sources */,
 				6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */,
 				6FFB31561F22379B00C15CD7 /* Emulator.swift in Sources */,
 				6FEFA90F1F2238C200F9AD93 /* ZilogZ80.swift in Sources */,
 				6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */,
-				6FFC9E081F35CFA400B9322C /* Register.swift in Sources */,
 				6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */,
 				6FEFA9261F224F9000F9AD93 /* Z80+cb.swift in Sources */,
 				6FEFA9281F224FC000F9AD93 /* Z80+dd.swift in Sources */,
-				6F7421E11F36FDFF00C056EA /* RefreshReg.swift in Sources */,
 				6FEFA92A1F224FF500F9AD93 /* Z80+ed.swift in Sources */,
-				6FFC9E0A1F35CFB200B9322C /* RegisterPair.swift in Sources */,
 				6FFB31541F22379B00C15CD7 /* AppDelegate.swift in Sources */,
 				6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */,
 				6F036DBF1F44C68D005A16D0 /* Spectrum.swift in Sources */,

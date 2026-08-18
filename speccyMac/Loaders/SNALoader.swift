@@ -29,9 +29,9 @@ class SNALoader: GameLoaderProtocol {
         z80.exbc = (UInt16(data[6]) << 8) + UInt16(data[5])
         z80.exaf = (UInt16(data[8]) << 8) + UInt16(data[7])
         
-        z80.hl.value = (UInt16(data[10]) << 8) + UInt16(data[9])
-        z80.de.value = (UInt16(data[12]) << 8) + UInt16(data[11])
-        z80.bc.value = (UInt16(data[14]) << 8) + UInt16(data[13])
+        z80.hl = (UInt16(data[10]) << 8) + UInt16(data[9])
+        z80.de = (UInt16(data[12]) << 8) + UInt16(data[11])
+        z80.bc = (UInt16(data[14]) << 8) + UInt16(data[13])
         z80.iy = (UInt16(data[16]) << 8) + UInt16(data[15])
         z80.ix = (UInt16(data[18]) << 8) + UInt16(data[17])
         
@@ -45,13 +45,13 @@ class SNALoader: GameLoaderProtocol {
             z80.iff2 = 0
         }
         
-        z80.r.value = data[20]
+        z80.regR = data[20]
         
-        z80.af.value = (UInt16(data[22]) << 8) + UInt16(data[21])
+        z80.af = (UInt16(data[22]) << 8) + UInt16(data[21])
         ZilogZ80.sp = (UInt16(data[24]) << 8) + UInt16(data[23])
         
         z80.interruptMode = data[25]
-        z80.machine?.output(0xfe, byte: data[26])
+        z80.machine.output(0xfe, byte: data[26])
         
         let start = z80.memory.romSize
         

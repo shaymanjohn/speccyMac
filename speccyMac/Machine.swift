@@ -34,13 +34,12 @@ protocol Machine : AnyObject {
     
     var emulatorScreen: NSImageView? { get set }
     var emulatorView:   EmulatorInputView? { get set }
-    var border:         NSStackView? { get set }
 }
 
 extension Machine {
     
     func start() {
-        processor.machine = self
+        processor.machine = self as? Spectrum
         
         DispatchQueue.global(qos: .userInitiated).async {
             self.processor.start()
