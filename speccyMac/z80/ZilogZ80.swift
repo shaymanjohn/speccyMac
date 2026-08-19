@@ -98,7 +98,7 @@ class ZilogZ80 : Processor {
     
     var paused:        Bool = false
     var lastFrame:     TimeInterval = 0
-    let frameTime:     TimeInterval = 0.02      // pal refresh rate = 50Hz
+    let frameTime:     TimeInterval = 1 / 50.0      // pal refresh rate = 50Hz
     var lateFrames:    Int = 0
     var interrupts:    Bool = false
     var halted:        Bool = false
