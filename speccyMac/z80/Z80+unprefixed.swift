@@ -489,6 +489,7 @@ extension ZilogZ80 {
             }
             
         case 0xd3:  // out (n), a
+            machine.contendIO(UInt16(regA) << 8 | UInt16(first))
             machine.output(first, byte: regA)
             
         case 0xd4:  // call nc, nn
@@ -539,6 +540,7 @@ extension ZilogZ80 {
             }
             
         case 0xdb:  // in a, (n)
+            machine.contendIO(UInt16(regA) << 8 | UInt16(first))
             regA = machine.input(regA, low: first)
             regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regA]
             

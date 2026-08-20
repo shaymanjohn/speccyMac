@@ -48,10 +48,12 @@ extension ZilogZ80 {
             regR = regA
             
         case 0x50:  // in d, (c)
+            machine.contendIO(bc)
             regD = machine.input(regB, low: regC)
             regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regD]
             
         case 0x51: // out (c), d
+            machine.contendIO(bc)
             machine.output(regC, byte: regD)
             
         case 0x52:  // sbc hl, de
@@ -68,6 +70,7 @@ extension ZilogZ80 {
             regA = i
             
         case 0x58:  // in e, (c)
+            machine.contendIO(bc)
             regE = machine.input(regB, low: regC)
             regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regE]
             
@@ -115,10 +118,12 @@ extension ZilogZ80 {
             memory.set(word16 &+ 1, byte: UInt8(sp >> 8))
             
         case 0x78:  // in a, (c)
+            machine.contendIO(bc)
             regA = machine.input(regB, low: regC)
             regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regA]
             
         case 0x79:  // out (c), a
+            machine.contendIO(bc)
             machine.output(regC, byte: regA)
             
         case 0x7a:  // adc hl, sp

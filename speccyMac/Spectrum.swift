@@ -21,6 +21,9 @@ class Spectrum: Machine {
     var ula:      UInt32 = 0
     var videoRow: UInt16 = 0
 
+    // Contended memory delay table - indexed by T-state within frame
+    let contentionTable = UnsafeMutablePointer<UInt8>.allocate(capacity: 69888)
+
     weak var emulatorView:   EmulatorInputView?
     weak var screenLayer:    CALayer?
 
@@ -112,6 +115,9 @@ class Spectrum: Machine {
     init() {
         memory = Memory("48.rom")
         processor = ZilogZ80(memory: memory)
+        
+        // Set back-reference so Memory can apply contention delays
+        memory.machine = self
 
         // Populate colour tables
         for (colourIndex, colour) in colourTable.enumerated() {
@@ -150,10 +156,60 @@ class Spectrum: Machine {
                                   space: colourSpace, bitmapInfo: contextInfo.rawValue)
         bitmapContext?.interpolationQuality = .none
         
+        // Build contended memory delay table
+        // 48K Spectrum: 312 scanlines per frame, 224 T-states per scanline = 69888 T-states/frame
+        // Display area: scanlines 64-255 (192 lines)
+        // Each display scanline: first 128 T-states are contended, remaining 96 are not
+        // Contention pattern repeats every 8 T-states: 6, 5, 4, 3, 2, 1, 0, 0
+        let contentionPattern: [UInt8] = [6, 5, 4, 3, 2, 1, 0, 0]
+        
+        for i in 0..<69888 {
+            contentionTable[i] = 0
+        }
+        
+        for line in 64..<256 {
+            let lineStart = line * 224
+            for col in 0..<128 {
+                contentionTable[lineStart + col] = contentionPattern[col % 8]
+            }
+        }
+        
         // Useful for slow machines, show how many late counts after 10 seconds elapsed.
         DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
             print("Late count is \(self.processor.lateFrames)")
         }
+    }
+    
+    // MARK: - Contended memory/IO
+    
+    /// Apply contention for I/O port access.
+    /// This adds ONLY the extra contention wait states. The base I/O timing
+    /// is already accounted for in the opcode's T-state count.
+    ///
+    /// On 48K Spectrum, I/O contention depends on whether the port address is
+    /// in the contended range AND whether it's a ULA port (low bit = 0):
+    ///
+    /// Contended address + ULA port: C:1, C:3 pattern
+    /// Contended address + non-ULA port: C:1, C:1, C:1, C:1 pattern
+    /// Non-contended address + ULA port: N:1, C:3 pattern
+    /// Non-contended address + non-ULA port: no contention
+    ///
+    /// Only the contention delays (C parts) are added here.
+    @inline(__always) final func contendIO(_ port: UInt16) {
+        let isContendedAddress = (port >= 0x4000 && port <= 0x7FFF)
+        let isULAPort = (port & 1) == 0
+        
+        if isContendedAddress {
+            // Contention at the current T-state position
+            let delay = UInt32(contentionTable[Int(processor.counter % UInt32(ticksPerFrame))])
+            processor.incCounters(delay)
+        } else if isULAPort {
+            // Non-contended address but ULA port: contention occurs 1 T-state later
+            let tstate = (processor.counter + 1) % UInt32(ticksPerFrame)
+            let delay = UInt32(contentionTable[Int(tstate)])
+            processor.incCounters(delay)
+        }
+        // Non-contended + non-ULA: no contention
     }
 
     final func captureRow(_ row: UInt16) {

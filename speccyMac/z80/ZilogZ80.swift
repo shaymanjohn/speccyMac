@@ -13,6 +13,7 @@ protocol Processor: AnyObject {
     func start()
     func pause()
     func unpause()
+    func incCounters(_ amount: UInt32)
     
     var counter:    UInt32 { get set }
     var machine:    Spectrum! { get set }
@@ -173,19 +174,30 @@ class ZilogZ80 : Processor {
                     serviceInterrupts()
                 } else {
                     opCode = memory.get(pc)
-                    byte1  = memory.get(pc &+ 1)
+                    
+                    // When halted, the Z80 repeatedly executes NOPs (4 T-states each)
+                    // without reading additional bytes. Skip the eager operand reads.
+                    if halted {
+                        incCounters(4)
+                        incR()
+                        machine.tick()
+                        continue
+                    }
                     
                     switch opCode {
                         
                     case 0xcb:
+                        byte1 = memory.get(pc &+ 1)
                         cbprefix(opcode: byte1)
                         
                     case 0xed:
+                        byte1 = memory.get(pc &+ 1)
                         byte2 = memory.get(pc &+ 2)
                         byte3 = memory.get(pc &+ 3)
                         edprefix(opcode: byte1, first: byte2, second: byte3)
                         
                     case 0xdd, 0xfd:
+                        byte1 = memory.get(pc &+ 1)
                         byte2 = memory.get(pc &+ 2)
                         byte3 = memory.get(pc &+ 3)
                         
@@ -205,7 +217,20 @@ class ZilogZ80 : Processor {
                         }
                         
                     default:
-                        byte2 = memory.get(pc &+ 2)
+                        // Only read operand bytes that the instruction actually needs.
+                        // Length 1: no operands, length 2: one byte, length 3: two bytes.
+                        let len = unprefixedLength[Int(opCode)]
+                        if len >= 2 {
+                            byte1 = memory.get(pc &+ 1)
+                            if len >= 3 {
+                                byte2 = memory.get(pc &+ 2)
+                            } else {
+                                byte2 = 0
+                            }
+                        } else {
+                            byte1 = 0
+                            byte2 = 0
+                        }
                         unprefixed(opcode: opCode, first: byte1, second: byte2)
                     }
                 }
@@ -234,6 +259,32 @@ class ZilogZ80 : Processor {
     @inline(__always) final func incCounters(_ amount: UInt32) {
         counter += amount        
         machine.ula += amount
+    }
+    
+    // MARK: - Contended memory access helpers
+    
+    /// Apply contention delay for reading a byte from a possibly-contended address.
+    /// Call this before the actual memory read when cycle-accurate timing matters.
+    @inline(__always) final func contendRead(_ address: UInt16, time: UInt32) {
+        if address >= 0x4000 && address <= 0x7FFF {
+            let tstate = counter % UInt32(machine.ticksPerFrame)
+            let delay = UInt32(machine.contentionTable[Int(tstate)])
+            incCounters(delay + time)
+        } else {
+            incCounters(time)
+        }
+    }
+    
+    /// Apply contention delay for writing a byte to a possibly-contended address.
+    /// Call this before the actual memory write when cycle-accurate timing matters.
+    @inline(__always) final func contendWrite(_ address: UInt16, time: UInt32) {
+        if address >= 0x4000 && address <= 0x7FFF {
+            let tstate = counter % UInt32(machine.ticksPerFrame)
+            let delay = UInt32(machine.contentionTable[Int(tstate)])
+            incCounters(delay + time)
+        } else {
+            incCounters(time)
+        }
     }
     
     final func parseInstructions() {
