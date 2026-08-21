@@ -258,7 +258,7 @@ class Spectrum: Machine {
         for screenRow in 0..<192 {
             let bitmapRow = screenRow + borderTopLines
             let rowStart = bitmapRow * totalWidth
-            let borderColour = colours[Int(borderSnapshot[screenRow + 64] & 0x07)]
+            let borderColour = colours[Int(borderSnapshot[screenRow + 53] & 0x07)]  // 53 was 64...
             
             // Left border
             for x in 0..<borderLeftPx {
