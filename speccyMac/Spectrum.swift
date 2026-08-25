@@ -14,7 +14,7 @@ class Spectrum: Machine {
     var processor: Processor
     var memory:    Memory
 
-    let ticksPerFrame: Int = 69888
+    let ticksPerFrame: UInt32 = 69888
 
     var clicks: UInt8 = 0
 
@@ -201,11 +201,13 @@ class Spectrum: Machine {
         
         if isContendedAddress {
             // Contention at the current T-state position
-            let delay = UInt32(contentionTable[Int(processor.counter % UInt32(ticksPerFrame))])
+            let tstate = processor.counter < ticksPerFrame ? processor.counter : processor.counter &- ticksPerFrame
+            let delay = UInt32(contentionTable[Int(tstate)])
             processor.incCounters(delay)
         } else if isULAPort {
             // Non-contended address but ULA port: contention occurs 1 T-state later
-            let tstate = (processor.counter + 1) % UInt32(ticksPerFrame)
+            let t = processor.counter + 1
+            let tstate = t < ticksPerFrame ? t : t &- ticksPerFrame
             let delay = UInt32(contentionTable[Int(tstate)])
             processor.incCounters(delay)
         }
@@ -412,7 +414,7 @@ class Spectrum: Machine {
         }
     }
 
-    func tick() {
+    @inline(__always) func tick() {
         beeper.updateSample(processor.counter, beep: clicks)
 
         if ula >= 224 {

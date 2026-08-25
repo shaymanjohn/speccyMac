@@ -267,7 +267,7 @@ class ZilogZ80 : Processor {
     /// Call this before the actual memory read when cycle-accurate timing matters.
     @inline(__always) final func contendRead(_ address: UInt16, time: UInt32) {
         if address >= 0x4000 && address <= 0x7FFF {
-            let tstate = counter % UInt32(machine.ticksPerFrame)
+            let tstate = counter < machine.ticksPerFrame ? counter : counter &- machine.ticksPerFrame
             let delay = UInt32(machine.contentionTable[Int(tstate)])
             incCounters(delay + time)
         } else {
@@ -279,7 +279,7 @@ class ZilogZ80 : Processor {
     /// Call this before the actual memory write when cycle-accurate timing matters.
     @inline(__always) final func contendWrite(_ address: UInt16, time: UInt32) {
         if address >= 0x4000 && address <= 0x7FFF {
-            let tstate = counter % UInt32(machine.ticksPerFrame)
+            let tstate = counter < machine.ticksPerFrame ? counter : counter &- machine.ticksPerFrame
             let delay = UInt32(machine.contentionTable[Int(tstate)])
             incCounters(delay + time)
         } else {
@@ -363,7 +363,7 @@ class ZilogZ80 : Processor {
             lastFrame = timeNow
         }
         
-        counter -= UInt32(machine.ticksPerFrame)
+        counter -= machine.ticksPerFrame
         machine.ula = counter
         machine.videoRow = 0
         

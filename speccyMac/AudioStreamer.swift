@@ -108,7 +108,7 @@ class AudioStreamer {
         sample -= sample / 8
         sample += amplitude / 8
 
-        let offset: Int = (Int(counter) * kSamplesPerFrame) / machine.ticksPerFrame
+        let offset: Int = (Int(counter) * kSamplesPerFrame) / Int(machine.ticksPerFrame)
 
         // Fill gaps since last write
         if offset > lastWrittenOffset + 1 && lastWrittenOffset >= 0 {

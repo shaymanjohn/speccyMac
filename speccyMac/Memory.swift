@@ -13,8 +13,9 @@ class Memory {
     var romSize: UInt16 = 0
     let memory = UnsafeMutablePointer<UInt8>.allocate(capacity: 65536)
     
-    // Back-reference to machine for contention (set after Spectrum init)
-    weak var machine: Spectrum?
+    // Back-reference to machine for contention (set after Spectrum init).
+    // unowned(unsafe) avoids retain/release and optional-unwrap overhead in the hot path.
+    unowned(unsafe) var machine: Spectrum!
 
     init(_ rom: String) {
         for ix in 0..<65536 {
@@ -42,8 +43,9 @@ class Memory {
     }
     
     @inline(__always) final func get(_ address: UInt16) -> UInt8 {
-        if address >= 0x4000 && address <= 0x7FFF, let m = machine {
-            let tstate = m.processor.counter % UInt32(m.ticksPerFrame)
+        if address >= 0x4000 && address <= 0x7FFF {
+            let m = machine!
+            let tstate = m.processor.counter < m.ticksPerFrame ? m.processor.counter : m.processor.counter &- m.ticksPerFrame
             let delay = UInt32(m.contentionTable[Int(tstate)])
             if delay > 0 {
                 m.processor.incCounters(delay)
@@ -54,8 +56,9 @@ class Memory {
     
     @inline(__always) final func set(_ address: UInt16, byte: UInt8) {
         if address >= romSize {
-            if address >= 0x4000 && address <= 0x7FFF, let m = machine {
-                let tstate = m.processor.counter % UInt32(m.ticksPerFrame)
+            if address >= 0x4000 && address <= 0x7FFF {
+                let m = machine!
+                let tstate = m.processor.counter < m.ticksPerFrame ? m.processor.counter : m.processor.counter &- m.ticksPerFrame
                 let delay = UInt32(m.contentionTable[Int(tstate)])
                 if delay > 0 {
                     m.processor.incCounters(delay)

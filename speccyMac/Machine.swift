@@ -27,7 +27,7 @@ protocol Machine : AnyObject {
     var ula:      UInt32 { get set }
     var videoRow: UInt16 { get set }
     
-    var ticksPerFrame: Int { get }
+    var ticksPerFrame: UInt32 { get }
     
     var games: [Game] { get }
     var clicks: UInt8 { get }
