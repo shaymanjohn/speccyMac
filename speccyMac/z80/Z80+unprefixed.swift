@@ -12,12 +12,10 @@ extension ZilogZ80 {
     
 // swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
-    final func unprefixed(opcode: UInt8, first: UInt8, second: UInt8) throws {
+    final func unprefixed(opcode: UInt8, first: UInt8, second: UInt8) {
         
-        let instruction = instructionSet.unprefixed[opcode]
         var normalFlow = true
         let word16 = (UInt16(second) << 8) | UInt16(first)
-//        log(instruction)
 
         switch opcode {
             
@@ -25,319 +23,373 @@ extension ZilogZ80 {
             break
             
         case 0x01:  // ld bc, nnnn
-            bc.value = word16
+            bc = word16
             
         case 0x02:  // ld (bc), a
-            memory.set(bc.value, byte: a.value)
+            memory.set(bc, byte: regA)
             
         case 0x03:  // inc bc
-            bc.value = bc.value &+ 1
+            bc = bc &+ 1
             
         case 0x04:  // inc b
-            b.inc()
+            regB = regInc(regB)
             
         case 0x05:  // dec b
-            b.dec()
+            regB = regDec(regB)
             
         case 0x06:  // ld b, n
-            b.value = first
+            regB = first
             
         case 0x07:  // rlca
-            a.rlca()
+            aluRlca()
             
         case 0x08:  // ex af, af'
-            let temp = af.value
-            af.value = exaf
+            let temp = af
+            af = exaf
             exaf = temp
             
         case 0x09:  // add hl, bc
-            hl.add(bc.value)
+            addHL(bc)
             
         case 0x0a:  // ld a, (bc)
-            a.value = memory.get(bc)
+            regA = memory.get(bc)
             
         case 0x0b:  // dec bc
-            bc.value = bc.value &- 1
+            bc = bc &- 1
             
         case 0x0c:  // inc c
-            c.inc()
+            regC = regInc(regC)
             
         case 0x0d:  // dec c
-            c.dec()
+            regC = regDec(regC)
             
         case 0x0e:  // ld c, n
-            c.value = first
+            regC = first
             
         case 0x0f:  // rrca
-            a.rrca()
+            aluRrca()
             
         case 0x10:  // djnz nn
-            b.value = b.value &- 1
-            if b.value > 0 {
+            regB = regB &- 1
+            if regB > 0 {
                 setRelativePC(first)
             } else {
                 normalFlow = false
             }
             
         case 0x11:  // ld de, nnnn
-            de.value = word16
+            de = word16
             
         case 0x12:  // ld (de), a
-            memory.set(de.value, byte: a.value)
+            memory.set(de, byte: regA)
             
         case 0x13:  // inc de
-            de.value = de.value &+ 1
+            de = de &+ 1
             
         case 0x14:  // inc d
-            d.inc()
+            regD = regInc(regD)
             
         case 0x15:  // dec d
-            d.dec()
+            regD = regDec(regD)
             
         case 0x16:  // ld d, n
-            d.value = first
+            regD = first
             
         case 0x17:  // rla
-            a.rla()
+            aluRla()
             
         case 0x18:  // jr d
             setRelativePC(first)
             
         case 0x19:  // add hl, de
-            hl.add(de.value)
+            addHL(de)
             
         case 0x1a:  // ld a, (de)
-            a.value = memory.get(de)
+            regA = memory.get(de)
             
         case 0x1b:  // dec de
-            de.value = de.value &- 1
+            de = de &- 1
             
         case 0x1c:  // inc e
-            e.inc()
+            regE = regInc(regE)
             
         case 0x1d:  // dec e
-            e.dec()
+            regE = regDec(regE)
             
         case 0x1e:  // ld e, n
-            e.value = first
+            regE = first
             
         case 0x1f:  // rra
-            a.rra()
+            aluRra()
             
         case 0x20:  // jr nz, nn
-            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
+            if regF & ZilogZ80.zBit > 0 {
                 normalFlow = false
             } else {
                 setRelativePC(first)
             }
             
         case 0x21:  // ld hl, nnnn
-            hl.value = word16
+            hl = word16
             
         case 0x22:  // ld (nnnn), hl
-            memory.set(word16, regPair: hl)
+            memory.set(word16, byte: regL)
+            memory.set(word16 &+ 1, byte: regH)
             
         case 0x23:  // inc hl
-            hl.value = hl.value &+ 1
+            hl = hl &+ 1
             
         case 0x24:  // inc h
-            h.inc()
+            regH = regInc(regH)
             
         case 0x25:  // dec h
-            h.dec()
+            regH = regDec(regH)
             
         case 0x26:  // ld h, n
-            h.value = first
+            regH = first
             
         case 0x27:  // daa
-            a.daa()
+            aluDaa()
             
         case 0x28:  // jr z, nn
-            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
+            if regF & ZilogZ80.zBit > 0 {
                 setRelativePC(first)
             } else {
                 normalFlow = false
             }
             
         case 0x29:  // add hl, hl
-            hl.add(hl.value)
+            addHL(hl)
             
         case 0x2a:  // ld hl, (nnnn)
-            l.value = memory.get(word16)
-            h.value = memory.get(word16 &+ 1)
+            regL = memory.get(word16)
+            regH = memory.get(word16 &+ 1)
             
         case 0x2b:  // dec hl
-            hl.value = hl.value &- 1
+            hl = hl &- 1
             
         case 0x2c:  // inc l
-            l.inc()
+            regL = regInc(regL)
             
         case 0x2d:  // dec l
-            l.dec()
+            regL = regDec(regL)
             
         case 0x2e:  // ld l, n
-            l.value = first
+            regL = first
             
         case 0x2f:  // cpl
-            a.cpl()
+            aluCpl()
             
         case 0x30:  // jr nc, nn
-            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
+            if regF & ZilogZ80.cBit > 0 {
                 normalFlow = false
             } else {
                 setRelativePC(first)
             }
             
         case 0x31:  // ld sp, nn
-            ZilogZ80.sp = word16
+            sp = word16
             
         case 0x32:  // ld (nnnn), a
-            memory.set(word16, reg: a)
+            memory.set(word16, byte: regA)
             
         case 0x33:  // inc sp
-            ZilogZ80.sp = ZilogZ80.sp &+ 1
+            sp = sp &+ 1
             
         case 0x34:  // inc (hl)
-            memory.inc(hl.value)
+            memory.inc(hl)
             
         case 0x35:  // dec (hl)
-            memory.dec(hl.value)
+            memory.dec(hl)
             
         case 0x36:  // ld (hl), n
-            memory.set(hl.value, byte: first)
+            memory.set(hl, byte: first)
             
         case 0x37:  // scf
-            ZilogZ80.f.value &= ZilogZ80.zBit | ZilogZ80.sBit | ZilogZ80.pvBit
-            ZilogZ80.f.value |= (a.value & (ZilogZ80.threeBit | ZilogZ80.fiveBit))
-            ZilogZ80.f.value |= ZilogZ80.cBit
+            regF &= ZilogZ80.zBit | ZilogZ80.sBit | ZilogZ80.pvBit
+            regF |= (regA & (ZilogZ80.threeBit | ZilogZ80.fiveBit))
+            regF |= ZilogZ80.cBit
             
         case 0x38:  // jr c, nn
-            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
+            if regF & ZilogZ80.cBit > 0 {
                 setRelativePC(first)
             } else {
                 normalFlow = false
             }
             
         case 0x39:  // add hl, sp
-            hl.add(ZilogZ80.sp)
+            addHL(sp)
             
         case 0x3a:  // ld a, (nn)
-            a.value = memory.get(word16)
+            regA = memory.get(word16)
             
         case 0x3b:  // dec sp
-            ZilogZ80.sp = ZilogZ80.sp &- 1
+            sp = sp &- 1
             
         case 0x3c:  // inc a
-            a.inc()
+            regA = regInc(regA)
             
         case 0x3d:  // dec a
-            a.dec()
+            regA = regDec(regA)
             
         case 0x3e:  // ld a, n
-            a.value = first
+            regA = first
             
         case 0x3f:  // ccf
-            ZilogZ80.f.value = (ZilogZ80.f.value & (ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | ((ZilogZ80.f.value & ZilogZ80.cBit) > 0 ? ZilogZ80.hBit : ZilogZ80.cBit) | (a.value & (ZilogZ80.threeBit | ZilogZ80.fiveBit))
+            regF = (regF & (ZilogZ80.pvBit | ZilogZ80.zBit | ZilogZ80.sBit)) | ((regF & ZilogZ80.cBit) > 0 ? ZilogZ80.hBit : ZilogZ80.cBit) | (regA & (ZilogZ80.threeBit | ZilogZ80.fiveBit))
             
-        case 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x47:  // ld b, reg
-            b.value = [b, c, d, e, h, l, a, a][opcode - 0x40].value
+        // LD register-to-register block (0x40-0x7f)
+        case 0x40: break  // ld b, b
+        case 0x41: regB = regC
+        case 0x42: regB = regD
+        case 0x43: regB = regE
+        case 0x44: regB = regH
+        case 0x45: regB = regL
+        case 0x46: regB = memory.get(hl)
+        case 0x47: regB = regA
             
-        case 0x46:  // ld b, (hl)
-            b.value = memory.get(hl)
+        case 0x48: regC = regB
+        case 0x49: break  // ld c, c
+        case 0x4a: regC = regD
+        case 0x4b: regC = regE
+        case 0x4c: regC = regH
+        case 0x4d: regC = regL
+        case 0x4e: regC = memory.get(hl)
+        case 0x4f: regC = regA
             
-        case 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4f:  // ld c, reg
-            c.value = [b, c, d, e, h, l, a, a][opcode - 0x48].value
+        case 0x50: regD = regB
+        case 0x51: regD = regC
+        case 0x52: break  // ld d, d
+        case 0x53: regD = regE
+        case 0x54: regD = regH
+        case 0x55: regD = regL
+        case 0x56: regD = memory.get(hl)
+        case 0x57: regD = regA
             
-        case 0x4e:  // ld c, (hl)
-            c.value = memory.get(hl)
+        case 0x58: regE = regB
+        case 0x59: regE = regC
+        case 0x5a: regE = regD
+        case 0x5b: break  // ld e, e
+        case 0x5c: regE = regH
+        case 0x5d: regE = regL
+        case 0x5e: regE = memory.get(hl)
+        case 0x5f: regE = regA
             
-        case 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x57:  // ld d, reg
-            d.value = [b, c, d, e, h, l, a, a][opcode - 0x50].value
+        case 0x60: regH = regB
+        case 0x61: regH = regC
+        case 0x62: regH = regD
+        case 0x63: regH = regE
+        case 0x64: break  // ld h, h
+        case 0x65: regH = regL
+        case 0x66: regH = memory.get(hl)
+        case 0x67: regH = regA
             
-        case 0x56:  // ld d, (hl)
-            d.value = memory.get(hl)
+        case 0x68: regL = regB
+        case 0x69: regL = regC
+        case 0x6a: regL = regD
+        case 0x6b: regL = regE
+        case 0x6c: regL = regH
+        case 0x6d: break  // ld l, l
+        case 0x6e: regL = memory.get(hl)
+        case 0x6f: regL = regA
             
-        case 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5f:  // ld e, reg
-            e.value = [b, c, d, e, h, l, a, a][opcode - 0x58].value
-            
-        case 0x5e:  // ld e, (hl)
-            e.value = memory.get(hl)
-            
-        case 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x67:  // ld h, reg
-            h.value = [b, c, d, e, h, l, a, a][opcode - 0x60].value
-            
-        case 0x66:  // ld h, (hl)
-            h.value = memory.get(hl)
-            
-        case 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6f:  // ld l, reg
-            l.value = [b, c, d, e, h, l, a, a][opcode - 0x68].value
-            
-        case 0x6e:  // ld l, (hl)
-            l.value = memory.get(hl)
-            
-        case 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x77:  // ld (hl), reg
-            memory.set(hl.value, byte: [b, c, d, e, h, l, a, a][opcode - 0x70].value)
+        case 0x70: memory.set(hl, byte: regB)
+        case 0x71: memory.set(hl, byte: regC)
+        case 0x72: memory.set(hl, byte: regD)
+        case 0x73: memory.set(hl, byte: regE)
+        case 0x74: memory.set(hl, byte: regH)
+        case 0x75: memory.set(hl, byte: regL)
             
         case 0x76:  // halt
             halted = true
             pc = pc &- 1
             
-        case 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7f:  // ld a, reg
-            a.value = [b, c, d, e, h, l, a, a][opcode - 0x78].value
+        case 0x77: memory.set(hl, byte: regA)
             
-        case 0x7e:  // ld a, (hl)
-            a.value = memory.get(hl)
+        case 0x78: regA = regB
+        case 0x79: regA = regC
+        case 0x7a: regA = regD
+        case 0x7b: regA = regE
+        case 0x7c: regA = regH
+        case 0x7d: regA = regL
+        case 0x7e: regA = memory.get(hl)
+        case 0x7f: break  // ld a, a
             
-        case 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x87:  // add a, reg
-            a.add([b, c, d, e, h, l, a, a][opcode - 0x80].value)
+        // ALU operations on registers
+        case 0x80: aluAdd(regB)
+        case 0x81: aluAdd(regC)
+        case 0x82: aluAdd(regD)
+        case 0x83: aluAdd(regE)
+        case 0x84: aluAdd(regH)
+        case 0x85: aluAdd(regL)
+        case 0x86: aluAdd(memory.get(hl))
+        case 0x87: aluAdd(regA)
             
-        case 0x86:  // add a, (hl)
-            a.add(memory.get(hl))
+        case 0x88: aluAdc(regB)
+        case 0x89: aluAdc(regC)
+        case 0x8a: aluAdc(regD)
+        case 0x8b: aluAdc(regE)
+        case 0x8c: aluAdc(regH)
+        case 0x8d: aluAdc(regL)
+        case 0x8e: aluAdc(memory.get(hl))
+        case 0x8f: aluAdc(regA)
             
-        case 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8f:  // adc a, reg
-            a.adc([b, c, d, e, h, l, a, a][opcode - 0x88].value)
+        case 0x90: aluSub(regB)
+        case 0x91: aluSub(regC)
+        case 0x92: aluSub(regD)
+        case 0x93: aluSub(regE)
+        case 0x94: aluSub(regH)
+        case 0x95: aluSub(regL)
+        case 0x96: aluSub(memory.get(hl))
+        case 0x97: aluSub(regA)
             
-        case 0x8e:  // adc a, (hl)
-            a.adc(memory.get(hl))
+        case 0x98: aluSbc(regB)
+        case 0x99: aluSbc(regC)
+        case 0x9a: aluSbc(regD)
+        case 0x9b: aluSbc(regE)
+        case 0x9c: aluSbc(regH)
+        case 0x9d: aluSbc(regL)
+        case 0x9e: aluSbc(memory.get(hl))
+        case 0x9f: aluSbc(regA)
             
-        case 0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x97:  // sub reg
-            a.sub([b, c, d, e, h, l, a, a][opcode - 0x90].value)
+        case 0xa0: aluAnd(regB)
+        case 0xa1: aluAnd(regC)
+        case 0xa2: aluAnd(regD)
+        case 0xa3: aluAnd(regE)
+        case 0xa4: aluAnd(regH)
+        case 0xa5: aluAnd(regL)
+        case 0xa6: aluAnd(memory.get(hl))
+        case 0xa7: aluAnd(regA)
             
-        case 0x96:  // sub (hl)
-            a.sub(memory.get(hl))
+        case 0xa8: aluXor(regB)
+        case 0xa9: aluXor(regC)
+        case 0xaa: aluXor(regD)
+        case 0xab: aluXor(regE)
+        case 0xac: aluXor(regH)
+        case 0xad: aluXor(regL)
+        case 0xae: aluXor(memory.get(hl))
+        case 0xaf: aluXor(regA)
             
-        case 0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9f:  // sbc reg
-            a.sbc([b, c, d, e, h, l, a, a][opcode - 0x98].value)
+        case 0xb0: aluOr(regB)
+        case 0xb1: aluOr(regC)
+        case 0xb2: aluOr(regD)
+        case 0xb3: aluOr(regE)
+        case 0xb4: aluOr(regH)
+        case 0xb5: aluOr(regL)
+        case 0xb6: aluOr(memory.get(hl))
+        case 0xb7: aluOr(regA)
             
-        case 0x9e:  // sbc a, (hl)
-            a.sbc(memory.get(hl))
-            
-        case 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa7:  // and reg
-            a.and([b, c, d, e, h, l, a, a][opcode - 0xa0])
-            
-        case 0xa6:  // and (hl)
-            a.and(memory.get(hl))
-            
-        case 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xaf:  // xor reg
-            a.xor([b, c, d, e, h, l, a, a][opcode - 0xa8])
-            
-        case 0xae:  // xor (hl)
-            a.xor(memory.get(hl))
-            
-        case 0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb7:  // or reg
-            a.or([b, c, d, e, h, l, a, a][opcode - 0xb0])
-            
-        case 0xb6:  // or (hl)
-            a.or(memory.get(hl))
-            
-        case 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xbf:  // cp reg
-            a.cp([b, c, d, e, h, l, a, a][opcode - 0xb8])
-            
-        case 0xbe:  // cp (hl)
-            a.cp(memory.get(hl))
+        case 0xb8: aluCp(regB)
+        case 0xb9: aluCp(regC)
+        case 0xba: aluCp(regD)
+        case 0xbb: aluCp(regE)
+        case 0xbc: aluCp(regH)
+        case 0xbd: aluCp(regL)
+        case 0xbe: aluCp(memory.get(hl))
+        case 0xbf: aluCp(regA)
             
         case 0xc0:  // ret nz
-            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
+            if regF & ZilogZ80.zBit > 0 {
                 normalFlow = false
             } else {
                 pc = memory.pop()
@@ -345,10 +397,10 @@ extension ZilogZ80 {
             }
             
         case 0xc1:  // pop bc
-            bc.value = memory.pop()
+            bc = memory.pop()
             
         case 0xc2:  // jp nz, nnnn
-            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
+            if regF & ZilogZ80.zBit > 0 {
                 normalFlow = false
             } else {
                 pc = word16
@@ -360,7 +412,7 @@ extension ZilogZ80 {
             pc = pc &- 3
             
         case 0xc4:  // call nz, nn
-            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
+            if regF & ZilogZ80.zBit > 0 {
                 normalFlow = false
             } else {
                 memory.push(pc &+ 3)
@@ -372,13 +424,13 @@ extension ZilogZ80 {
             memory.push(bc)
             
         case 0xc6:  // add a, n
-            a.add(first)
+            aluAdd(first)
             
         case 0xc7:  // rst $00
-            rst(0x0000)
+            rst(0x00)
             
         case 0xc8:  // ret z
-            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
+            if regF & ZilogZ80.zBit > 0 {
                 pc = memory.pop()
                 pc = pc &- 1
             } else {
@@ -390,7 +442,7 @@ extension ZilogZ80 {
             pc = pc &- 1
             
         case 0xca:  // jp z, nn
-            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
+            if regF & ZilogZ80.zBit > 0 {
                 pc = word16
                 pc = pc &- 3
             } else {
@@ -398,7 +450,7 @@ extension ZilogZ80 {
             }
             
         case 0xcc:  // call z, nn
-            if ZilogZ80.f.value & ZilogZ80.zBit > 0 {
+            if regF & ZilogZ80.zBit > 0 {
                 memory.push(pc &+ 3)
                 pc = word16
                 pc = pc &- 3
@@ -412,13 +464,13 @@ extension ZilogZ80 {
             pc = pc &- 3
             
         case 0xce:  // adc a, n
-            a.adc(first)
+            aluAdc(first)
             
         case 0xcf:  // rst $08
-            rst(0x0008)
+            rst(0x08)
             
         case 0xd0:  // ret nc
-            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
+            if regF & ZilogZ80.cBit > 0 {
                 normalFlow = false
             } else {
                 pc = memory.pop()
@@ -426,10 +478,10 @@ extension ZilogZ80 {
             }
             
         case 0xd1:  // pop de
-            de.value = memory.pop()
+            de = memory.pop()
             
         case 0xd2:  // jp nc, nn
-            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
+            if regF & ZilogZ80.cBit > 0 {
                 normalFlow = false
             } else {
                 pc = word16
@@ -437,10 +489,11 @@ extension ZilogZ80 {
             }
             
         case 0xd3:  // out (n), a
-            machine?.output(first, byte: a.value)
+            machine.contendIO(UInt16(regA) << 8 | UInt16(first))
+            machine.output(first, byte: regA)
             
         case 0xd4:  // call nc, nn
-            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
+            if regF & ZilogZ80.cBit > 0 {
                 normalFlow = false
             } else {
                 memory.push(pc &+ 3)
@@ -452,13 +505,13 @@ extension ZilogZ80 {
             memory.push(de)
             
         case 0xd6:  // sub n
-            a.sub(first)
+            aluSub(first)
             
         case 0xd7:  // rst $10
-            rst(0x0010)
+            rst(0x10)
             
         case 0xd8:  // ret c
-            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
+            if regF & ZilogZ80.cBit > 0 {
                 pc = memory.pop()
                 pc = pc &- 1
             } else {
@@ -466,20 +519,20 @@ extension ZilogZ80 {
             }
             
         case 0xd9:  // exx
-            var temp = bc.value
-            bc.value = exbc
+            var temp = bc
+            bc = exbc
             exbc = temp
             
-            temp = de.value
-            de.value = exde
+            temp = de
+            de = exde
             exde = temp
             
-            temp = hl.value
-            hl.value = exhl
+            temp = hl
+            hl = exhl
             exhl = temp
             
         case 0xda:  // jp c, nn
-            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
+            if regF & ZilogZ80.cBit > 0 {
                 pc = word16
                 pc = pc &- 3
             } else {
@@ -487,11 +540,12 @@ extension ZilogZ80 {
             }
             
         case 0xdb:  // in a, (n)
-            a.value = machine?.input(a.value, low: first) ?? 0
-            ZilogZ80.f.value = (ZilogZ80.f.value & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[a.value]
+            machine.contendIO(UInt16(regA) << 8 | UInt16(first))
+            regA = machine.input(regA, low: first)
+            regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regA]
             
         case 0xdc:  // call c, nn
-            if ZilogZ80.f.value & ZilogZ80.cBit > 0 {
+            if regF & ZilogZ80.cBit > 0 {
                 memory.push(pc &+ 3)
                 pc = word16
                 pc = pc &- 3
@@ -500,13 +554,13 @@ extension ZilogZ80 {
             }
             
         case 0xde:  // sbc a, n
-            a.sbc(first)
+            aluSbc(first)
             
         case 0xdf:  // rst 18
-            rst(0x0018)
+            rst(0x18)
             
         case 0xe0:  // ret po
-            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
+            if regF & ZilogZ80.pvBit > 0 {
                 normalFlow = false
             } else {
                 pc = memory.pop()
@@ -514,10 +568,10 @@ extension ZilogZ80 {
             }
             
         case 0xe1:  // pop hl
-            hl.value = memory.pop()
+            hl = memory.pop()
             
         case 0xe2:  // jp po, nn
-            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
+            if regF & ZilogZ80.pvBit > 0 {
                 normalFlow = false
             } else {
                 pc = word16
@@ -525,16 +579,16 @@ extension ZilogZ80 {
             }
             
         case 0xe3:  // ex (sp), hl
-            let savesp = ZilogZ80.sp &+ 1
-            let byte1 = h.value
-            let byte2 = l.value
-            l.value = memory.get(ZilogZ80.sp)
-            h.value = memory.get(savesp)
-            memory.set(ZilogZ80.sp, byte: byte2)
+            let savesp = sp &+ 1
+            let byte1 = regH
+            let byte2 = regL
+            regL = memory.get(sp)
+            regH = memory.get(savesp)
+            memory.set(sp, byte: byte2)
             memory.set(savesp, byte: byte1)
             
         case 0xe4:  // call po, nn
-            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
+            if regF & ZilogZ80.pvBit > 0 {
                 normalFlow = false
             } else {
                 memory.push(pc &+ 3)
@@ -546,13 +600,13 @@ extension ZilogZ80 {
             memory.push(hl)
             
         case 0xe6:  // and n
-            a.and(first)
+            aluAnd(first)
             
         case 0xe7:  // rst 20
-            rst(0x0020)
+            rst(0x20)
             
         case 0xe8:  // ret pe
-            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
+            if regF & ZilogZ80.pvBit > 0 {
                 pc = memory.pop()
                 pc = pc &- 1
             } else {
@@ -560,11 +614,11 @@ extension ZilogZ80 {
             }
             
         case 0xe9:  // jp (hl)
-            pc = hl.value
+            pc = hl
             pc = pc &- 1
             
         case 0xea:  // jp pe, nn
-            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
+            if regF & ZilogZ80.pvBit > 0 {
                 pc = word16
                 pc = pc &- 3
             } else {
@@ -572,12 +626,12 @@ extension ZilogZ80 {
             }        
             
         case 0xeb:  // ex de, hl
-            let temp = de.value
-            de.value = hl.value
-            hl.value = temp
+            let temp = de
+            de = hl
+            hl = temp
             
         case 0xec:  // call pe, nn
-            if ZilogZ80.f.value & ZilogZ80.pvBit > 0 {
+            if regF & ZilogZ80.pvBit > 0 {
                 memory.push(pc &+ 3)
                 pc = word16
                 pc = pc &- 3
@@ -586,13 +640,13 @@ extension ZilogZ80 {
             }
             
         case 0xee:  // xor n
-            a.xor(first)
+            aluXor(first)
             
         case 0xef:  // rst 28
-            rst(0x0028)
+            rst(0x28)
             
         case 0xf0:  // ret p
-            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
+            if regF & ZilogZ80.sBit > 0 {
                 normalFlow = false
             } else {
                 pc = memory.pop()
@@ -600,10 +654,10 @@ extension ZilogZ80 {
             }
             
         case 0xf1:  // pop af
-            af.value = memory.pop()
+            af = memory.pop()
             
         case 0xf2:  // jp p, nn
-            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
+            if regF & ZilogZ80.sBit > 0 {
                 normalFlow = false
             } else {
                 pc = word16
@@ -616,7 +670,7 @@ extension ZilogZ80 {
             iff2 = 2
             
         case 0xf4:  // call p, nn
-            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
+            if regF & ZilogZ80.sBit > 0 {
                 normalFlow = false
             } else {
                 memory.push(pc &+ 3)
@@ -628,13 +682,13 @@ extension ZilogZ80 {
             memory.push(af)
             
         case 0xf6:  // or n
-            a.or(first)
+            aluOr(first)
             
         case 0xf7:  // rst 30
-            rst(0x0030)
+            rst(0x30)
             
         case 0xf8:  // ret m
-            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
+            if regF & ZilogZ80.sBit > 0 {
                 pc = memory.pop()
                 pc = pc &- 1
             } else {
@@ -642,10 +696,10 @@ extension ZilogZ80 {
             }
             
         case 0xf9:  // ld sp, hl
-            ZilogZ80.sp = hl.value
+            sp = hl
             
         case 0xfa:  // jp m, nn
-            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
+            if regF & ZilogZ80.sBit > 0 {
                 pc = word16
                 pc = pc &- 3
             } else {
@@ -658,7 +712,7 @@ extension ZilogZ80 {
             iff2 = 1
             
         case 0xfc:  // call m, nn
-            if ZilogZ80.f.value & ZilogZ80.sBit > 0 {
+            if regF & ZilogZ80.sBit > 0 {
                 memory.push(pc &+ 3)
                 pc = word16
                 pc = pc &- 3
@@ -667,19 +721,19 @@ extension ZilogZ80 {
             }            
             
         case 0xfe:  // cp n
-            a.cp(first)
+            aluCp(first)
             
         case 0xff:  // rst 38
-            rst(0x0038)
+            rst(0x38)
             
         default:
-            throw NSError(domain: "z80 unprefixed", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])
+            break
         }                
         
-        pc = pc &+ instruction.length
+        pc = pc &+ unprefixedLength[Int(opcode)]
 
-        incCounters(normalFlow ? instruction.tstates : instruction.alttstates)        
-        r.inc()
+        incCounters(normalFlow ? unprefixedTstates[Int(opcode)] : unprefixedAltTstates[Int(opcode)])        
+        incR()
     }
     
     final func setRelativePC(_ byte: UInt8) {

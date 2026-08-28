@@ -14,7 +14,7 @@ protocol Machine : AnyObject {
     func start()
     func tick()
     
-    func loadGame(_ game: String)
+    func loadGame(_ gameUrl: URL)
     
     func input(_ high: UInt8, low: UInt8) -> UInt8
     func output(_ port: UInt8, byte: UInt8)
@@ -27,22 +27,21 @@ protocol Machine : AnyObject {
     var ula:      UInt32 { get set }
     var videoRow: UInt16 { get set }
     
-    var ticksPerFrame: Int { get }
+    var ticksPerFrame: UInt32 { get }
     
     var games: [Game] { get }
     var clicks: UInt8 { get }
     
-    var emulatorScreen: NSImageView? { get set }
+    var screenLayer:    CALayer? { get set }
     var emulatorView:   EmulatorInputView? { get set }
-    var lateLabel:      NSTextField? { get set }
 }
 
 extension Machine {
     
     func start() {
-        processor.machine = self
+        processor.machine = self as? Spectrum
         
-        DispatchQueue.global().async {
+        DispatchQueue.global(qos: .userInitiated).async {
             self.processor.start()
         }
     }

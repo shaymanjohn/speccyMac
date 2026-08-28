@@ -8,19 +8,32 @@
 
 import Cocoa
 
-class Emulator: NSViewController {
+protocol DragDelegate: AnyObject {
+    func loadGame(_ fileUrl: URL)
+}
+
+class Emulator: NSViewController, DragDelegate {
     
     @IBOutlet weak var emulatorScreen: EmulatorImageView!
-    @IBOutlet weak var lateLabel:      NSTextField!
     
     let machine: Machine = Spectrum()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        emulatorScreen.dragDelegate = self
+        
+        // Black background around the emulator image
+        view.wantsLayer = true
+        view.layer?.backgroundColor = NSColor.gray.cgColor
+        
+        // Use the image view's layer directly for pixel rendering
+        emulatorScreen.wantsLayer = true
+        emulatorScreen.layer?.contentsGravity = .resizeAspect
+        emulatorScreen.layer?.magnificationFilter = .nearest
 
         machine.emulatorView = view as? EmulatorInputView
-        machine.emulatorScreen = emulatorScreen
-        machine.lateLabel = lateLabel
+        machine.screenLayer = emulatorScreen.layer
         
         machine.start()
     }
@@ -33,7 +46,16 @@ class Emulator: NSViewController {
     }
 
     @IBAction func toggleMode(_ sender: NSButton) {
-        emulatorScreen.changeImageMode()
+        if let layer = emulatorScreen.layer {
+            if layer.magnificationFilter == .nearest {
+                layer.magnificationFilter = .linear
+            } else {
+                layer.magnificationFilter = .nearest
+            }
+        }
     }
     
+    func loadGame(_ fileURL: URL) {
+        machine.loadGame(fileURL)
+    }
 }

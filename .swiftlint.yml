@@ -4,7 +4,7 @@ disabled_rules: # rule identifiers to exclude from running
   - function_body_length
   - comma
   - trailing_whitespace
-  - line_length 
+  - line_length
   - control_statement
 opt_in_rules: # some rules are only opt-in
   - empty_count
@@ -25,7 +25,7 @@ force_try:
   severity: warning # explicitly
 # rules that have both warning and error levels, can set just the warning level
 # implicitly
-line_length: 110
+#line_length: 110
 # they can set both implicitly with an array
 type_body_length:
   - 300 # warning

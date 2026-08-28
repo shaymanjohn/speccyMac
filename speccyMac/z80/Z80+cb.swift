@@ -11,138 +11,328 @@ import Foundation
 extension ZilogZ80 {
 
 // swiftlint:disable cyclomatic_complexity
-    final func cbprefix(opcode: UInt8) throws {
-        
-        let instruction = instructionSet.cbprefix[opcode]
-//        log(instruction)
+    final func cbprefix(opcode: UInt8) {
         
         switch opcode {
             
-        case 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x07:  // rlc r
-            [b, c, d, e, h, l, a, a][opcode].rlc()
+        // rlc r (0x00-0x07)
+        case 0x00: regB = regRlc(regB)
+        case 0x01: regC = regRlc(regC)
+        case 0x02: regD = regRlc(regD)
+        case 0x03: regE = regRlc(regE)
+        case 0x04: regH = regRlc(regH)
+        case 0x05: regL = regRlc(regL)
+        case 0x06: memory.rlc(hl)
+        case 0x07: regA = regRlc(regA)
             
-        case 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0f:  // rrc r
-            [b, c, d, e, h, l, a, a][opcode - 0x08].rrc()
+        // rrc r (0x08-0x0f)
+        case 0x08: regB = regRrc(regB)
+        case 0x09: regC = regRrc(regC)
+        case 0x0a: regD = regRrc(regD)
+        case 0x0b: regE = regRrc(regE)
+        case 0x0c: regH = regRrc(regH)
+        case 0x0d: regL = regRrc(regL)
+        case 0x0e: memory.rrc(hl)
+        case 0x0f: regA = regRrc(regA)
             
-        case 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x17:  // rl r
-            [b, c, d, e, h, l, a, a][opcode - 0x10].rl()
+        // rl r (0x10-0x17)
+        case 0x10: regB = regRl(regB)
+        case 0x11: regC = regRl(regC)
+        case 0x12: regD = regRl(regD)
+        case 0x13: regE = regRl(regE)
+        case 0x14: regH = regRl(regH)
+        case 0x15: regL = regRl(regL)
+        case 0x16: memory.rl(hl)
+        case 0x17: regA = regRl(regA)
             
-        case 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1f:  // rr r
-            [b, c, d, e, h, l, a, a][opcode - 0x18].rr()
+        // rr r (0x18-0x1f)
+        case 0x18: regB = regRr(regB)
+        case 0x19: regC = regRr(regC)
+        case 0x1a: regD = regRr(regD)
+        case 0x1b: regE = regRr(regE)
+        case 0x1c: regH = regRr(regH)
+        case 0x1d: regL = regRr(regL)
+        case 0x1e: memory.rr(hl)
+        case 0x1f: regA = regRr(regA)
             
-        case 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x27:  // sla r
-            [b, c, d, e, h, l, a, a][opcode - 0x20].sla()
+        // sla r (0x20-0x27)
+        case 0x20: regB = regSla(regB)
+        case 0x21: regC = regSla(regC)
+        case 0x22: regD = regSla(regD)
+        case 0x23: regE = regSla(regE)
+        case 0x24: regH = regSla(regH)
+        case 0x25: regL = regSla(regL)
+        case 0x26: memory.sla(hl)
+        case 0x27: regA = regSla(regA)
             
-        case 0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2f:  // sra r
-            [b, c, d, e, h, l, a, a][opcode - 0x28].sra()
+        // sra r (0x28-0x2f)
+        case 0x28: regB = regSra(regB)
+        case 0x29: regC = regSra(regC)
+        case 0x2a: regD = regSra(regD)
+        case 0x2b: regE = regSra(regE)
+        case 0x2c: regH = regSra(regH)
+        case 0x2d: regL = regSra(regL)
+        case 0x2e: memory.sra(hl)
+        case 0x2f: regA = regSra(regA)
             
-        case 0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3f:  // srl r
-            [b, c, d, e, h, l, a, a][opcode - 0x38].srl()
+        // srl r (0x38-0x3f)
+        case 0x38: regB = regSrl(regB)
+        case 0x39: regC = regSrl(regC)
+        case 0x3a: regD = regSrl(regD)
+        case 0x3b: regE = regSrl(regE)
+        case 0x3c: regH = regSrl(regH)
+        case 0x3d: regL = regSrl(regL)
+        case 0x3e: memory.srl(hl)
+        case 0x3f: regA = regSrl(regA)
             
-        case 0x40, 0x41, 0x42, 0x43, 0x44, 0x45, 0x47:  // bit 0, r
-            [b, c, d, e, h, l, a, a][opcode - 0x40].bit(0)
+        // bit 0, r (0x40-0x47)
+        case 0x40: regBit(0, value: regB)
+        case 0x41: regBit(0, value: regC)
+        case 0x42: regBit(0, value: regD)
+        case 0x43: regBit(0, value: regE)
+        case 0x44: regBit(0, value: regH)
+        case 0x45: regBit(0, value: regL)
+        case 0x46: memory.indexBit(0, address: hl)
+        case 0x47: regBit(0, value: regA)
             
-        case 0x48, 0x49, 0x4a, 0x4b, 0x4c, 0x4d, 0x4f:  // bit 1, r
-            [b, c, d, e, h, l, a, a][opcode - 0x48].bit(1)
+        // bit 1, r (0x48-0x4f)
+        case 0x48: regBit(1, value: regB)
+        case 0x49: regBit(1, value: regC)
+        case 0x4a: regBit(1, value: regD)
+        case 0x4b: regBit(1, value: regE)
+        case 0x4c: regBit(1, value: regH)
+        case 0x4d: regBit(1, value: regL)
+        case 0x4e: memory.indexBit(1, address: hl)
+        case 0x4f: regBit(1, value: regA)
             
-        case 0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x57:  // bit 2, r
-            [b, c, d, e, h, l, a, a][opcode - 0x50].bit(2)
+        // bit 2, r (0x50-0x57)
+        case 0x50: regBit(2, value: regB)
+        case 0x51: regBit(2, value: regC)
+        case 0x52: regBit(2, value: regD)
+        case 0x53: regBit(2, value: regE)
+        case 0x54: regBit(2, value: regH)
+        case 0x55: regBit(2, value: regL)
+        case 0x56: memory.indexBit(2, address: hl)
+        case 0x57: regBit(2, value: regA)
             
-        case 0x58, 0x59, 0x5a, 0x5b, 0x5c, 0x5d, 0x5f:  // bit 3, r
-            [b, c, d, e, h, l, a, a][opcode - 0x58].bit(3)
+        // bit 3, r (0x58-0x5f)
+        case 0x58: regBit(3, value: regB)
+        case 0x59: regBit(3, value: regC)
+        case 0x5a: regBit(3, value: regD)
+        case 0x5b: regBit(3, value: regE)
+        case 0x5c: regBit(3, value: regH)
+        case 0x5d: regBit(3, value: regL)
+        case 0x5e: memory.indexBit(3, address: hl)
+        case 0x5f: regBit(3, value: regA)
             
-        case 0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x67:  // bit 4, r
-            [b, c, d, e, h, l, a, a][opcode - 0x60].bit(4)
+        // bit 4, r (0x60-0x67)
+        case 0x60: regBit(4, value: regB)
+        case 0x61: regBit(4, value: regC)
+        case 0x62: regBit(4, value: regD)
+        case 0x63: regBit(4, value: regE)
+        case 0x64: regBit(4, value: regH)
+        case 0x65: regBit(4, value: regL)
+        case 0x66: memory.indexBit(4, address: hl)
+        case 0x67: regBit(4, value: regA)
             
-        case 0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6f:  // bit 5, r
-            [b, c, d, e, h, l, a, a][opcode - 0x68].bit(5)
+        // bit 5, r (0x68-0x6f)
+        case 0x68: regBit(5, value: regB)
+        case 0x69: regBit(5, value: regC)
+        case 0x6a: regBit(5, value: regD)
+        case 0x6b: regBit(5, value: regE)
+        case 0x6c: regBit(5, value: regH)
+        case 0x6d: regBit(5, value: regL)
+        case 0x6e: memory.indexBit(5, address: hl)
+        case 0x6f: regBit(5, value: regA)
             
-        case 0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x77:  // bit 6, r
-            [b, c, d, e, h, l, a, a][opcode - 0x70].bit(6)
+        // bit 6, r (0x70-0x77)
+        case 0x70: regBit(6, value: regB)
+        case 0x71: regBit(6, value: regC)
+        case 0x72: regBit(6, value: regD)
+        case 0x73: regBit(6, value: regE)
+        case 0x74: regBit(6, value: regH)
+        case 0x75: regBit(6, value: regL)
+        case 0x76: memory.indexBit(6, address: hl)
+        case 0x77: regBit(6, value: regA)
             
-        case 0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7f:  // bit 7, r
-            [b, c, d, e, h, l, a, a][opcode - 0x78].bit(7)
+        // bit 7, r (0x78-0x7f)
+        case 0x78: regBit(7, value: regB)
+        case 0x79: regBit(7, value: regC)
+        case 0x7a: regBit(7, value: regD)
+        case 0x7b: regBit(7, value: regE)
+        case 0x7c: regBit(7, value: regH)
+        case 0x7d: regBit(7, value: regL)
+        case 0x7e: memory.indexBit(7, address: hl)
+        case 0x7f: regBit(7, value: regA)
             
-        case 0x16:  // rl (hl)
-            memory.rl(hl)
+        // res 0, r (0x80-0x87)
+        case 0x80: regB &= ~(1 << 0)
+        case 0x81: regC &= ~(1 << 0)
+        case 0x82: regD &= ~(1 << 0)
+        case 0x83: regE &= ~(1 << 0)
+        case 0x84: regH &= ~(1 << 0)
+        case 0x85: regL &= ~(1 << 0)
+        case 0x86: memory.indexRes(0, address: hl)
+        case 0x87: regA &= ~(1 << 0)
             
-        case 0x1e:  // rr (hl)
-            memory.rr(hl)
+        // res 1, r (0x88-0x8f)
+        case 0x88: regB &= ~(1 << 1)
+        case 0x89: regC &= ~(1 << 1)
+        case 0x8a: regD &= ~(1 << 1)
+        case 0x8b: regE &= ~(1 << 1)
+        case 0x8c: regH &= ~(1 << 1)
+        case 0x8d: regL &= ~(1 << 1)
+        case 0x8e: memory.indexRes(1, address: hl)
+        case 0x8f: regA &= ~(1 << 1)
             
-        case 0x26:  // sla (hl)
-            memory.sla(hl)
-
-        case 0x3e:  // srl (hl)
-            memory.srl(hl)
+        // res 2, r (0x90-0x97)
+        case 0x90: regB &= ~(1 << 2)
+        case 0x91: regC &= ~(1 << 2)
+        case 0x92: regD &= ~(1 << 2)
+        case 0x93: regE &= ~(1 << 2)
+        case 0x94: regH &= ~(1 << 2)
+        case 0x95: regL &= ~(1 << 2)
+        case 0x96: memory.indexRes(2, address: hl)
+        case 0x97: regA &= ~(1 << 2)
             
-        case 0x46, 0x4e, 0x56, 0x5e, 0x66, 0x6e, 0x76, 0x7e:
-            let bit = ((opcode - 0x40) & 0x3c) >> 3
-            memory.indexBit(bit, address: hl.value)
+        // res 3, r (0x98-0x9f)
+        case 0x98: regB &= ~(1 << 3)
+        case 0x99: regC &= ~(1 << 3)
+        case 0x9a: regD &= ~(1 << 3)
+        case 0x9b: regE &= ~(1 << 3)
+        case 0x9c: regH &= ~(1 << 3)
+        case 0x9d: regL &= ~(1 << 3)
+        case 0x9e: memory.indexRes(3, address: hl)
+        case 0x9f: regA &= ~(1 << 3)
             
-        case 0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x87:  // res 0, r
-            [b, c, d, e, h, l, a, a][opcode - 0x80].res(0)
+        // res 4, r (0xa0-0xa7)
+        case 0xa0: regB &= ~(1 << 4)
+        case 0xa1: regC &= ~(1 << 4)
+        case 0xa2: regD &= ~(1 << 4)
+        case 0xa3: regE &= ~(1 << 4)
+        case 0xa4: regH &= ~(1 << 4)
+        case 0xa5: regL &= ~(1 << 4)
+        case 0xa6: memory.indexRes(4, address: hl)
+        case 0xa7: regA &= ~(1 << 4)
             
-        case 0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8f:  // res 1, r
-            [b, c, d, e, h, l, a, a][opcode - 0x88].res(1)
+        // res 5, r (0xa8-0xaf)
+        case 0xa8: regB &= ~(1 << 5)
+        case 0xa9: regC &= ~(1 << 5)
+        case 0xaa: regD &= ~(1 << 5)
+        case 0xab: regE &= ~(1 << 5)
+        case 0xac: regH &= ~(1 << 5)
+        case 0xad: regL &= ~(1 << 5)
+        case 0xae: memory.indexRes(5, address: hl)
+        case 0xaf: regA &= ~(1 << 5)
             
-        case 0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x97:  // res 2, r
-            [b, c, d, e, h, l, a, a][opcode - 0x90].res(2)
+        // res 6, r (0xb0-0xb7)
+        case 0xb0: regB &= ~(1 << 6)
+        case 0xb1: regC &= ~(1 << 6)
+        case 0xb2: regD &= ~(1 << 6)
+        case 0xb3: regE &= ~(1 << 6)
+        case 0xb4: regH &= ~(1 << 6)
+        case 0xb5: regL &= ~(1 << 6)
+        case 0xb6: memory.indexRes(6, address: hl)
+        case 0xb7: regA &= ~(1 << 6)
             
-        case 0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9f:  // res 3, r
-            [b, c, d, e, h, l, a, a][opcode - 0x98].res(3)
+        // res 7, r (0xb8-0xbf)
+        case 0xb8: regB &= ~(1 << 7)
+        case 0xb9: regC &= ~(1 << 7)
+        case 0xba: regD &= ~(1 << 7)
+        case 0xbb: regE &= ~(1 << 7)
+        case 0xbc: regH &= ~(1 << 7)
+        case 0xbd: regL &= ~(1 << 7)
+        case 0xbe: memory.indexRes(7, address: hl)
+        case 0xbf: regA &= ~(1 << 7)
             
-        case 0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa7:  // res 4, r
-            [b, c, d, e, h, l, a, a][opcode - 0xa0].res(4)
+        // set 0, r (0xc0-0xc7)
+        case 0xc0: regB |= (1 << 0)
+        case 0xc1: regC |= (1 << 0)
+        case 0xc2: regD |= (1 << 0)
+        case 0xc3: regE |= (1 << 0)
+        case 0xc4: regH |= (1 << 0)
+        case 0xc5: regL |= (1 << 0)
+        case 0xc6: memory.indexSet(0, address: hl)
+        case 0xc7: regA |= (1 << 0)
             
-        case 0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xaf:  // res 5, r
-            [b, c, d, e, h, l, a, a][opcode - 0xa8].res(5)
+        // set 1, r (0xc8-0xcf)
+        case 0xc8: regB |= (1 << 1)
+        case 0xc9: regC |= (1 << 1)
+        case 0xca: regD |= (1 << 1)
+        case 0xcb: regE |= (1 << 1)
+        case 0xcc: regH |= (1 << 1)
+        case 0xcd: regL |= (1 << 1)
+        case 0xce: memory.indexSet(1, address: hl)
+        case 0xcf: regA |= (1 << 1)
             
-        case 0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb7:  // res 6, r
-            [b, c, d, e, h, l, a, a][opcode - 0xb0].res(6)
+        // set 2, r (0xd0-0xd7)
+        case 0xd0: regB |= (1 << 2)
+        case 0xd1: regC |= (1 << 2)
+        case 0xd2: regD |= (1 << 2)
+        case 0xd3: regE |= (1 << 2)
+        case 0xd4: regH |= (1 << 2)
+        case 0xd5: regL |= (1 << 2)
+        case 0xd6: memory.indexSet(2, address: hl)
+        case 0xd7: regA |= (1 << 2)
             
-        case 0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xbf:  // res 7, r
-            [b, c, d, e, h, l, a, a][opcode - 0xb8].res(7)
+        // set 3, r (0xd8-0xdf)
+        case 0xd8: regB |= (1 << 3)
+        case 0xd9: regC |= (1 << 3)
+        case 0xda: regD |= (1 << 3)
+        case 0xdb: regE |= (1 << 3)
+        case 0xdc: regH |= (1 << 3)
+        case 0xdd: regL |= (1 << 3)
+        case 0xde: memory.indexSet(3, address: hl)
+        case 0xdf: regA |= (1 << 3)
             
-        case 0x86, 0x8e, 0x96, 0x9e, 0xa6, 0xae, 0xb6, 0xbe:
-            let bit = ((opcode - 0x80) & 0x3c) >> 3
-            memory.indexRes(bit, address: hl.value)
+        // set 4, r (0xe0-0xe7)
+        case 0xe0: regB |= (1 << 4)
+        case 0xe1: regC |= (1 << 4)
+        case 0xe2: regD |= (1 << 4)
+        case 0xe3: regE |= (1 << 4)
+        case 0xe4: regH |= (1 << 4)
+        case 0xe5: regL |= (1 << 4)
+        case 0xe6: memory.indexSet(4, address: hl)
+        case 0xe7: regA |= (1 << 4)
             
-        case 0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc7:  // set 0, r
-            [b, c, d, e, h, l, a, a][opcode - 0xc0].set(0)
+        // set 5, r (0xe8-0xef)
+        case 0xe8: regB |= (1 << 5)
+        case 0xe9: regC |= (1 << 5)
+        case 0xea: regD |= (1 << 5)
+        case 0xeb: regE |= (1 << 5)
+        case 0xec: regH |= (1 << 5)
+        case 0xed: regL |= (1 << 5)
+        case 0xee: memory.indexSet(5, address: hl)
+        case 0xef: regA |= (1 << 5)
             
-        case 0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xcf:  // set 1, r
-            [b, c, d, e, h, l, a, a][opcode - 0xc8].set(1)
+        // set 6, r (0xf0-0xf7)
+        case 0xf0: regB |= (1 << 6)
+        case 0xf1: regC |= (1 << 6)
+        case 0xf2: regD |= (1 << 6)
+        case 0xf3: regE |= (1 << 6)
+        case 0xf4: regH |= (1 << 6)
+        case 0xf5: regL |= (1 << 6)
+        case 0xf6: memory.indexSet(6, address: hl)
+        case 0xf7: regA |= (1 << 6)
             
-        case 0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd7:  // set 2, r
-            [b, c, d, e, h, l, a, a][opcode - 0xd0].set(2)
-            
-        case 0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xdf:  // set 3, r
-            [b, c, d, e, h, l, a, a][opcode - 0xd8].set(3)
-            
-        case 0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe7:  // set 4, r
-            [b, c, d, e, h, l, a, a][opcode - 0xe0].set(4)
-            
-        case 0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xef:  // set 5, r
-            [b, c, d, e, h, l, a, a][opcode - 0xe8].set(5)
-            
-        case 0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf7:  // set 6, r
-            [b, c, d, e, h, l, a, a][opcode - 0xf0].set(6)
-            
-        case 0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xff:  // set 7, r
-            [b, c, d, e, h, l, a, a][opcode - 0xf8].set(7)
-            
-        case 0xc6, 0xce, 0xd6, 0xde, 0xe6, 0xee, 0xf6, 0xfe:
-            let bit = ((opcode - 0xc0) & 0x3c) >> 3
-            memory.indexSet(bit, address: hl.value)            
+        // set 7, r (0xf8-0xff)
+        case 0xf8: regB |= (1 << 7)
+        case 0xf9: regC |= (1 << 7)
+        case 0xfa: regD |= (1 << 7)
+        case 0xfb: regE |= (1 << 7)
+        case 0xfc: regH |= (1 << 7)
+        case 0xfd: regL |= (1 << 7)
+        case 0xfe: memory.indexSet(7, address: hl)
+        case 0xff: regA |= (1 << 7)
             
         default:
-            throw NSError(domain: "z80+cb", code: 1, userInfo: ["opcode" : String(opcode, radix: 16, uppercase: true), "instruction" : instruction.opcode, "pc" : pc])
+            break
         }        
         
-        pc = pc &+ instruction.length        
-        incCounters(instruction.tstates)
+        pc = pc &+ cbLength[Int(opcode)]        
+        incCounters(cbTstates[Int(opcode)])
         
-        r.inc()
-        r.inc()
+        incR()
+        incR()
     }
 }
