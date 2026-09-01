@@ -63,6 +63,9 @@ extension ZilogZ80 {
             memory.set(word16, byte: regE)
             memory.set(word16 &+ 1, byte: regD)
             
+        case 0x46:  // im 0
+            interruptMode = 0
+
         case 0x56:  // im 1
             interruptMode = 1
             

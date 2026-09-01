@@ -47,11 +47,16 @@ class Spectrum: Machine {
     let screenRowAddress    = UnsafeMutablePointer<UInt16>.allocate(capacity: 192)
     let attributeRowAddress = UnsafeMutablePointer<UInt16>.allocate(capacity: 24)
 
-    // Screen image
+    // Screen image (written by emulation thread)
     let screenBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 32 * 192)
 
     // Attribute image - save colour per row (not 8 rows) to allow hi-colour effects
+    // (written by emulation thread)
     let colourBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 32 * 192)
+
+    // Snapshots of screen/colour buffers for rendering (copied at frame end, read by main thread)
+    let screenSnapshot = UnsafeMutablePointer<UInt8>.allocate(capacity: 32 * 192)
+    let colourSnapshot = UnsafeMutablePointer<UInt8>.allocate(capacity: 32 * 192)
     
     // Border colour per line (written by emulation thread)
     let borderBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: 1024)
@@ -270,8 +275,8 @@ class Spectrum: Machine {
             // Screen pixels
             let bufferRow = screenRow * 32
             for col in 0..<32 {
-                byte      = screenBuffer[bufferRow + col]
-                attribute = colourBuffer[bufferRow + col]
+                byte      = screenSnapshot[bufferRow + col]
+                attribute = colourSnapshot[bufferRow + col]
                 
                 colourOffset = attribute & brightBit > 0 ? 8 : 0
                 ink   = colours[Int((attribute & 0x07) + colourOffset)]
@@ -426,9 +431,13 @@ class Spectrum: Machine {
 
             case 311:
                 soundFrameCompleted()
-                // Snapshot border buffer before dispatching (emulation thread will overwrite it)
+                // Snapshot buffers before dispatching (emulation thread will overwrite them)
                 for i in 0..<312 {
                     borderSnapshot[i] = borderBuffer[i]
+                }
+                for i in 0..<(32 * 192) {
+                    screenSnapshot[i] = screenBuffer[i]
+                    colourSnapshot[i] = colourBuffer[i]
                 }
                 DispatchQueue.main.async {
                     self.frameCompleted()

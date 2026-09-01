@@ -667,7 +667,7 @@ extension ZilogZ80 {
         case 0xf3:  // di
             interrupts = false
             iff1 = 0
-            iff2 = 2
+            iff2 = 0
             
         case 0xf4:  // call p, nn
             if regF & ZilogZ80.sBit > 0 {

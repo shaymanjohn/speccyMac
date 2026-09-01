@@ -135,8 +135,6 @@ class ZilogZ80 : Processor {
     let edTstates            = UnsafeMutablePointer<UInt32>.allocate(capacity: 256)
     let edLength             = UnsafeMutablePointer<UInt16>.allocate(capacity: 256)
     
-    var log = false
-    
     init(memory: Memory) {
         self.memory = memory
         
@@ -261,70 +259,51 @@ class ZilogZ80 : Processor {
         machine.ula += amount
     }
     
-    // MARK: - Contended memory access helpers
-    
-    /// Apply contention delay for reading a byte from a possibly-contended address.
-    /// Call this before the actual memory read when cycle-accurate timing matters.
-    @inline(__always) final func contendRead(_ address: UInt16, time: UInt32) {
-        if address >= 0x4000 && address <= 0x7FFF {
-            let tstate = counter < machine.ticksPerFrame ? counter : counter &- machine.ticksPerFrame
-            let delay = UInt32(machine.contentionTable[Int(tstate)])
-            incCounters(delay + time)
-        } else {
-            incCounters(time)
-        }
-    }
-    
-    /// Apply contention delay for writing a byte to a possibly-contended address.
-    /// Call this before the actual memory write when cycle-accurate timing matters.
-    @inline(__always) final func contendWrite(_ address: UInt16, time: UInt32) {
-        if address >= 0x4000 && address <= 0x7FFF {
-            let tstate = counter < machine.ticksPerFrame ? counter : counter &- machine.ticksPerFrame
-            let delay = UInt32(machine.contentionTable[Int(tstate)])
-            incCounters(delay + time)
-        } else {
-            incCounters(time)
-        }
-    }
-    
     final func parseInstructions() {
-        if let path = Bundle.main.path(forResource: "z80ops", ofType: "json"),
+        guard let path = Bundle.main.path(forResource: "z80ops", ofType: "json"),
             let json = try? String.init(contentsOfFile: path),
-            let data = json.data(using: .utf8) {
+            let data = json.data(using: .utf8) else {
+            fatalError("Could not locate or read z80ops.json instruction timing data")
+        }
 
-            struct Instruction: Codable {
-                var opcode: String
-                var tstates: UInt32
-                var alttstates: UInt32
-                var length: UInt16
-            }
-            struct Instructions: Codable {
-                var unprefixed: [Instruction]
-                var edprefix:   [Instruction]
-                var ddprefix:   [Instruction]
-                var cbprefix:   [Instruction]
-            }
+        struct Instruction: Codable {
+            var opcode: String
+            var tstates: UInt32
+            var alttstates: UInt32
+            var length: UInt16
+        }
+        struct Instructions: Codable {
+            var unprefixed: [Instruction]
+            var edprefix:   [Instruction]
+            var ddprefix:   [Instruction]
+            var cbprefix:   [Instruction]
+        }
 
-            do {
-                let instructionSet = try JSONDecoder().decode(Instructions.self, from: data)
-                
-                // Extract timing data into flat arrays
-                for i in 0..<256 {
-                    unprefixedTstates[i]    = instructionSet.unprefixed[i].tstates
-                    unprefixedAltTstates[i] = instructionSet.unprefixed[i].alttstates
-                    unprefixedLength[i]     = instructionSet.unprefixed[i].length
-                    cbTstates[i]            = instructionSet.cbprefix[i].tstates
-                    cbLength[i]             = instructionSet.cbprefix[i].length
-                    ddTstates[i]            = instructionSet.ddprefix[i].tstates
-                    ddLength[i]             = instructionSet.ddprefix[i].length
-                    edTstates[i]            = instructionSet.edprefix[i].tstates
-                    edLength[i]             = instructionSet.edprefix[i].length
-                }
-            } catch {
-                print("couldn't parse json")
-            }
-        } else {
-            print("couldn't find opcodes")
+        let instructionSet: Instructions
+        do {
+            instructionSet = try JSONDecoder().decode(Instructions.self, from: data)
+        } catch {
+            fatalError("Could not parse z80ops.json: \(error)")
+        }
+
+        guard instructionSet.unprefixed.count >= 256,
+            instructionSet.cbprefix.count >= 256,
+            instructionSet.ddprefix.count >= 256,
+            instructionSet.edprefix.count >= 256 else {
+            fatalError("z80ops.json does not contain full 256-entry instruction tables")
+        }
+
+        // Extract timing data into flat arrays
+        for i in 0..<256 {
+            unprefixedTstates[i]    = instructionSet.unprefixed[i].tstates
+            unprefixedAltTstates[i] = instructionSet.unprefixed[i].alttstates
+            unprefixedLength[i]     = instructionSet.unprefixed[i].length
+            cbTstates[i]            = instructionSet.cbprefix[i].tstates
+            cbLength[i]             = instructionSet.cbprefix[i].length
+            ddTstates[i]            = instructionSet.ddprefix[i].tstates
+            ddLength[i]             = instructionSet.ddprefix[i].length
+            edTstates[i]            = instructionSet.edprefix[i].tstates
+            edLength[i]             = instructionSet.edprefix[i].length
         }
     }
 

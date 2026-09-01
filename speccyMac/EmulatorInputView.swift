@@ -9,12 +9,25 @@
 import Cocoa
 
 class EmulatorInputView: NSView {
-    
-    var keysDown: [UInt16] = []    
-    
+
+    // keysDown is written on the main (UI) thread via keyDown/keyUp/flagsChanged
+    // and read from the emulation thread (Spectrum.input). Access is guarded by
+    // keysLock to avoid data races on the underlying Array.
+    private let keysLock = NSLock()
+    private var _keysDown: [UInt16] = []
+
+    var keysDown: [UInt16] {
+        keysLock.lock()
+        defer { keysLock.unlock() }
+        return _keysDown
+    }
+
     private var keyStates: [UInt16 : Bool] = [:] {
         didSet {
-            keysDown = Array(keyStates.filter {key in key.value == true}.keys)
+            let snapshot = Array(keyStates.filter { key in key.value == true }.keys)
+            keysLock.lock()
+            _keysDown = snapshot
+            keysLock.unlock()
         }
     }
     

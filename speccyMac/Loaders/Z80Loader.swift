@@ -69,9 +69,11 @@ class Z80Loader: GameLoaderProtocol {
         v1.iff2 = data[28]
         v1.flags2 = data[29]
 
-        // file format quirks
-        v1.r = (v1.r & 0x7f) | (v1.flags1 << 7)
+        // file format quirks: a stored value of 255 must be treated as 1
+        // *before* interpreting any of its bits (bit 0 = R high bit,
+        // bits 1-3 = border colour, bit 5 = compressed flag).
         if v1.flags1 == 255 { v1.flags1 = 1 }
+        v1.r = (v1.r & 0x7f) | (v1.flags1 << 7)
 
         if (v1.pc != 0) {
             print(".z80 version 1 file")
@@ -121,39 +123,42 @@ class Z80Loader: GameLoaderProtocol {
             // prepare ram
 
             let ram = z80.memory.romSize
-            let ramlen = 64 * 1024
-            let datlen: UInt16 = UInt16(data.count) - v1HeaderLen
-            var from: UInt16 = v1HeaderLen
-            var to: UInt16 = 0
+            let ramBytes = 48 * 1024        // 49152 bytes of RAM in a 48K v1 image
+            let fileLen = data.count
+            var from: Int = Int(v1HeaderLen)
+            var to: Int = 0
 
             var loop = true
             while loop {
-                let left = datlen - from
-                if left == 0 {
+                let left = fileLen - from
+                if left <= 0 {
                     break
                 }
-                if UInt(ram) + UInt(to) >= ramlen {
-                    return false
+                // RAM is full - decompression complete
+                if to >= ramBytes {
+                    break
                 }
 
-                let byte = data[Int(from)]
+                let byte = data[from]
 
-                if isCompressed && byte == 0x00 && left >= 4 && data[Int(from + 1)] == 0xed
-                    && data[Int(from + 2)] == 0xed && data[Int(from + 3)] == 0x00 {
+                if isCompressed && byte == 0x00 && left >= 4 && data[from + 1] == 0xed
+                    && data[from + 2] == 0xed && data[from + 3] == 0x00 {
                     loop = false
                     from += 4
-                } else if isCompressed && byte == 0xed && left >= 4 && data[Int(from + 1)] == 0xed {
-                    let length = data[Int(from + 2)]
-                    let value = data[Int(from + 3)]
+                } else if isCompressed && byte == 0xed && left >= 4 && data[from + 1] == 0xed {
+                    let length = data[from + 2]
+                    let value = data[from + 3]
 
                     for _ in 0..<length {
-                        z80.memory.set(ram + to, byte:value)
-
+                        if to >= ramBytes {
+                            return false        // run would overflow RAM
+                        }
+                        z80.memory.set(ram + UInt16(to), byte: value)
                         to += 1
                     }
                     from += 4
                 } else {
-                    z80.memory.set(ram + to, byte:byte)
+                    z80.memory.set(ram + UInt16(to), byte: byte)
 
                     from += 1
                     to += 1
