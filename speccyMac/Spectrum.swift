@@ -43,6 +43,11 @@ class Spectrum: Machine {
 
     let colours = UnsafeMutablePointer<UInt32>.allocate(capacity: 16)
 
+    // Precomputed pixel-select masks: for each of 256 byte values, 8 entries of
+    // 0xFFFFFFFF (bit set) or 0x00000000 (bit clear), MSB first. Used to expand a
+    // screen byte into 8 pixels branchlessly: paper ^ ((ink ^ paper) & mask).
+    let pixelMask = UnsafeMutablePointer<UInt32>.allocate(capacity: 256 * 8)
+
     // Precalculated screen and attribute rows
     let screenRowAddress    = UnsafeMutablePointer<UInt16>.allocate(capacity: 192)
     let attributeRowAddress = UnsafeMutablePointer<UInt16>.allocate(capacity: 24)
@@ -130,6 +135,13 @@ class Spectrum: Machine {
             let gComp = UInt32(colour.g) << 16
             let bComp = UInt32(colour.b) << 24
             colours[colourIndex] = rComp | gComp | bComp | UInt32(0xff)
+        }
+
+        // Populate pixel-select mask table (MSB first)
+        for byte in 0..<256 {
+            for bit in 0..<8 {
+                pixelMask[byte * 8 + bit] = (byte & (0x80 >> bit)) != 0 ? 0xFFFFFFFF : 0
+            }
         }
         
         for ix in 0..<1024 {
@@ -288,15 +300,19 @@ class Spectrum: Machine {
                     ink = temp
                 }
                 
+                // Branchless pixel expansion: for each bit, select ink or paper via
+                // a precomputed mask. paper ^ ((ink ^ paper) & mask) == mask ? ink : paper.
+                let diff = ink ^ paper
+                let maskBase = Int(byte) * 8
                 let pixelStart = rowStart + borderLeftPx + (col * 8)
-                bmpData[pixelStart + 0] = (byte & 0x80) > 0 ? ink : paper
-                bmpData[pixelStart + 1] = (byte & 0x40) > 0 ? ink : paper
-                bmpData[pixelStart + 2] = (byte & 0x20) > 0 ? ink : paper
-                bmpData[pixelStart + 3] = (byte & 0x10) > 0 ? ink : paper
-                bmpData[pixelStart + 4] = (byte & 0x08) > 0 ? ink : paper
-                bmpData[pixelStart + 5] = (byte & 0x04) > 0 ? ink : paper
-                bmpData[pixelStart + 6] = (byte & 0x02) > 0 ? ink : paper
-                bmpData[pixelStart + 7] = (byte & 0x01) > 0 ? ink : paper
+                bmpData[pixelStart + 0] = paper ^ (diff & pixelMask[maskBase + 0])
+                bmpData[pixelStart + 1] = paper ^ (diff & pixelMask[maskBase + 1])
+                bmpData[pixelStart + 2] = paper ^ (diff & pixelMask[maskBase + 2])
+                bmpData[pixelStart + 3] = paper ^ (diff & pixelMask[maskBase + 3])
+                bmpData[pixelStart + 4] = paper ^ (diff & pixelMask[maskBase + 4])
+                bmpData[pixelStart + 5] = paper ^ (diff & pixelMask[maskBase + 5])
+                bmpData[pixelStart + 6] = paper ^ (diff & pixelMask[maskBase + 6])
+                bmpData[pixelStart + 7] = paper ^ (diff & pixelMask[maskBase + 7])
             }
             
             // Right border
