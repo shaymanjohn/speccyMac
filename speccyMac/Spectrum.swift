@@ -27,8 +27,6 @@ class Spectrum: Machine {
     weak var emulatorView:   EmulatorInputView?
     weak var metalView:      MetalScreenView?
 
-    let brightBit: UInt8 = 0x40
-    let flashBit:  UInt8 = 0x80
     let attributeAddress: UInt16 = 22528
 
     var flashCounter = 0
@@ -38,11 +36,6 @@ class Spectrum: Machine {
     let beeper = AudioStreamer()
 
     let colours = UnsafeMutablePointer<UInt32>.allocate(capacity: 16)
-
-    // Precomputed pixel-select masks: for each of 256 byte values, 8 entries of
-    // 0xFFFFFFFF (bit set) or 0x00000000 (bit clear), MSB first. Used to expand a
-    // screen byte into 8 pixels branchlessly: paper ^ ((ink ^ paper) & mask).
-    let pixelMask = UnsafeMutablePointer<UInt32>.allocate(capacity: 256 * 8)
 
     // Precalculated screen and attribute rows
     let screenRowAddress    = UnsafeMutablePointer<UInt16>.allocate(capacity: 192)
@@ -65,16 +58,12 @@ class Spectrum: Machine {
     // Snapshot of border buffer for rendering (copied at frame end, read by main thread)
     let borderSnapshot = UnsafeMutablePointer<UInt8>.allocate(capacity: 1024)
 
-    // Bmp pool to render image (320x288 = screen + border)
-    // 32px border left/right, 48px border top/bottom
-    let bmpData = UnsafeMutablePointer<UInt32>.allocate(capacity: 320 * 288)
-    
-    // Border dimensions
-    let borderLeftPx = 32
-    let borderTopLines = 48
-    let borderBottomLines = 48
-    let totalWidth = 320
-    let totalHeight = 288
+    // Per-output-row border colour index (288 rows), rebuilt each frame and
+    // handed to the GPU. Maps each of the 288 output scanlines to a border colour.
+    let borderLine = UnsafeMutablePointer<UInt8>.allocate(capacity: 288)
+
+    // Whether the palette has been uploaded to the Metal view yet.
+    private var paletteUploaded = false
 
     // 8 Spectrum RGB values, plus addition 8 for bright mode.
     let colourTable = [Colour(0x000000), Colour(0x0000cd), Colour(0xcd0000), Colour(0xcd00cd),
@@ -133,13 +122,6 @@ class Spectrum: Machine {
             colours[colourIndex] = rComp | gComp | bComp | UInt32(0xff)
         }
 
-        // Populate pixel-select mask table (MSB first)
-        for byte in 0..<256 {
-            for bit in 0..<8 {
-                pixelMask[byte * 8 + bit] = (byte & (0x80 >> bit)) != 0 ? 0xFFFFFFFF : 0
-            }
-        }
-        
         for ix in 0..<1024 {
             borderBuffer[ix] = 0
         }
@@ -241,87 +223,34 @@ class Spectrum: Machine {
             flashCounter = 0
         }
 
-        // Render full 320x288 image with border
-        // Layout: 48 rows top border (videoRow 16..63), 192 rows screen (videoRow 64..255),
-        //         48 rows bottom border (videoRow 256..303)
-        // Each row: 32px left border + 256px screen + 32px right border = 320px
-        
-        var ink:   UInt32 = 0
-        var paper: UInt32 = 0
-        var temp:  UInt32 = 0
-        var byte: UInt8 = 0
-        var attribute: UInt8 = 0
-        var colourOffset: UInt8 = 0
-        
-        // Top border (48 scanlines from videoRow 16..63)
-        for row in 0..<borderTopLines {
-            let borderColour = colours[Int(borderSnapshot[row + 16] & 0x07)]
-            let rowStart = row * totalWidth
-            for x in 0..<totalWidth {
-                bmpData[rowStart + x] = borderColour
-            }
-        }
-        
-        // Main screen area (192 scanlines from videoRow 64..255)
-        for screenRow in 0..<192 {
-            let bitmapRow = screenRow + borderTopLines
-            let rowStart = bitmapRow * totalWidth
-            let borderColour = colours[Int(borderSnapshot[screenRow + 53] & 0x07)]  // 53 was 64...
-            
-            // Left border
-            for x in 0..<borderLeftPx {
-                bmpData[rowStart + x] = borderColour
-            }
-            
-            // Screen pixels
-            let bufferRow = screenRow * 32
-            for col in 0..<32 {
-                byte      = screenSnapshot[bufferRow + col]
-                attribute = colourSnapshot[bufferRow + col]
-                
-                colourOffset = attribute & brightBit > 0 ? 8 : 0
-                ink   = colours[Int((attribute & 0x07) + colourOffset)]
-                paper = colours[Int(((attribute & 0x38) >> 3) + colourOffset)]
-                
-                if invertFlashColours && (attribute & flashBit) > 0 {
-                    temp = paper
-                    paper = ink
-                    ink = temp
-                }
-                
-                // Branchless pixel expansion: for each bit, select ink or paper via
-                // a precomputed mask. paper ^ ((ink ^ paper) & mask) == mask ? ink : paper.
-                let diff = ink ^ paper
-                let maskBase = Int(byte) * 8
-                let pixelStart = rowStart + borderLeftPx + (col * 8)
-                bmpData[pixelStart + 0] = paper ^ (diff & pixelMask[maskBase + 0])
-                bmpData[pixelStart + 1] = paper ^ (diff & pixelMask[maskBase + 1])
-                bmpData[pixelStart + 2] = paper ^ (diff & pixelMask[maskBase + 2])
-                bmpData[pixelStart + 3] = paper ^ (diff & pixelMask[maskBase + 3])
-                bmpData[pixelStart + 4] = paper ^ (diff & pixelMask[maskBase + 4])
-                bmpData[pixelStart + 5] = paper ^ (diff & pixelMask[maskBase + 5])
-                bmpData[pixelStart + 6] = paper ^ (diff & pixelMask[maskBase + 6])
-                bmpData[pixelStart + 7] = paper ^ (diff & pixelMask[maskBase + 7])
-            }
-            
-            // Right border
-            for x in (borderLeftPx + 256)..<totalWidth {
-                bmpData[rowStart + x] = borderColour
-            }
-        }
-        
-        // Bottom border (48 scanlines from videoRow 256..303)
-        for row in 0..<borderBottomLines {
-            let borderColour = colours[Int(borderSnapshot[row + 256] & 0x07)]
-            let rowStart = (row + borderTopLines + 192) * totalWidth
-            for x in 0..<totalWidth {
-                bmpData[rowStart + x] = borderColour
-            }
+        // Upload the 16-entry palette to the GPU once (the Metal view is wired
+        // after this object is constructed, so do it lazily on first frame).
+        if !paletteUploaded, let view = metalView {
+            view.setPalette(colours)
+            paletteUploaded = true
         }
 
-        // Upload the freshly built frame to the Metal view for presentation.
-        // This replaces the previous per-frame CGImage allocation.
-        metalView?.updateFrame(bmpData)
+        // Build the per-output-row border colour index (288 rows).
+        // Layout matches the original CPU renderer:
+        //   top border    rows 0..47    -> borderSnapshot[row + 16]
+        //   screen area   rows 48..239  -> borderSnapshot[screenRow + 53]
+        //   bottom border rows 240..287 -> borderSnapshot[row + 256]
+        for row in 0..<48 {
+            borderLine[row] = borderSnapshot[row + 16] & 0x07
+        }
+        for screenRow in 0..<192 {
+            borderLine[screenRow + 48] = borderSnapshot[screenRow + 53] & 0x07
+        }
+        for row in 0..<48 {
+            borderLine[row + 240] = borderSnapshot[row + 256] & 0x07
+        }
+
+        // Hand the raw Spectrum data to the GPU; the shader expands pixels,
+        // resolves ink/paper/bright/flash, and fills the border.
+        metalView?.updateFrame(screen: screenSnapshot,
+                               attributes: colourSnapshot,
+                               borderLines: borderLine,
+                               invertFlash: invertFlashColours)
     }
 
     func soundFrameCompleted() {

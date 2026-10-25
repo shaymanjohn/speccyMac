@@ -116,12 +116,15 @@ Kempston joystick is emulated on cursor keys + backtick (fire).
 
 An `MTKView` subclass that renders the emulator frame with Metal and accepts drag-and-drop of game files. It is created programmatically in `Emulator.viewDidLoad()` and pinned to fill the storyboard's container image view.
 
+Pixel generation happens entirely on the GPU: the CPU uploads the raw Spectrum data and a fragment shader expands it into pixels (resolving ink/paper, bright, and flash, and filling the border).
+
 The rendering path:
-1. During emulation, `captureRow()` copies pixel and attribute data from memory at the appropriate scanline.
-2. At frame end, `frameCompleted()` renders a full 320x288 bitmap (32px border each side, 48px top/bottom) from the captured screen/colour/border buffers into `bmpData`.
-3. `frameCompleted()` calls `MetalScreenView.updateFrame()`, which uploads `bmpData` into a reused `.bgra8Unorm` texture via `replace(region:)` and requests a redraw. This replaces the previous per-frame `CGImage` allocation.
-4. The `draw()` method draws the texture as a single textured quad, letterboxing it with an aspect-fit viewport. A fragment-shader swizzle maps the emulator's `0x00RRGGBB` (bytes A R G B) pixel layout onto the BGRA texture's channels.
-5. Scaling uses a `.nearest` sampler by default for crisp pixels; `toggleFiltering()` switches to `.linear` for smoothing.
+1. During emulation, `captureRow()` copies pixel and attribute data from memory at the appropriate scanline into the screen/colour buffers (attributes are stored per pixel row to allow hi-colour effects).
+2. At frame end, `frameCompleted()` builds a 288-entry per-output-row border colour index from `borderSnapshot`, then calls `MetalScreenView.updateFrame()` with the raw screen bytes, attribute bytes, border indices, and the current flash-invert flag.
+3. `updateFrame()` uploads the screen and attribute bytes into two reused `R8Uint` textures (32x192) via `replace(region:)`, copies the border indices and flash flag into small buffers, and requests a redraw. ~12 KB is uploaded per frame (vs ~368 KB for a full bitmap).
+4. The 16-entry palette is uploaded once (lazily, on the first frame) as a `float4` constant buffer via `setPalette()`.
+5. The `draw()` method renders a single quad over an aspect-fit viewport. The fragment shader, per output pixel: decides border vs screen, reads the relevant screen/attribute byte via integer texture reads, resolves ink/paper (with bright and flash-invert), and outputs the palette colour. Border pixels use `borderLine[row]`.
+6. Scaling uses `.nearest` magnification by default for crisp pixels; `toggleFiltering()` switches to `.linear` for smoothing.
 
 ### 4.8 Game Loading
 
@@ -209,8 +212,8 @@ Game file (.sna/.z80) ──► Loader ──► Memory + Z80 registers
                      Audio callback              (main thread)
                      (AudioQueue)                       │
                               │                        ▼
-                              ▼                  texture → MTKView
-                         Speaker                   (display)
+                              ▼                 raw data → GPU shader
+                         Speaker                   (MTKView display)
 ```
 
 ## 7. Key Design Decisions
