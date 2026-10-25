@@ -21,6 +21,8 @@
 		6F33B92D1F38F56900B886CD /* monty.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9231F38F55200B886CD /* monty.sna */; };
 		6F33B92E1F38F56C00B886CD /* spacies.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9251F38F55200B886CD /* spacies.sna */; };
 		6F33B92F1F38F56E00B886CD /* thehobbit.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9241F38F55200B886CD /* thehobbit.sna */; };
+		6F51A16D308E1BC300E95204 /* TapeDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F51A16C308E1BC300E95204 /* TapeDeck.swift */; };
+		6F51A16F308E1C0200E95204 /* TapLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F51A16E308E1C0200E95204 /* TapLoader.swift */; };
 		6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7618D91F49697F00D793D7 /* Machine.swift */; };
 		6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */; };
 		6F8E15421F3B2F9900A34AB4 /* techted.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153F1F3B2ED800A34AB4 /* techted.sna */; };
@@ -86,6 +88,8 @@
 		6F33B9241F38F55200B886CD /* thehobbit.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = thehobbit.sna; sourceTree = "<group>"; };
 		6F33B9251F38F55200B886CD /* spacies.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = spacies.sna; sourceTree = "<group>"; };
 		6F33B9261F38F55200B886CD /* deathchase.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = deathchase.sna; sourceTree = "<group>"; };
+		6F51A16C308E1BC300E95204 /* TapeDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapeDeck.swift; sourceTree = "<group>"; };
+		6F51A16E308E1C0200E95204 /* TapLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapLoader.swift; sourceTree = "<group>"; };
 		6F7618D91F49697F00D793D7 /* Machine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Machine.swift; sourceTree = "<group>"; };
 		6F8E15381F3B14E100A34AB4 /* testz80.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = testz80.sna; sourceTree = "<group>"; };
 		6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = uridium.sna; sourceTree = "<group>"; };
@@ -158,6 +162,7 @@
 				6F2063AB28B127C9007A69FF /* GameLoaderProtocol.swift */,
 				6F2063AD28B12878007A69FF /* SNALoader.swift */,
 				6F2063AF28B1289E007A69FF /* Z80Loader.swift */,
+				6F51A16E308E1C0200E95204 /* TapLoader.swift */,
 			);
 			path = Loaders;
 			sourceTree = "<group>";
@@ -262,6 +267,7 @@
 				6FA10D9E308DEDB600F0B47F /* MetalScreenView.swift */,
 				6FA10DA0308E0A7600F0B47F /* EmulatorView.swift */,
 				6FA10DA2308E0A9000F0B47F /* SpeccyMacApp.swift */,
+				6F51A16C308E1BC300E95204 /* TapeDeck.swift */,
 			);
 			path = speccyMac;
 			sourceTree = "<group>";
@@ -441,6 +447,7 @@
 				6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */,
 				6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */,
 				6FEFA90F1F2238C200F9AD93 /* ZilogZ80.swift in Sources */,
+				6F51A16D308E1BC300E95204 /* TapeDeck.swift in Sources */,
 				6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */,
 				6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */,
 				6FEFA9261F224F9000F9AD93 /* Z80+cb.swift in Sources */,
@@ -453,6 +460,7 @@
 				6FA10DA3308E0A9000F0B47F /* SpeccyMacApp.swift in Sources */,
 				6F2063AE28B12878007A69FF /* SNALoader.swift in Sources */,
 				6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */,
+				6F51A16F308E1C0200E95204 /* TapLoader.swift in Sources */,
 				6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

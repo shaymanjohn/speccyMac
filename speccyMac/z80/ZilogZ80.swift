@@ -13,6 +13,7 @@ protocol Processor: AnyObject {
     func start()
     func pause()
     func unpause()
+    func reset()
     func incCounters(_ amount: UInt32)
     
     var counter:    UInt32 { get set }
@@ -145,6 +146,22 @@ class ZilogZ80 : Processor {
         pc = 0x0000
         iff1 = 0
         iff2 = 0
+    }
+
+    /// Reset the CPU to its power-on state so the ROM boots to the BASIC prompt.
+    /// RAM is cleared so a previously-loaded game can't confuse the ROM init.
+    func reset() {
+        for address in 0x4000..<0x10000 {
+            memory.set(UInt16(address), byte: 0)
+        }
+        sp = 0xffff
+        pc = 0x0000
+        iff1 = 0
+        iff2 = 0
+        interrupts = false
+        interruptMode = 0
+        halted = false
+        counter = 0
     }
     
     func dumpReg() {

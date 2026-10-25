@@ -34,6 +34,12 @@ protocol Machine : AnyObject {
     
     var metalView:      MetalScreenView? { get set }
     var emulatorView:   EmulatorInputView? { get set }
+
+    // Tape transport (no-op on machines without a tape).
+    var tapeLoaded: Bool { get }
+    var tapePlaying: Bool { get }
+    func playTape()
+    func stopTape()
 }
 
 extension Machine {

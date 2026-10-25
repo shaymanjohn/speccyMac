@@ -11,14 +11,24 @@ import Foundation
 enum SupportedGameTypes: String, CaseIterable {
     case SNA = "sna"
     case Z80 = "z80"
+    case TAP = "tap"
     
-    var loader: GameLoaderProtocol.Type {
+    /// Snapshot loader for this type, or nil for tape formats (which are played
+    /// in real time by the TapeDeck rather than splatted into memory).
+    var loader: GameLoaderProtocol.Type? {
         switch self {
         case .SNA:
             return SNALoader.self
         case .Z80:
             return Z80Loader.self
+        case .TAP:
+            return nil
         }
+    }
+
+    /// Whether this is a tape format (real-time load) rather than a snapshot.
+    var isTape: Bool {
+        self == .TAP
     }
 }
 
@@ -26,7 +36,8 @@ class Loader {
     init?(_ game: URL, z80: ZilogZ80) {
         let gameType = game.pathExtension.lowercased()
         
-        guard let gameType = SupportedGameTypes.allCases.first(where: { $0.rawValue == gameType }) else {
+        guard let gameType = SupportedGameTypes.allCases.first(where: { $0.rawValue == gameType }),
+              let loaderType = gameType.loader else {
             return nil
         }
 
@@ -37,7 +48,7 @@ class Loader {
             return nil
         }
         
-        let gameLoader = gameType.loader.init(z80: z80)
+        let gameLoader = loaderType.init(z80: z80)
         
         if gameLoader.load(data: gameData) {
             z80.counter = 0

@@ -28,13 +28,16 @@ struct ContentView: View {
     // Tracks the built-in game chosen from the Games menu (nil when a game was
     // loaded via drag-drop or the file importer, i.e. not in the built-in list).
     @State private var selectedGameFile: String?
+    // Tape transport state, mirrored for the toolbar control.
+    @State private var tapeLoaded = false
+    @State private var tapePlaying = false
 
     // Built-in games, sorted by display name.
     private var games: [Game] {
         machine.games.sorted { $0.name < $1.name }
     }
 
-    // Content types the file importer accepts (.sna / .z80).
+    // Content types the file importer accepts (.sna / .z80 / .tap).
     private var importableTypes: [UTType] {
         SupportedGameTypes.allCases.compactMap {
             UTType(filenameExtension: $0.rawValue)
@@ -57,6 +60,16 @@ struct ContentView: View {
                     }
 
                     Button("Load…") { showingImporter = true }
+
+                    Button(tapePlaying ? "Stop Tape" : "Play Tape") {
+                        if tapePlaying {
+                            machine.stopTape()
+                        } else {
+                            machine.playTape()
+                        }
+                        tapePlaying = machine.tapePlaying
+                    }
+                    .disabled(!tapeLoaded)
 
                     Menu("Display") {
                         Picker("Display", selection: $displayMode) {
@@ -81,6 +94,17 @@ struct ContentView: View {
                     loadBuiltIn(game)
                 }
             }
+            .task {
+                // Keep the toolbar's tape state in sync with the deck, which can
+                // stop on its own (on the emulation thread) at the end of a tape.
+                while !Task.isCancelled {
+                    let playing = machine.tapePlaying
+                    if playing != tapePlaying {
+                        tapePlaying = playing
+                    }
+                    try? await Task.sleep(nanoseconds: 300_000_000)  // 0.3s
+                }
+            }
     }
 
     // MARK: - Game loading
@@ -88,6 +112,7 @@ struct ContentView: View {
     private func loadBuiltIn(_ game: Game) {
         if let url = Bundle.main.url(forResource: game.file, withExtension: "") {
             machine.loadGame(url)
+            refreshTapeState()
         }
     }
 
@@ -98,5 +123,11 @@ struct ContentView: View {
         machine.loadGame(url)
         // Loaded game isn't in the built-in list, so clear the menu tick.
         selectedGameFile = nil
+        refreshTapeState()
+    }
+
+    private func refreshTapeState() {
+        tapeLoaded = machine.tapeLoaded
+        tapePlaying = machine.tapePlaying
     }
 }

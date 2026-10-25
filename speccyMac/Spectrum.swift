@@ -35,6 +35,12 @@ class Spectrum: Machine {
 
     let beeper = AudioStreamer()
 
+    // Tape playback engine (feeds the EAR bit during LOAD).
+    let tapeDeck = TapeDeck()
+
+    // Last processor counter seen by tick(), used to advance the tape deck.
+    private var lastTapeCounter: UInt32 = 0
+
     let colours = UnsafeMutablePointer<UInt32>.allocate(capacity: 16)
 
     // Precalculated screen and attribute rows
@@ -317,6 +323,13 @@ class Spectrum: Machine {
                     bit = bit << 1
                 }
             }
+
+            // Inject the tape EAR input on bit 6 so the ROM loader can read it.
+            if tapeDeck.currentLevel {
+                byte |= 0x40
+            } else {
+                byte &= ~0x40
+            }
         } else if low == 0x1f {     // kempston port
             let downKeys = emulatorView?.keysDown ?? []
 
@@ -354,7 +367,28 @@ class Spectrum: Machine {
     }
 
     @inline(__always) func tick() {
-        beeper.updateSample(processor.counter, beep: clicks)
+        if tapeDeck.isActive {
+            // Mix the tape EAR level into bit 6 so loading is audible (the ULA
+            // routes the tape signal through the speaker on real hardware).
+            let beep = tapeDeck.currentLevel ? (clicks | 0x40) : clicks
+            beeper.updateSample(processor.counter, beep: beep)
+
+            // Advance the tape by the T-states consumed since the last tick.
+            // counter normally increases; at a frame boundary it drops when
+            // serviceInterrupts subtracts ticksPerFrame. Only advance on the
+            // normal forward case and resync on a wrap (avoids underflow traps).
+            let now = processor.counter
+            if now >= lastTapeCounter {
+                let delta = now - lastTapeCounter
+                if delta > 0 {
+                    tapeDeck.advance(delta)
+                }
+            }
+            lastTapeCounter = now
+        } else {
+            beeper.updateSample(processor.counter, beep: clicks)
+            lastTapeCounter = processor.counter
+        }
 
         if ula >= 224 {
             borderBuffer[Int(videoRow)] = borderColourIndex
@@ -390,6 +424,27 @@ class Spectrum: Machine {
         processor.pause()
         clicks = 0
 
+        let ext = gameUrl.pathExtension.lowercased()
+        let type = SupportedGameTypes.allCases.first { $0.rawValue == ext }
+
+        if type?.isTape == true {
+            // Tape: reset to the BASIC prompt and load the tape into the deck.
+            // The user presses Play and types LOAD "" to start loading.
+            if let data = try? Data(contentsOf: gameUrl),
+               let pulses = TapLoader.pulses(from: data) {
+                tapeDeck.load(pulses: pulses)
+                processor.reset()
+                videoRow = 0
+                ula = 0
+                lastTapeCounter = 0
+                processor.counter = 0
+                processor.unpause()
+            } else {
+                tapeLoadFailed(gameUrl)
+            }
+            return
+        }
+
         if let z80 = processor as? ZilogZ80,
             Loader(gameUrl, z80: z80) != nil {
             videoRow = 0
@@ -397,9 +452,26 @@ class Spectrum: Machine {
             processor.counter = 0
             processor.unpause()
         } else {
-            let alert = NSAlert()
-            alert.messageText = "Couldn't load:\n\n\(gameUrl)"
-            alert.runModal()
+            tapeLoadFailed(gameUrl)
         }
+    }
+
+    private func tapeLoadFailed(_ gameUrl: URL) {
+        let alert = NSAlert()
+        alert.messageText = "Couldn't load:\n\n\(gameUrl)"
+        alert.runModal()
+    }
+
+    // MARK: - Tape transport
+
+    var tapeLoaded: Bool { tapeDeck.hasTape }
+    var tapePlaying: Bool { tapeDeck.isPlaying }
+
+    func playTape() {
+        tapeDeck.play()
+    }
+
+    func stopTape() {
+        tapeDeck.stop()
     }
 }
