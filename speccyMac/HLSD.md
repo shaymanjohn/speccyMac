@@ -123,8 +123,11 @@ The rendering path:
 2. At frame end, `frameCompleted()` builds a 288-entry per-output-row border colour index from `borderSnapshot`, then calls `MetalScreenView.updateFrame()` with the raw screen bytes, attribute bytes, border indices, and the current flash-invert flag.
 3. `updateFrame()` uploads the screen and attribute bytes into two reused `R8Uint` textures (32x192) via `replace(region:)`, copies the border indices and flash flag into small buffers, and requests a redraw. ~12 KB is uploaded per frame (vs ~368 KB for a full bitmap).
 4. The 16-entry palette is uploaded once (lazily, on the first frame) as a `float4` constant buffer via `setPalette()`.
-5. The `draw()` method renders a single quad over an aspect-fit viewport. The fragment shader, per output pixel: decides border vs screen, reads the relevant screen/attribute byte via integer texture reads, resolves ink/paper (with bright and flash-invert), and outputs the palette colour. Border pixels use `borderLine[row]`.
-6. Scaling uses `.nearest` magnification by default for crisp pixels; `toggleFiltering()` switches to `.linear` for smoothing.
+5. The `draw()` method renders a single quad over an aspect-fit viewport, writing the uniforms (display-mode flags plus the vertical scale factor `scaleY = viewportHeight / 288`) at this point since the viewport scale is only known here. Pixel colour is resolved by a shader helper `colourAt(px, py)`: it decides border vs screen, reads the relevant screen/attribute byte via integer texture reads, resolves ink/paper (with bright and flash-invert), and returns the palette colour. Border pixels use `borderLine[row]`.
+6. Three mutually-exclusive display modes are selected via a segmented control (Crisp / Smooth / Scanlines) wired to `Emulator.changeDisplayMode(_:)` → `MetalScreenView.setDisplayMode(_:)`. All three are implemented in the fragment shader (filtering can't rely on a sampler, since screen pixels come from a palette lookup rather than a sampleable RGBA texture):
+   - **Crisp:** point-sample the covering pixel.
+   - **Smooth:** bilinear blend of the four `colourAt` neighbours around the sample point.
+   - **Scanlines:** crisp colour, then darkened toward the gaps between source rows using `fract(fy)`. The effect fades out below ~2x scale (via `scaleY`) to avoid aliasing in small windows.
 
 ### 4.8 Game Loading
 

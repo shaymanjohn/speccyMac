@@ -15,6 +15,7 @@ protocol DragDelegate: AnyObject {
 class Emulator: NSViewController, DragDelegate {
     
     @IBOutlet weak var emulatorScreen: NSImageView!
+    @IBOutlet weak var displayModeControl: NSSegmentedControl!
 
     private var metalView: MetalScreenView!
 
@@ -43,7 +44,13 @@ class Emulator: NSViewController, DragDelegate {
 
         machine.emulatorView = view as? EmulatorInputView
         machine.metalView = metal
-        
+
+        // The control sits over the dark letterboxed Metal view; give it an
+        // opaque backing so unselected segment labels stay legible.
+        displayModeControl.wantsLayer = true
+        displayModeControl.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        displayModeControl.layer?.cornerRadius = 6
+
         machine.start()
     }
     
@@ -54,8 +61,9 @@ class Emulator: NSViewController, DragDelegate {
         }
     }
 
-    @IBAction func toggleMode(_ sender: NSButton) {
-        metalView.toggleFiltering()
+    @IBAction func changeDisplayMode(_ sender: NSSegmentedControl) {
+        let mode = MetalScreenView.DisplayMode(rawValue: sender.selectedSegment) ?? .crisp
+        metalView.setDisplayMode(mode)
     }
     
     func loadGame(_ fileURL: URL) {

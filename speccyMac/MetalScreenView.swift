@@ -37,17 +37,30 @@ final class MetalScreenView: MTKView {
     // 16-entry RGBA palette, uploaded once.
     private var paletteBuffer: MTLBuffer!
 
-    // Per-frame uniforms (flash invert flag).
+    // Per-frame uniforms (flash flag + display-mode flags + scale).
     private var uniformBuffer: MTLBuffer!
 
-    // Whether to smooth (linear) or keep pixels crisp (nearest) when scaling.
-    private var useLinearFiltering = false
+    /// Mutually-exclusive display modes selectable from the UI.
+    enum DisplayMode: Int {
+        case crisp = 0
+        case smooth = 1
+        case scanlines = 2
+        case crt = 3
+    }
+    private var displayMode: DisplayMode = .crisp
+
+    // Latest flash-invert state from the emulator (written into uniforms at draw time).
+    private var lastInvertFlash = false
 
     weak var dragDelegate: DragDelegate?
 
     // Matches the Uniforms struct in the shader.
     private struct Uniforms {
         var invertFlash: UInt32
+        var smoothing: UInt32
+        var scanlines: UInt32
+        var crt: UInt32
+        var scaleY: Float
     }
 
     override init(frame frameRect: CGRect, device: MTLDevice?) {
@@ -101,6 +114,10 @@ final class MetalScreenView: MTKView {
 
         struct Uniforms {
             uint invertFlash;
+            uint smoothing;
+            uint scanlines;
+            uint crt;
+            float scaleY;
         };
 
         // Fullscreen quad generated from the vertex id (no vertex buffer).
@@ -133,18 +150,15 @@ final class MetalScreenView: MTKView {
         constant uint kScreenWidth   = 256u;
         constant uint kScreenHeight  = 192u;
 
-        fragment float4 screen_fragment(VertexOut in [[stage_in]],
-                                        texture2d<uint> screenTex [[texture(0)]],
-                                        texture2d<uint> attrTex   [[texture(1)]],
-                                        constant float4 *palette   [[buffer(0)]],
-                                        constant uchar  *borderLine [[buffer(1)]],
-                                        constant Uniforms &uniforms [[buffer(2)]]) {
+        // Resolve the RGBA colour of a single logical frame pixel (px, py).
+        // Handles both the border and the 256x192 screen area.
+        static float4 colourAt(uint px, uint py,
+                               texture2d<uint> screenTex,
+                               texture2d<uint> attrTex,
+                               constant float4 *palette,
+                               constant uchar  *borderLine,
+                               uint invertFlash) {
 
-            // Map the normalised texCoord to an integer pixel in the 320x288 frame.
-            uint px = min(uint(in.texCoord.x * float(kFrameWidth)),  kFrameWidth  - 1u);
-            uint py = min(uint(in.texCoord.y * float(kFrameHeight)), kFrameHeight - 1u);
-
-            // Border regions: anything outside the central 256x192 screen area.
             bool inScreenX = (px >= kBorderLeft) && (px < kBorderLeft + kScreenWidth);
             bool inScreenY = (py >= kBorderTop)  && (py < kBorderTop + kScreenHeight);
 
@@ -153,7 +167,6 @@ final class MetalScreenView: MTKView {
                 return palette[idx];
             }
 
-            // Screen pixel coordinates (0..255, 0..191).
             uint sx = px - kBorderLeft;
             uint sy = py - kBorderTop;
 
@@ -164,18 +177,109 @@ final class MetalScreenView: MTKView {
             uint byte = screenTex.read(uint2(col, row)).r;
             uint attr = attrTex.read(uint2(col, row)).r;
 
-            // Resolve ink/paper with bright and flash.
             uint bright = (attr & 0x40u) != 0u ? 8u : 0u;
             uint inkIdx   = (attr & 0x07u) + bright;
             uint paperIdx = ((attr & 0x38u) >> 3) + bright;
 
-            if (uniforms.invertFlash != 0u && (attr & 0x80u) != 0u) {
+            if (invertFlash != 0u && (attr & 0x80u) != 0u) {
                 uint t = inkIdx; inkIdx = paperIdx; paperIdx = t;
             }
 
-            // Select ink or paper for this bit (MSB first).
             bool pixelSet = (byte & (0x80u >> bit)) != 0u;
             return pixelSet ? palette[inkIdx] : palette[paperIdx];
+        }
+
+        fragment float4 screen_fragment(VertexOut in [[stage_in]],
+                                        texture2d<uint> screenTex [[texture(0)]],
+                                        texture2d<uint> attrTex   [[texture(1)]],
+                                        constant float4 *palette   [[buffer(0)]],
+                                        constant uchar  *borderLine [[buffer(1)]],
+                                        constant Uniforms &uniforms [[buffer(2)]]) {
+
+            bool crt = (uniforms.crt != 0u);
+
+            // Sample coordinate in 0..1 across the frame. In CRT mode we apply
+            // barrel distortion so the image bulges like a real tube.
+            float2 uv = in.texCoord;
+            if (crt) {
+                float2 c = uv * 2.0 - 1.0;          // -1..1 centred
+                float r2 = dot(c, c);
+                float k = 0.08;                     // curvature strength
+                c *= 1.0 + k * r2;                  // push corners outward
+                uv = c * 0.5 + 0.5;
+                // Outside the tube after warping -> black bezel.
+                if (uv.x < 0.0 || uv.x > 1.0 || uv.y < 0.0 || uv.y > 1.0) {
+                    return float4(0.0, 0.0, 0.0, 1.0);
+                }
+            }
+
+            // Continuous position in frame space (pixel centres at integer+0.5).
+            float fx = uv.x * float(kFrameWidth);
+            float fy = uv.y * float(kFrameHeight);
+
+            float4 colour;
+            if (uniforms.smoothing == 0u) {
+                // Crisp: point-sample the covering pixel.
+                uint px = min(uint(fx), kFrameWidth  - 1u);
+                uint py = min(uint(fy), kFrameHeight - 1u);
+                colour = colourAt(px, py, screenTex, attrTex, palette, borderLine,
+                                  uniforms.invertFlash);
+            } else {
+                // Smooth: bilinear blend of the four pixel centres around (fx, fy).
+                float gx = fx - 0.5;
+                float gy = fy - 0.5;
+                float x0f = floor(gx);
+                float y0f = floor(gy);
+                float wx = gx - x0f;
+                float wy = gy - y0f;
+
+                uint x0 = uint(clamp(x0f, 0.0, float(kFrameWidth  - 1u)));
+                uint y0 = uint(clamp(y0f, 0.0, float(kFrameHeight - 1u)));
+                uint x1 = min(x0 + 1u, kFrameWidth  - 1u);
+                uint y1 = min(y0 + 1u, kFrameHeight - 1u);
+
+                float4 c00 = colourAt(x0, y0, screenTex, attrTex, palette, borderLine, uniforms.invertFlash);
+                float4 c10 = colourAt(x1, y0, screenTex, attrTex, palette, borderLine, uniforms.invertFlash);
+                float4 c01 = colourAt(x0, y1, screenTex, attrTex, palette, borderLine, uniforms.invertFlash);
+                float4 c11 = colourAt(x1, y1, screenTex, attrTex, palette, borderLine, uniforms.invertFlash);
+
+                float4 top = mix(c00, c10, wx);
+                float4 bot = mix(c01, c11, wx);
+                colour = mix(top, bot, wy);
+            }
+
+            // Scanline modulation: darken toward the gaps between source rows.
+            // Only meaningful when the image is upscaled, so fade the effect out
+            // at small scale factors to avoid aliasing. Active for Scanlines and CRT.
+            if (uniforms.scanlines != 0u || crt) {
+                float scaleY = uniforms.scaleY;             // output px per source row
+                float strength = clamp((scaleY - 2.0) / 2.0, 0.0, 1.0);
+                float frac = fract(fy);                     // 0..1 within source row
+                float dist = abs(frac - 0.5) * 2.0;         // 0 centre, 1 at edges
+                float depth = 0.45 * strength;              // max darkening
+                float scan = 1.0 - depth * dist;
+                colour.rgb *= scan;
+            }
+
+            if (crt) {
+                // Aperture-grille shadow mask: cycle R/G/B emphasis across
+                // columns of output pixels so phosphor triads are suggested.
+                // in.position.x is the output pixel coordinate.
+                uint col = uint(in.position.x) % 3u;
+                float3 mask = float3(1.0);
+                float dim = 0.85;                   // non-emphasised channel level
+                if (col == 0u)      mask = float3(1.0, dim, dim);
+                else if (col == 1u) mask = float3(dim, 1.0, dim);
+                else                mask = float3(dim, dim, 1.0);
+                colour.rgb *= mask;
+
+                // Vignette: gently darken toward the edges/corners of the tube.
+                float2 c = uv * 2.0 - 1.0;
+                float vig = 1.0 - 0.25 * dot(c, c);
+                colour.rgb *= clamp(vig, 0.0, 1.0);
+            }
+
+            return colour;
         }
         """
 
@@ -228,10 +332,10 @@ final class MetalScreenView: MTKView {
 
     // MARK: - Public API
 
-    /// Toggle between crisp (nearest) and smoothed (linear) scaling.
-    func toggleFiltering() {
-        useLinearFiltering.toggle()
-        layer?.magnificationFilter = useLinearFiltering ? .linear : .nearest
+    /// Select the display mode (crisp / smooth / scanlines). All three are
+    /// implemented in the fragment shader; the choice is passed via uniforms.
+    func setDisplayMode(_ mode: DisplayMode) {
+        displayMode = mode
         setNeedsDisplay(bounds)
     }
 
@@ -254,9 +358,9 @@ final class MetalScreenView: MTKView {
         memcpy(borderBufferGPU.contents(), borderLines, frameHeight)
         borderBufferGPU.didModifyRange(0..<frameHeight)
 
-        var uniforms = Uniforms(invertFlash: invertFlash ? 1 : 0)
-        memcpy(uniformBuffer.contents(), &uniforms, MemoryLayout<Uniforms>.stride)
-        uniformBuffer.didModifyRange(0..<MemoryLayout<Uniforms>.stride)
+        // Uniforms (including display-mode flags and scale) are written in
+        // draw(), where the viewport scale is known. Just record the flash state.
+        lastInvertFlash = invertFlash
 
         setNeedsDisplay(bounds)
     }
@@ -293,6 +397,17 @@ final class MetalScreenView: MTKView {
                                         height: Double(vpHeight),
                                         znear: 0.0,
                                         zfar: 1.0))
+
+        // Write uniforms now that the viewport scale is known.
+        // scaleY = output pixels per source row (drives scanline strength/fade).
+        let scaleY = Float(vpHeight / CGFloat(frameHeight))
+        var uniforms = Uniforms(invertFlash: lastInvertFlash ? 1 : 0,
+                                smoothing: displayMode == .smooth ? 1 : 0,
+                                scanlines: displayMode == .scanlines ? 1 : 0,
+                                crt: displayMode == .crt ? 1 : 0,
+                                scaleY: scaleY)
+        memcpy(uniformBuffer.contents(), &uniforms, MemoryLayout<Uniforms>.stride)
+        uniformBuffer.didModifyRange(0..<MemoryLayout<Uniforms>.stride)
 
         encoder.setRenderPipelineState(pipelineState)
         encoder.setFragmentTexture(screenTexture, index: 0)

@@ -322,20 +322,24 @@
                                     <action selector="changeGame:" target="XfG-lQ-9wD" id="igO-wa-mCt"/>
                                 </connections>
                             </button>
-                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hJV-iW-liq">
-                                <rect key="frame" x="10" y="519" width="59" height="21"/>
-                                <buttonCell key="cell" type="push" title="Mode" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="KXA-GW-qxY">
-                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hJV-iW-liq">
+                                <rect key="frame" x="10" y="519" width="296" height="21"/>
+                                <segmentedCell key="cell" borderStyle="border" alignment="left" style="rounded" trackingMode="selectOne" id="KXA-GW-qxY">
                                     <font key="font" metaFont="system"/>
-                                </buttonCell>
-                                <color key="bezelColor" name="systemTealColor" catalog="System" colorSpace="catalog"/>
+                                    <segments>
+                                        <segment label="Crisp" width="72" selected="YES"/>
+                                        <segment label="Smooth" width="72"/>
+                                        <segment label="Scanlines" width="76"/>
+                                        <segment label="CRT" width="72"/>
+                                    </segments>
+                                </segmentedCell>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="E0b-8K-FI3"/>
                                 </constraints>
                                 <connections>
-                                    <action selector="toggleMode:" target="XfG-lQ-9wD" id="Fg4-Ja-1vv"/>
+                                    <action selector="changeDisplayMode:" target="XfG-lQ-9wD" id="Fg4-Ja-1vv"/>
                                 </connections>
-                            </button>
+                            </segmentedControl>
                         </subviews>
                         <constraints>
                             <constraint firstItem="q1X-na-ykB" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="10" id="0iy-oA-rQR"/>
@@ -352,6 +356,7 @@
                     </view>
                     <connections>
                         <outlet property="emulatorScreen" destination="UOb-xd-KSE" id="EYb-mz-9EF"/>
+                        <outlet property="displayModeControl" destination="hJV-iW-liq" id="Dmc-01-aaa"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
