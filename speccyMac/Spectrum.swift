@@ -25,15 +25,11 @@ class Spectrum: Machine {
     let contentionTable = UnsafeMutablePointer<UInt8>.allocate(capacity: 69888)
 
     weak var emulatorView:   EmulatorInputView?
-    weak var screenLayer:    CALayer?
+    weak var metalView:      MetalScreenView?
 
     let brightBit: UInt8 = 0x40
     let flashBit:  UInt8 = 0x80
     let attributeAddress: UInt16 = 22528
-
-    let colourSpace = CGColorSpaceCreateDeviceRGB()
-    let bitmapInfo  = CGBitmapInfo(rawValue: CGImageAlphaInfo.first.rawValue).union(CGBitmapInfo())
-    var bitmapContext: CGContext!
 
     var flashCounter = 0
     var invertFlashColours = false
@@ -165,13 +161,6 @@ class Spectrum: Machine {
         }
 
         beeper.machine = self
-        
-        // Create bitmap context backed by bmpData (reused every frame)
-        let contextInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)
-        bitmapContext = CGContext(data: UnsafeMutableRawPointer(bmpData), width: 320, height: 288,
-                                  bitsPerComponent: 8, bytesPerRow: 320 * 4,
-                                  space: colourSpace, bitmapInfo: contextInfo.rawValue)
-        bitmapContext?.interpolationQuality = .none
         
         // Build contended memory delay table
         // 48K Spectrum: 312 scanlines per frame, 224 T-states per scanline = 69888 T-states/frame
@@ -330,9 +319,9 @@ class Spectrum: Machine {
             }
         }
 
-        if let image = bitmapContext.makeImage() {
-            screenLayer?.contents = image
-        }
+        // Upload the freshly built frame to the Metal view for presentation.
+        // This replaces the previous per-frame CGImage allocation.
+        metalView?.updateFrame(bmpData)
     }
 
     func soundFrameCompleted() {

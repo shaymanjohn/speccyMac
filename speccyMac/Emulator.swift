@@ -14,26 +14,35 @@ protocol DragDelegate: AnyObject {
 
 class Emulator: NSViewController, DragDelegate {
     
-    @IBOutlet weak var emulatorScreen: EmulatorImageView!
-    
+    @IBOutlet weak var emulatorScreen: NSImageView!
+
+    private var metalView: MetalScreenView!
+
     let machine: Machine = Spectrum()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        emulatorScreen.dragDelegate = self
-        
         // Black background around the emulator image
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.gray.cgColor
-        
-        // Use the image view's layer directly for pixel rendering
-        emulatorScreen.wantsLayer = true
-        emulatorScreen.layer?.contentsGravity = .resizeAspect
-        emulatorScreen.layer?.magnificationFilter = .nearest
+
+        // Replace the storyboard image view's content with a Metal-backed view
+        // pinned to the same frame. The emulator uploads frames to this view.
+        let metal = MetalScreenView(frame: emulatorScreen.bounds, device: nil)
+        metal.translatesAutoresizingMaskIntoConstraints = false
+        metal.dragDelegate = self
+        emulatorScreen.addSubview(metal)
+        NSLayoutConstraint.activate([
+            metal.leadingAnchor.constraint(equalTo: emulatorScreen.leadingAnchor),
+            metal.trailingAnchor.constraint(equalTo: emulatorScreen.trailingAnchor),
+            metal.topAnchor.constraint(equalTo: emulatorScreen.topAnchor),
+            metal.bottomAnchor.constraint(equalTo: emulatorScreen.bottomAnchor)
+        ])
+        metalView = metal
 
         machine.emulatorView = view as? EmulatorInputView
-        machine.screenLayer = emulatorScreen.layer
+        machine.metalView = metal
         
         machine.start()
     }
@@ -46,13 +55,7 @@ class Emulator: NSViewController, DragDelegate {
     }
 
     @IBAction func toggleMode(_ sender: NSButton) {
-        if let layer = emulatorScreen.layer {
-            if layer.magnificationFilter == .nearest {
-                layer.magnificationFilter = .linear
-            } else {
-                layer.magnificationFilter = .nearest
-            }
-        }
+        metalView.toggleFiltering()
     }
     
     func loadGame(_ fileURL: URL) {

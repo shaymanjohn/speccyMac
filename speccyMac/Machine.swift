@@ -32,7 +32,7 @@ protocol Machine : AnyObject {
     var games: [Game] { get }
     var clicks: UInt8 { get }
     
-    var screenLayer:    CALayer? { get set }
+    var metalView:      MetalScreenView? { get set }
     var emulatorView:   EmulatorInputView? { get set }
 }
 

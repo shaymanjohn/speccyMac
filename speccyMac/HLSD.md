@@ -21,8 +21,8 @@ The emulator targets cycle-accurate timing for the display area, enabling correc
 │      ├── EmulatorInputView (keyboard)                               │
 │      │        ▲ polled by Spectrum.input()                          │
 │      │                                                              │
-│      ├── EmulatorImageView (display + drag-drop)                    │
-│      │        ▲ layer.contents set by Spectrum.frameCompleted()     │
+│      ├── MetalScreenView (display + drag-drop)                     │
+│      │        ▲ texture uploaded by Spectrum.frameCompleted()      │
 │      │                                                              │
 │      └── Machine / Spectrum (core emulation) ◄── Loader             │
 │               │                                   ├── SNALoader     │
@@ -37,7 +37,7 @@ The emulator targets cycle-accurate timing for the display area, enabling correc
 
 | Thread | Responsibility |
 |--------|---------------|
-| Main thread | UI, keyboard events, frame rendering (CGImage to CALayer) |
+| Main thread | UI, keyboard events, frame rendering (Metal texture upload) |
 | Emulation thread | Z80 execution loop, ULA tick, audio sample generation |
 | Audio callback thread | Reads from ring buffer, fills AudioQueue buffers |
 
@@ -49,7 +49,7 @@ The emulation thread runs continuously at ~50Hz (PAL frame rate). Frame images a
 
 **File:** `Emulator.swift`
 
-The main coordinator. Creates the `Spectrum` instance, wires the input view and display layer, and starts emulation. Handles game selection (modal UI) and drag-and-drop loading.
+The main coordinator. Creates the `Spectrum` instance, creates and wires the Metal display view and input view, and starts emulation. Handles game selection (modal UI) and drag-and-drop loading.
 
 ### 4.2 Spectrum (Machine)
 
@@ -59,7 +59,7 @@ The main coordinator. Creates the `Spectrum` instance, wires the input view and 
 The heart of the emulator. Owns the CPU, memory, and audio subsystem. Responsibilities:
 
 - **Video timing:** Tracks the ULA counter and video row. After every Z80 instruction, `tick()` checks if a full scanline (224 T-states) has elapsed and captures screen data at the appropriate row.
-- **Frame rendering:** At video row 311 (end of frame), renders a 320x288 pixel bitmap (256x192 screen + border) and pushes it to the display layer.
+- **Frame rendering:** At video row 311 (end of frame), renders a 320x288 pixel bitmap (256x192 screen + border) and uploads it to the Metal view's texture for display.
 - **Keyboard I/O:** Reads from `EmulatorInputView.keysDown` and translates macOS key codes to Spectrum keyboard matrix via a lookup table.
 - **Border colour:** Tracks `OUT 0xFE` writes for per-scanline border colour.
 - **Contended memory:** Maintains a 69888-entry contention delay table. Contention is applied transparently by `Memory.get()`/`Memory.set()` for all accesses to 0x4000-0x7FFF.
@@ -112,15 +112,16 @@ Kempston joystick is emulated on cursor keys + backtick (fire).
 
 ### 4.7 Display
 
-**File:** `EmulatorImageView.swift`
+**File:** `MetalScreenView.swift`
 
-An `NSImageView` subclass that hosts the rendering CALayer and accepts drag-and-drop of game files.
+An `MTKView` subclass that renders the emulator frame with Metal and accepts drag-and-drop of game files. It is created programmatically in `Emulator.viewDidLoad()` and pinned to fill the storyboard's container image view.
 
 The rendering path:
 1. During emulation, `captureRow()` copies pixel and attribute data from memory at the appropriate scanline.
-2. At frame end, `frameCompleted()` renders a full 320x288 bitmap (32px border each side, 48px top/bottom) from the captured screen/colour/border buffers.
-3. The resulting `CGImage` is assigned to the layer's `contents` property on the main thread.
-4. The layer uses `.nearest` magnification for sharp pixel scaling.
+2. At frame end, `frameCompleted()` renders a full 320x288 bitmap (32px border each side, 48px top/bottom) from the captured screen/colour/border buffers into `bmpData`.
+3. `frameCompleted()` calls `MetalScreenView.updateFrame()`, which uploads `bmpData` into a reused `.bgra8Unorm` texture via `replace(region:)` and requests a redraw. This replaces the previous per-frame `CGImage` allocation.
+4. The `draw()` method draws the texture as a single textured quad, letterboxing it with an aspect-fit viewport. A fragment-shader swizzle maps the emulator's `0x00RRGGBB` (bytes A R G B) pixel layout onto the BGRA texture's channels.
+5. Scaling uses a `.nearest` sampler by default for crisp pixels; `toggleFiltering()` switches to `.linear` for smoothing.
 
 ### 4.8 Game Loading
 
@@ -208,7 +209,7 @@ Game file (.sna/.z80) ──► Loader ──► Memory + Z80 registers
                      Audio callback              (main thread)
                      (AudioQueue)                       │
                               │                        ▼
-                              ▼                  CGImage → CALayer
+                              ▼                  texture → MTKView
                          Speaker                   (display)
 ```
 
@@ -241,7 +242,7 @@ Game file (.sna/.z80) ──► Loader ──► Memory + Z80 registers
 | `AudioStreamer.swift` | ~230 | Beeper audio via AudioQueue |
 | `Emulator.swift` | ~65 | Main view controller |
 | `EmulatorInputView.swift` | ~50 | Keyboard capture |
-| `EmulatorImageView.swift` | ~80 | Display + drag-drop |
+| `MetalScreenView.swift` | ~245 | Metal display + drag-drop |
 | `Loader.swift` | ~50 | Game loading factory |
 | `Loaders/SNALoader.swift` | ~60 | .sna format loader |
 | `Loaders/Z80Loader.swift` | ~90 | .z80 v1 format loader |
