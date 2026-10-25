@@ -34,7 +34,17 @@ class EmulatorInputView: NSView {
     override var acceptsFirstResponder : Bool {
         return true
     }
-    
+
+    // When hosted in a window (including via SwiftUI), claim first responder so
+    // key events are delivered, and clear any stale key state.
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        if window != nil {
+            clearKeysWhenGettingFocus()
+            window?.makeFirstResponder(self)
+        }
+    }
+
     func clearKeysWhenGettingFocus() {
         keyStates = [:]
     }

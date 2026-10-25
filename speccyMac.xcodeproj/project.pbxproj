@@ -31,6 +31,8 @@
 		6F93325F1F4F6B38000CA284 /* batty.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F93325C1F4F6B2A000CA284 /* batty.sna */; };
 		6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA031651F5460CA00CD636E /* AudioStreamer.swift */; };
 		6FA10D9F308DEDB600F0B47F /* MetalScreenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA10D9E308DEDB600F0B47F /* MetalScreenView.swift */; };
+		6FA10DA1308E0A7600F0B47F /* EmulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA10DA0308E0A7600F0B47F /* EmulatorView.swift */; };
+		6FA10DA3308E0A9000F0B47F /* SpeccyMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA10DA2308E0A9000F0B47F /* SpeccyMacApp.swift */; };
 		6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */; };
 		6FBB5FFC29A249F100F369A8 /* aquaplane.z80 in Resources */ = {isa = PBXBuildFile; fileRef = 6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */; };
 		6FC90B4F1F5295AA002506DC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC90B4E1F5295AA002506DC /* README.md */; };
@@ -99,6 +101,8 @@
 		6F93325D1F4F6B2B000CA284 /* chuckie.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = chuckie.sna; sourceTree = "<group>"; };
 		6FA031651F5460CA00CD636E /* AudioStreamer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AudioStreamer.swift; sourceTree = "<group>"; };
 		6FA10D9E308DEDB600F0B47F /* MetalScreenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalScreenView.swift; sourceTree = "<group>"; };
+		6FA10DA0308E0A7600F0B47F /* EmulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorView.swift; sourceTree = "<group>"; };
+		6FA10DA2308E0A9000F0B47F /* SpeccyMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeccyMacApp.swift; sourceTree = "<group>"; };
 		6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorInputView.swift; sourceTree = "<group>"; };
 		6FB18B4E236493C100E33924 /* Jenkinsfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Jenkinsfile; sourceTree = SOURCE_ROOT; };
 		6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */ = {isa = PBXFileReference; lastKnownFileType = file; path = aquaplane.z80; sourceTree = "<group>"; };
@@ -268,6 +272,8 @@
 				6FB18B4E236493C100E33924 /* Jenkinsfile */,
 				6F8FFC0C25B194AC00908502 /* BuildScripts */,
 				6FA10D9E308DEDB600F0B47F /* MetalScreenView.swift */,
+				6FA10DA0308E0A7600F0B47F /* EmulatorView.swift */,
+				6FA10DA2308E0A9000F0B47F /* SpeccyMacApp.swift */,
 			);
 			path = speccyMac;
 			sourceTree = "<group>";
@@ -442,6 +448,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				6F036DBD1F44C210005A16D0 /* Structs.swift in Sources */,
+				6FA10DA1308E0A7600F0B47F /* EmulatorView.swift in Sources */,
 				6F2063AC28B127C9007A69FF /* GameLoaderProtocol.swift in Sources */,
 				6F2063B028B1289E007A69FF /* Z80Loader.swift in Sources */,
 				6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */,
@@ -458,6 +465,7 @@
 				6FA10D9F308DEDB600F0B47F /* MetalScreenView.swift in Sources */,
 				6F036DBF1F44C68D005A16D0 /* Spectrum.swift in Sources */,
 				6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */,
+				6FA10DA3308E0A9000F0B47F /* SpeccyMacApp.swift in Sources */,
 				6F2063AE28B12878007A69FF /* SNALoader.swift in Sources */,
 				6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */,
 				6F37E1BE1F46F25F005A4976 /* GameSelectViewController.swift in Sources */,
@@ -604,7 +612,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -770,7 +778,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -798,7 +806,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MACOSX_DEPLOYMENT_TARGET = 12.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 0.8;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
