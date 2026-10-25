@@ -25,6 +25,39 @@ enum TapeTiming {
     static let headerPilotCount = 8063   // pilot pulses for a header block
     static let dataPilotCount = 3223     // pilot pulses for a data block
     static let pauseTStates: UInt32 = 3_500_000  // ~1s pause between blocks
+
+    // T-states per millisecond (for converting pause fields).
+    static let tStatesPerMs: UInt32 = 3500
+
+    /// Append the data bytes of a block as pulses: each byte MSB first, two
+    /// pulses per bit, using the supplied zero/one pulse lengths. `usedBits`
+    /// limits how many top bits of the final byte are emitted (8 = all).
+    static func appendData(_ block: [UInt8],
+                           zero: UInt32,
+                           one: UInt32,
+                           usedBitsInLastByte: Int = 8,
+                           to pulses: inout [UInt32]) {
+        for (index, byte) in block.enumerated() {
+            let bits = (index == block.count - 1) ? usedBitsInLastByte : 8
+            var mask: UInt8 = 0x80
+            for _ in 0..<bits {
+                let pulse = (byte & mask) != 0 ? one : zero
+                pulses.append(pulse)
+                pulses.append(pulse)
+                mask >>= 1
+            }
+        }
+    }
+
+    /// Append a pilot tone of `count` pulses followed by the two sync pulses,
+    /// using standard timings.
+    static func appendPilotAndSync(pilotCount: Int, to pulses: inout [UInt32]) {
+        for _ in 0..<pilotCount {
+            pulses.append(pilotPulse)
+        }
+        pulses.append(sync1)
+        pulses.append(sync2)
+    }
 }
 
 struct TapLoader {
@@ -59,28 +92,14 @@ struct TapLoader {
     private static func appendBlock(_ block: [UInt8], to pulses: inout [UInt32]) {
         guard let flag = block.first else { return }
 
-        // Pilot tone: header blocks (flag < 0x80) use a longer tone.
+        // Header blocks (flag < 0x80) use a longer pilot tone.
         let pilotCount = flag < 0x80 ? TapeTiming.headerPilotCount
                                      : TapeTiming.dataPilotCount
-        for _ in 0..<pilotCount {
-            pulses.append(TapeTiming.pilotPulse)
-        }
-
-        // Sync pair.
-        pulses.append(TapeTiming.sync1)
-        pulses.append(TapeTiming.sync2)
-
-        // Data: each byte MSB first, two pulses per bit.
-        for byte in block {
-            var mask: UInt8 = 0x80
-            while mask != 0 {
-                let pulse = (byte & mask) != 0 ? TapeTiming.onePulse
-                                               : TapeTiming.zeroPulse
-                pulses.append(pulse)
-                pulses.append(pulse)
-                mask >>= 1
-            }
-        }
+        TapeTiming.appendPilotAndSync(pilotCount: pilotCount, to: &pulses)
+        TapeTiming.appendData(block,
+                              zero: TapeTiming.zeroPulse,
+                              one: TapeTiming.onePulse,
+                              to: &pulses)
 
         // Pause after the block (a single long pulse).
         pulses.append(TapeTiming.pauseTStates)

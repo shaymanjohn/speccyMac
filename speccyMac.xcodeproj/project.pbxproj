@@ -23,6 +23,7 @@
 		6F33B92F1F38F56E00B886CD /* thehobbit.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9241F38F55200B886CD /* thehobbit.sna */; };
 		6F51A16D308E1BC300E95204 /* TapeDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F51A16C308E1BC300E95204 /* TapeDeck.swift */; };
 		6F51A16F308E1C0200E95204 /* TapLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F51A16E308E1C0200E95204 /* TapLoader.swift */; };
+		6F51A171308E217600E95204 /* TzxLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F51A170308E217600E95204 /* TzxLoader.swift */; };
 		6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7618D91F49697F00D793D7 /* Machine.swift */; };
 		6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */; };
 		6F8E15421F3B2F9900A34AB4 /* techted.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153F1F3B2ED800A34AB4 /* techted.sna */; };
@@ -90,6 +91,7 @@
 		6F33B9261F38F55200B886CD /* deathchase.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = deathchase.sna; sourceTree = "<group>"; };
 		6F51A16C308E1BC300E95204 /* TapeDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapeDeck.swift; sourceTree = "<group>"; };
 		6F51A16E308E1C0200E95204 /* TapLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapLoader.swift; sourceTree = "<group>"; };
+		6F51A170308E217600E95204 /* TzxLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TzxLoader.swift; sourceTree = "<group>"; };
 		6F7618D91F49697F00D793D7 /* Machine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Machine.swift; sourceTree = "<group>"; };
 		6F8E15381F3B14E100A34AB4 /* testz80.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = testz80.sna; sourceTree = "<group>"; };
 		6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = uridium.sna; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 				6F2063AD28B12878007A69FF /* SNALoader.swift */,
 				6F2063AF28B1289E007A69FF /* Z80Loader.swift */,
 				6F51A16E308E1C0200E95204 /* TapLoader.swift */,
+				6F51A170308E217600E95204 /* TzxLoader.swift */,
 			);
 			path = Loaders;
 			sourceTree = "<group>";
@@ -442,6 +445,7 @@
 			files = (
 				6F036DBD1F44C210005A16D0 /* Structs.swift in Sources */,
 				6FA10DA1308E0A7600F0B47F /* EmulatorView.swift in Sources */,
+				6F51A171308E217600E95204 /* TzxLoader.swift in Sources */,
 				6F2063AC28B127C9007A69FF /* GameLoaderProtocol.swift in Sources */,
 				6F2063B028B1289E007A69FF /* Z80Loader.swift in Sources */,
 				6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */,

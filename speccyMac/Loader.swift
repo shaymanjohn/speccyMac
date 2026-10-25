@@ -12,6 +12,7 @@ enum SupportedGameTypes: String, CaseIterable {
     case SNA = "sna"
     case Z80 = "z80"
     case TAP = "tap"
+    case TZX = "tzx"
     
     /// Snapshot loader for this type, or nil for tape formats (which are played
     /// in real time by the TapeDeck rather than splatted into memory).
@@ -21,14 +22,14 @@ enum SupportedGameTypes: String, CaseIterable {
             return SNALoader.self
         case .Z80:
             return Z80Loader.self
-        case .TAP:
+        case .TAP, .TZX:
             return nil
         }
     }
 
     /// Whether this is a tape format (real-time load) rather than a snapshot.
     var isTape: Bool {
-        self == .TAP
+        self == .TAP || self == .TZX
     }
 }
 

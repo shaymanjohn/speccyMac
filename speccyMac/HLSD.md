@@ -138,14 +138,34 @@ The rendering path:
 
 **Files:** `Loader.swift`, `Loaders/GameLoaderProtocol.swift`, `Loaders/SNALoader.swift`, `Loaders/Z80Loader.swift`
 
-A factory pattern with protocol-based loaders:
+Two distinct mechanisms, chosen by file extension in `Spectrum.loadGame()`:
+
+**Snapshots** (instant state restore) — a factory pattern with protocol-based loaders:
 
 | Format | File | Notes |
 |--------|------|-------|
 | `.sna` | `SNALoader.swift` | 48K snapshots. PC recovered from stack. |
 | `.z80` | `Z80Loader.swift` | Version 1 only. Supports RLE compression. |
 
-Loading flow: pause CPU → create Loader → restore registers + RAM → reset video/audio state → unpause CPU.
+Snapshot flow: pause CPU → create Loader → restore registers + RAM → reset video/audio state → unpause CPU.
+
+`SupportedGameTypes` maps each extension to an optional `GameLoaderProtocol.Type` (nil for tape formats) and exposes `isTape`.
+
+### 4.9 Tape Loading
+
+**Files:** `TapeDeck.swift`, `Loaders/TapLoader.swift`
+
+Unlike snapshots, tapes are **played in real time**: the loader expands the tape into a stream of pulse durations (T-states) and the Spectrum's own ROM loader reads them off the emulated EAR line.
+
+| Format | File | Notes |
+|--------|------|-------|
+| `.tap` | `TapLoader.swift` | Blocks expanded with standard ROM timings. |
+
+- **`TapeDeck`** holds the pulse list and plays it: `advance(_:)` (called from `tick()`) counts down the current pulse and flips the EAR level when it elapses; `currentLevel` is the EAR input. Transport is `play`/`stop`/`rewind`. Shared UI/emulation state is guarded by an `NSLock`, with a lock-free `isActive` gate so the emulation hot path does nothing when no tape is playing.
+- **EAR injection** — `Spectrum.input()` ORs the tape level into bit 6 of the `0xFE` keyboard-port read, which is what the ROM `LD-BYTES` routine samples.
+- **Loading sound** — `tick()` also mixes the tape level into bit 6 of the value sent to `AudioStreamer.updateSample`, so the loading tone plays through the speaker as on real hardware.
+- **Timings** — `TapeTiming` holds the standard ROM pulse lengths (pilot 2168, sync 667/735, zero 855, one 1710 T-states). These are the defaults a TZX standard-speed block uses, so the expansion is shared with future tape formats.
+- **UI** — loading a tape resets the machine to the BASIC prompt (`processor.reset()`); the user types `LOAD ""` and presses the toolbar's Play Tape button. The button auto-resets when the deck reaches the end of the tape (a SwiftUI `.task` poll syncs its state).
 
 ## 5. Timing Model
 
@@ -258,6 +278,8 @@ Game file (.sna/.z80) ──► Loader ──► Memory + Z80 registers
 | `Loader.swift` | ~50 | Game loading factory |
 | `Loaders/SNALoader.swift` | ~60 | .sna format loader |
 | `Loaders/Z80Loader.swift` | ~90 | .z80 v1 format loader |
+| `Loaders/TapLoader.swift` | ~90 | .tap tape → pulse expansion |
+| `TapeDeck.swift` | ~130 | Real-time tape pulse playback |
 | `Machine.swift` | ~60 | Machine protocol + extension |
 | `Structs.swift` | ~55 | Colour, KeyMap, Game structs |
 
@@ -265,7 +287,7 @@ Game file (.sna/.z80) ──► Loader ──► Memory + Z80 registers
 
 - **48K only:** No 128K paging or AY sound chip support.
 - **Z80 v1 snapshots only:** V2/V3 .z80 files with 128K bank switching not supported.
-- **No tape loading:** No TZX/TAP support; games must be pre-loaded snapshots.
+- **Tape loading:** `.tap` is supported (real-time ROM loading). `.tzx` and fast/instant loading are not yet implemented.
 - **Prefixed instruction contention:** ED/DD/FD prefix operand reads still occur eagerly (minor timing inaccuracy for code executing from contended RAM).
 - **LDIR/LDDR contention:** Block transfer instructions don't apply per-iteration contention to intermediate addresses.
 - **No snow effect:** The I-register display corruption on real hardware is not emulated.

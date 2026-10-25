@@ -430,8 +430,15 @@ class Spectrum: Machine {
         if type?.isTape == true {
             // Tape: reset to the BASIC prompt and load the tape into the deck.
             // The user presses Play and types LOAD "" to start loading.
-            if let data = try? Data(contentsOf: gameUrl),
-               let pulses = TapLoader.pulses(from: data) {
+            let pulses: [UInt32]?
+            if let data = try? Data(contentsOf: gameUrl) {
+                pulses = (ext == "tzx") ? TzxLoader.pulses(from: data)
+                                        : TapLoader.pulses(from: data)
+            } else {
+                pulses = nil
+            }
+
+            if let pulses = pulses {
                 tapeDeck.load(pulses: pulses)
                 processor.reset()
                 videoRow = 0
