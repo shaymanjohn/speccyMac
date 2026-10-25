@@ -38,6 +38,7 @@ protocol Machine : AnyObject {
     // Tape transport (no-op on machines without a tape).
     var tapeLoaded: Bool { get }
     var tapePlaying: Bool { get }
+    var fastLoad: Bool { get set }
     func playTape()
     func stopTape()
 }

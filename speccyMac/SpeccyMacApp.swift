@@ -31,6 +31,8 @@ struct ContentView: View {
     // Tape transport state, mirrored for the toolbar control.
     @State private var tapeLoaded = false
     @State private var tapePlaying = false
+    // Fast tape loading (uncapped emulation while a tape plays).
+    @State private var fastLoad = true
 
     // Built-in games, sorted by display name.
     private var games: [Game] {
@@ -70,6 +72,11 @@ struct ContentView: View {
                         tapePlaying = machine.tapePlaying
                     }
                     .disabled(!tapeLoaded)
+
+                    Toggle("Fast Load", isOn: $fastLoad)
+                        .onChange(of: fastLoad) { _, newValue in
+                            machine.fastLoad = newValue
+                        }
 
                     Menu("Display") {
                         Picker("Display", selection: $displayMode) {

@@ -34,6 +34,14 @@ final class TapeDeck {
     // instruction lag), letting tick() avoid taking the lock when idle.
     private(set) var isActive = false
 
+    // When true, long pulses (inter-block pauses) are shortened so fast loading
+    // doesn't waste emulated seconds idling between blocks. Real data/pilot/sync
+    // pulses are only a few thousand T-states, far below the threshold, so they
+    // are never affected. Set by the machine when fast load is enabled.
+    var clampLongPulses = false
+    private let longPulseThreshold: UInt32 = 500_000   // pauses are ~3.5M
+    private let clampedPauseLength: UInt32 = 200_000    // ~57ms
+
     /// Whether a tape is loaded and currently playing.
     var isPlaying: Bool {
         lock.lock(); defer { lock.unlock() }
@@ -123,7 +131,15 @@ final class TapeDeck {
             t -= remaining
             level.toggle()
             pulseIndex += 1
-            remaining = pulseIndex < pulses.count ? pulses[pulseIndex] : 0
+            if pulseIndex < pulses.count {
+                var next = pulses[pulseIndex]
+                if clampLongPulses && next > longPulseThreshold {
+                    next = clampedPauseLength
+                }
+                remaining = next
+            } else {
+                remaining = 0
+            }
         }
     }
 }

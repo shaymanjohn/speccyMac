@@ -167,6 +167,7 @@ Unlike snapshots, tapes are **played in real time**: the loader expands the tape
 - **Loading sound** — `tick()` also mixes the tape level into bit 6 of the value sent to `AudioStreamer.updateSample`, so the loading tone plays through the speaker as on real hardware.
 - **Shared timings** — `TapeTiming` holds the standard ROM pulse lengths (pilot 2168, sync 667/735, zero 855, one 1710 T-states) and the pulse-expansion helpers (`appendData`, `appendPilotAndSync`). Both loaders use them: `.tap` blocks use the standard timings; TZX data blocks supply their own.
 - **UI** — loading a tape resets the machine to the BASIC prompt (`processor.reset()`); the user types `LOAD ""` and presses the toolbar's Play Tape button. The button auto-resets when the deck reaches the end of the tape (a SwiftUI `.task` poll syncs its state).
+- **Fast Load** — a toolbar toggle (`Spectrum.fastLoad`, default on). While a tape plays, `ZilogZ80.serviceInterrupts` skips the 50Hz frame sleep (`Spectrum.accelerating = fastLoad && tapeDeck.isActive`), so the emulation thread runs uncapped and loading completes much faster, then returns to normal speed. It also clamps inter-block pauses (any pulse > 500,000 T-states → ~200,000) so multi-block tapes don't idle. This works for every tape — standard or turbo — because it only removes the frame cap, not the loader. The trade-off is that audio frames are produced faster than real time, so the loading tone is largely silent while fast-loading; turning Fast Load off restores real-time loading with sound.
 
 **TZX block coverage** (`TzxLoader`): the loader walks blocks by ID. Supported:
 
@@ -299,7 +300,7 @@ Game file (.sna/.z80) ──► Loader ──► Memory + Z80 registers
 
 - **48K only:** No 128K paging or AY sound chip support.
 - **Z80 v1 snapshots only:** V2/V3 .z80 files with 128K bank switching not supported.
-- **Tape loading:** `.tap` and `.tzx` are supported (real-time ROM loading). TZX covers data/tone/pulse/pause/loop and metadata blocks; flow-control and raw-audio blocks are not yet handled. Fast/instant loading is not implemented.
+- **Tape loading:** `.tap` and `.tzx` are supported (real-time ROM loading). TZX covers data/tone/pulse/pause/loop and metadata blocks; flow-control and raw-audio blocks are not yet handled. Fast loading is accelerated playback (uncapped emulation); ROM-trap instant loading is not implemented.
 - **Prefixed instruction contention:** ED/DD/FD prefix operand reads still occur eagerly (minor timing inaccuracy for code executing from contended RAM).
 - **LDIR/LDDR contention:** Block transfer instructions don't apply per-iteration contention to intermediate addresses.
 - **No snow effect:** The I-register display corruption on real hardware is not emulated.

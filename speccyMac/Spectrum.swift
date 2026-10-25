@@ -38,6 +38,17 @@ class Spectrum: Machine {
     // Tape playback engine (feeds the EAR bit during LOAD).
     let tapeDeck = TapeDeck()
 
+    // When true, the emulation thread runs uncapped while a tape is playing so
+    // loading completes much faster, then returns to 50Hz. Works for any tape
+    // (standard or turbo) since it just removes the frame-rate cap.
+    var fastLoad = true {
+        didSet { tapeDeck.clampLongPulses = fastLoad }
+    }
+
+    /// Whether the emulation should currently run uncapped (fast tape loading).
+    /// Read by the Z80's frame pacing. Lock-free via the deck's `isActive` gate.
+    var accelerating: Bool { fastLoad && tapeDeck.isActive }
+
     // Last processor counter seen by tick(), used to advance the tape deck.
     private var lastTapeCounter: UInt32 = 0
 
@@ -149,6 +160,7 @@ class Spectrum: Machine {
         }
 
         beeper.machine = self
+        tapeDeck.clampLongPulses = fastLoad
         
         // Build contended memory delay table
         // 48K Spectrum: 312 scanlines per frame, 224 T-states per scanline = 69888 T-states/frame

@@ -350,8 +350,12 @@ class ZilogZ80 : Processor {
     final func serviceInterrupts() {
         let timeNow = Date.timeIntervalSinceReferenceDate
         let thisFrameTime = timeNow - lastFrame
-        
-        if thisFrameTime <= frameTime {
+
+        if machine.accelerating {
+            // Fast tape loading: run uncapped (no sleep). Keep lastFrame current
+            // so normal 50Hz pacing resumes cleanly once acceleration ends.
+            lastFrame = timeNow
+        } else if thisFrameTime <= frameTime {
             lastFrame += frameTime
             Thread.sleep(forTimeInterval: frameTime - thisFrameTime)
         } else {
