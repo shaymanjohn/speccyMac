@@ -11,11 +11,13 @@ import XCTest
 
 class MemoryTests: XCTestCase {
 
-    let memory = Memory("48.rom")
-    
+    // Use a full Spectrum so `memory.machine` is wired up. Memory.get/set apply
+    // contention for addresses in 0x4000-0x7FFF and force-unwrap `machine`, so a
+    // bare Memory (without a machine) crashes on any contended access.
+    let spectrum = Spectrum()
+    var memory: Memory { spectrum.memory }
+
     override func setUp() {
-        let _ = ZilogZ80(memory: memory)
-        
         super.setUp()
     }
     
@@ -40,7 +42,6 @@ class MemoryTests: XCTestCase {
     }
     
     func testPushAndPop() {
-        let _ = ZilogZ80(memory: memory)
         ZilogZ80.sp = 32768
         
         memory.push(5678)

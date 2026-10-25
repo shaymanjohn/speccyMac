@@ -21,7 +21,6 @@
 		6F33B92D1F38F56900B886CD /* monty.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9231F38F55200B886CD /* monty.sna */; };
 		6F33B92E1F38F56C00B886CD /* spacies.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9251F38F55200B886CD /* spacies.sna */; };
 		6F33B92F1F38F56E00B886CD /* thehobbit.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9241F38F55200B886CD /* thehobbit.sna */; };
-		6F37E1BE1F46F25F005A4976 /* GameSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F37E1BD1F46F25F005A4976 /* GameSelectViewController.swift */; };
 		6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7618D91F49697F00D793D7 /* Machine.swift */; };
 		6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */; };
 		6F8E15421F3B2F9900A34AB4 /* techted.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153F1F3B2ED800A34AB4 /* techted.sna */; };
@@ -58,10 +57,7 @@
 		6FEFA92A1F224FF500F9AD93 /* Z80+ed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA9291F224FF500F9AD93 /* Z80+ed.swift */; };
 		6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA92B1F22503000F9AD93 /* Z80+unprefixed.swift */; };
 		6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FEFA92D1F2250B200F9AD93 /* Z80+ddcb.swift */; };
-		6FFB31541F22379B00C15CD7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFB31531F22379B00C15CD7 /* AppDelegate.swift */; };
-		6FFB31561F22379B00C15CD7 /* Emulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFB31551F22379B00C15CD7 /* Emulator.swift */; };
 		6FFB31581F22379B00C15CD7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FFB31571F22379B00C15CD7 /* Assets.xcassets */; };
-		6FFB315B1F22379B00C15CD7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FFB31591F22379B00C15CD7 /* Main.storyboard */; };
 		6FFE6FC21F376BEF00EBCC3B /* MemoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FFE6FC11F376BEF00EBCC3B /* MemoryTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -90,7 +86,6 @@
 		6F33B9241F38F55200B886CD /* thehobbit.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = thehobbit.sna; sourceTree = "<group>"; };
 		6F33B9251F38F55200B886CD /* spacies.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = spacies.sna; sourceTree = "<group>"; };
 		6F33B9261F38F55200B886CD /* deathchase.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = deathchase.sna; sourceTree = "<group>"; };
-		6F37E1BD1F46F25F005A4976 /* GameSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSelectViewController.swift; sourceTree = "<group>"; };
 		6F7618D91F49697F00D793D7 /* Machine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Machine.swift; sourceTree = "<group>"; };
 		6F8E15381F3B14E100A34AB4 /* testz80.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = testz80.sna; sourceTree = "<group>"; };
 		6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = uridium.sna; sourceTree = "<group>"; };
@@ -133,10 +128,7 @@
 		6FEFA92B1F22503000F9AD93 /* Z80+unprefixed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+unprefixed.swift"; sourceTree = "<group>"; };
 		6FEFA92D1F2250B200F9AD93 /* Z80+ddcb.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Z80+ddcb.swift"; sourceTree = "<group>"; };
 		6FFB31501F22379B00C15CD7 /* speccyMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = speccyMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		6FFB31531F22379B00C15CD7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		6FFB31551F22379B00C15CD7 /* Emulator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Emulator.swift; sourceTree = "<group>"; };
 		6FFB31571F22379B00C15CD7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		6FFB315A1F22379B00C15CD7 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		6FFB315C1F22379B00C15CD7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		6FFB315D1F22379B00C15CD7 /* speccyMac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = speccyMac.entitlements; sourceTree = "<group>"; };
 		6FFE6FC11F376BEF00EBCC3B /* MemoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryTests.swift; sourceTree = "<group>"; };
@@ -248,10 +240,7 @@
 		6FFB31521F22379B00C15CD7 /* speccyMac */ = {
 			isa = PBXGroup;
 			children = (
-				6FFB31531F22379B00C15CD7 /* AppDelegate.swift */,
-				6FFB31551F22379B00C15CD7 /* Emulator.swift */,
 				6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */,
-				6F37E1BD1F46F25F005A4976 /* GameSelectViewController.swift */,
 				6F7618D91F49697F00D793D7 /* Machine.swift */,
 				6F036DBE1F44C68D005A16D0 /* Spectrum.swift */,
 				6FEFA90C1F2238A500F9AD93 /* Memory.swift */,
@@ -265,7 +254,6 @@
 				6FEFA91D1F223B3A00F9AD93 /* 48.rom */,
 				6FFB31571F22379B00C15CD7 /* Assets.xcassets */,
 				6FEFA91B1F223AA400F9AD93 /* z80ops.json */,
-				6FFB31591F22379B00C15CD7 /* Main.storyboard */,
 				6FFB315C1F22379B00C15CD7 /* Info.plist */,
 				6FC1A73B3038D8E400F3C4A8 /* HLSD.md */,
 				6FFB315D1F22379B00C15CD7 /* speccyMac.entitlements */,
@@ -384,7 +372,6 @@
 				6F33B92B1F38F56300B886CD /* deathchase.sna in Resources */,
 				6FFB31581F22379B00C15CD7 /* Assets.xcassets in Resources */,
 				5482246C28B3E90E00B3E933 /* technted.z80 in Resources */,
-				6FFB315B1F22379B00C15CD7 /* Main.storyboard in Resources */,
 				6FEFA91F1F223B5E00F9AD93 /* 48.rom in Resources */,
 				6FCC17D81F3EDE0D00B867E1 /* headoverheels.sna in Resources */,
 				5482246B28B3E90E00B3E933 /* brucelee.z80 in Resources */,
@@ -453,14 +440,12 @@
 				6F2063B028B1289E007A69FF /* Z80Loader.swift in Sources */,
 				6FEFA90D1F2238A500F9AD93 /* Memory.swift in Sources */,
 				6FA031661F5460CA00CD636E /* AudioStreamer.swift in Sources */,
-				6FFB31561F22379B00C15CD7 /* Emulator.swift in Sources */,
 				6FEFA90F1F2238C200F9AD93 /* ZilogZ80.swift in Sources */,
 				6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */,
 				6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */,
 				6FEFA9261F224F9000F9AD93 /* Z80+cb.swift in Sources */,
 				6FEFA9281F224FC000F9AD93 /* Z80+dd.swift in Sources */,
 				6FEFA92A1F224FF500F9AD93 /* Z80+ed.swift in Sources */,
-				6FFB31541F22379B00C15CD7 /* AppDelegate.swift in Sources */,
 				6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */,
 				6FA10D9F308DEDB600F0B47F /* MetalScreenView.swift in Sources */,
 				6F036DBF1F44C68D005A16D0 /* Spectrum.swift in Sources */,
@@ -468,7 +453,6 @@
 				6FA10DA3308E0A9000F0B47F /* SpeccyMacApp.swift in Sources */,
 				6F2063AE28B12878007A69FF /* SNALoader.swift in Sources */,
 				6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */,
-				6F37E1BE1F46F25F005A4976 /* GameSelectViewController.swift in Sources */,
 				6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -483,30 +467,20 @@
 		};
 /* End PBXTargetDependency section */
 
-/* Begin PBXVariantGroup section */
-		6FFB31591F22379B00C15CD7 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				6FFB315A1F22379B00C15CD7 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
 /* Begin XCBuildConfiguration section */
 		6FE514771F372CF1004F0751 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				INFOPLIST_FILE = speccyMacTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -518,14 +492,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				INFOPLIST_FILE = speccyMacTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -627,14 +602,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				INFOPLIST_FILE = speccyMacTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.karmatoad.speccyMacTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

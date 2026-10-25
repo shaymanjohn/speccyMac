@@ -13,6 +13,11 @@ import Cocoa
 import Metal
 import MetalKit
 
+/// Receives game-file drops from the Metal view.
+protocol DragDelegate: AnyObject {
+    func loadGame(_ fileUrl: URL)
+}
+
 final class MetalScreenView: MTKView {
 
     // Output frame size (screen + border).
@@ -41,11 +46,23 @@ final class MetalScreenView: MTKView {
     private var uniformBuffer: MTLBuffer!
 
     /// Mutually-exclusive display modes selectable from the UI.
-    enum DisplayMode: Int {
+    enum DisplayMode: Int, CaseIterable, Identifiable {
         case crisp = 0
         case smooth = 1
         case scanlines = 2
         case crt = 3
+
+        var id: Int { rawValue }
+
+        /// Human-readable name for menus/pickers.
+        var title: String {
+            switch self {
+            case .crisp:     return "Crisp"
+            case .smooth:    return "Smooth"
+            case .scanlines: return "Scanlines"
+            case .crt:       return "CRT"
+            }
+        }
     }
     private var displayMode: DisplayMode = .crisp
 

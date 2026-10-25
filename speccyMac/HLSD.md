@@ -13,12 +13,14 @@ The emulator targets cycle-accurate timing for the display area, enabling correc
 │                         macOS Application                           │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  AppDelegate                                                        │
+│  SpeccyMacApp (SwiftUI @main)                                       │
 │      │                                                              │
 │      ▼                                                              │
-│  Emulator (NSViewController) ──────── GameSelectViewController      │
-│      │                                     (modal game picker)      │
-│      ├── EmulatorInputView (keyboard)                               │
+│  ContentView (SwiftUI) ── toolbar: Games menu, Load…, Mode menu     │
+│      │                                                              │
+│      ▼                                                              │
+│  EmulatorView (NSViewRepresentable)                                 │
+│      ├── EmulatorInputView (keyboard, first responder)              │
 │      │        ▲ polled by Spectrum.input()                          │
 │      │                                                              │
 │      ├── MetalScreenView (display + drag-drop)                     │
@@ -45,11 +47,13 @@ The emulation thread runs continuously at ~50Hz (PAL frame rate). Frame images a
 
 ## 4. Component Details
 
-### 4.1 Emulator (View Controller)
+### 4.1 UI Layer (SwiftUI)
 
-**File:** `Emulator.swift`
+**Files:** `SpeccyMacApp.swift`, `EmulatorView.swift`
 
-The main coordinator. Creates the `Spectrum` instance, creates and wires the Metal display view and input view, and starts emulation. Handles game selection (modal UI) and drag-and-drop loading.
+The app is a SwiftUI application (`@main struct SpeccyMacApp`). `ContentView` owns the `Spectrum` instance and the selected display mode, and provides a toolbar with a built-in **Games** menu, a **Load…** button (a `.fileImporter` for `.sna`/`.z80`), and a **Mode** menu (Crisp / Smooth / Scanlines / CRT).
+
+`EmulatorView` is an `NSViewRepresentable` that bridges the AppKit emulator views into SwiftUI: its root is an `EmulatorInputView` (keyboard + first responder) containing a pinned `MetalScreenView`. It wires `machine.emulatorView`/`metalView`, starts emulation, pushes the display mode via `updateNSView`, and routes drag-and-drop game loads back to the machine through a `Coordinator` conforming to `DragDelegate`.
 
 ### 4.2 Spectrum (Machine)
 
@@ -104,7 +108,7 @@ Emulates the Spectrum's beeper (1-bit audio output) using Apple's AudioQueue API
 
 **File:** `EmulatorInputView.swift`
 
-An `NSView` subclass that captures `keyDown`/`keyUp`/`flagsChanged` events. Maintains a `keysDown` array of currently-pressed macOS key codes, polled by `Spectrum.input()` whenever the Z80 reads port 0xFE.
+An `NSView` subclass that captures `keyDown`/`keyUp`/`flagsChanged` events. Maintains a `keysDown` array of currently-pressed macOS key codes, polled by `Spectrum.input()` whenever the Z80 reads port 0xFE. When hosted in a window (via the `EmulatorView` representable) it claims first responder and clears stale key state in `viewDidMoveToWindow`.
 
 The Spectrum class translates macOS key codes to the Spectrum's 8-row keyboard matrix using a 61-entry `keyMap` lookup table.
 
@@ -114,7 +118,7 @@ Kempston joystick is emulated on cursor keys + backtick (fire).
 
 **File:** `MetalScreenView.swift`
 
-An `MTKView` subclass that renders the emulator frame with Metal and accepts drag-and-drop of game files. It is created programmatically in `Emulator.viewDidLoad()` and pinned to fill the storyboard's container image view.
+An `MTKView` subclass that renders the emulator frame with Metal and accepts drag-and-drop of game files. It is created in the `EmulatorView` representable and pinned to fill the `EmulatorInputView` container.
 
 Pixel generation happens entirely on the GPU: the CPU uploads the raw Spectrum data and a fragment shader expands it into pixels (resolving ink/paper, bright, and flash, and filling the border).
 
@@ -124,10 +128,11 @@ The rendering path:
 3. `updateFrame()` uploads the screen and attribute bytes into two reused `R8Uint` textures (32x192) via `replace(region:)`, copies the border indices and flash flag into small buffers, and requests a redraw. ~12 KB is uploaded per frame (vs ~368 KB for a full bitmap).
 4. The 16-entry palette is uploaded once (lazily, on the first frame) as a `float4` constant buffer via `setPalette()`.
 5. The `draw()` method renders a single quad over an aspect-fit viewport, writing the uniforms (display-mode flags plus the vertical scale factor `scaleY = viewportHeight / 288`) at this point since the viewport scale is only known here. Pixel colour is resolved by a shader helper `colourAt(px, py)`: it decides border vs screen, reads the relevant screen/attribute byte via integer texture reads, resolves ink/paper (with bright and flash-invert), and returns the palette colour. Border pixels use `borderLine[row]`.
-6. Three mutually-exclusive display modes are selected via a segmented control (Crisp / Smooth / Scanlines) wired to `Emulator.changeDisplayMode(_:)` → `MetalScreenView.setDisplayMode(_:)`. All three are implemented in the fragment shader (filtering can't rely on a sampler, since screen pixels come from a palette lookup rather than a sampleable RGBA texture):
+6. Four mutually-exclusive display modes are selected via a SwiftUI menu in the toolbar, wired through `ContentView` → `EmulatorView` → `MetalScreenView.setDisplayMode(_:)`. All are implemented in the fragment shader (filtering can't rely on a sampler, since screen pixels come from a palette lookup rather than a sampleable RGBA texture):
    - **Crisp:** point-sample the covering pixel.
    - **Smooth:** bilinear blend of the four `colourAt` neighbours around the sample point.
    - **Scanlines:** crisp colour, then darkened toward the gaps between source rows using `fract(fy)`. The effect fades out below ~2x scale (via `scaleY`) to avoid aliasing in small windows.
+   - **CRT:** scanlines plus barrel curvature (with a black bezel outside the tube), an aperture-grille shadow mask across output columns, and a vignette.
 
 ### 4.8 Game Loading
 
@@ -246,16 +251,15 @@ Game file (.sna/.z80) ──► Loader ──► Memory + Z80 registers
 | `z80/Z80+ddcb.swift` | ~50 | DDCB/FDCB-prefix opcodes |
 | `Memory.swift` | ~170 | 64KB RAM with contention |
 | `AudioStreamer.swift` | ~230 | Beeper audio via AudioQueue |
-| `Emulator.swift` | ~65 | Main view controller |
-| `EmulatorInputView.swift` | ~50 | Keyboard capture |
-| `MetalScreenView.swift` | ~245 | Metal display + drag-drop |
+| `SpeccyMacApp.swift` | ~90 | SwiftUI @main app + ContentView (toolbar/menus) |
+| `EmulatorView.swift` | ~65 | NSViewRepresentable hosting the emulator |
+| `EmulatorInputView.swift` | ~75 | Keyboard capture + first responder |
+| `MetalScreenView.swift` | ~340 | Metal display + shaders + drag-drop |
 | `Loader.swift` | ~50 | Game loading factory |
 | `Loaders/SNALoader.swift` | ~60 | .sna format loader |
 | `Loaders/Z80Loader.swift` | ~90 | .z80 v1 format loader |
-| `GameSelectViewController.swift` | ~50 | Game selection UI |
 | `Machine.swift` | ~60 | Machine protocol + extension |
 | `Structs.swift` | ~55 | Colour, KeyMap, Game structs |
-| `AppDelegate.swift` | ~30 | App lifecycle |
 
 ## 9. Limitations and Future Work
 
