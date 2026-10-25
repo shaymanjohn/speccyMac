@@ -24,6 +24,9 @@
 		6F51A16D308E1BC300E95204 /* TapeDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F51A16C308E1BC300E95204 /* TapeDeck.swift */; };
 		6F51A16F308E1C0200E95204 /* TapLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F51A16E308E1C0200E95204 /* TapLoader.swift */; };
 		6F51A171308E217600E95204 /* TzxLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F51A170308E217600E95204 /* TzxLoader.swift */; };
+		6F51A174308E503D00E95204 /* ZIPFoundation in Frameworks */ = {isa = PBXBuildFile; productRef = 6F51A173308E503D00E95204 /* ZIPFoundation */; };
+		6F51A176308E508100E95204 /* ZipLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F51A175308E508100E95204 /* ZipLoader.swift */; };
+		6F51A17E308E58B100E95204 /* OnlineBrowser-DESIGN.md in Resources */ = {isa = PBXBuildFile; fileRef = 6F51A17D308E58B100E95204 /* OnlineBrowser-DESIGN.md */; };
 		6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7618D91F49697F00D793D7 /* Machine.swift */; };
 		6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */; };
 		6F8E15421F3B2F9900A34AB4 /* techted.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F8E153F1F3B2ED800A34AB4 /* techted.sna */; };
@@ -92,6 +95,8 @@
 		6F51A16C308E1BC300E95204 /* TapeDeck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapeDeck.swift; sourceTree = "<group>"; };
 		6F51A16E308E1C0200E95204 /* TapLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapLoader.swift; sourceTree = "<group>"; };
 		6F51A170308E217600E95204 /* TzxLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TzxLoader.swift; sourceTree = "<group>"; };
+		6F51A175308E508100E95204 /* ZipLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZipLoader.swift; sourceTree = "<group>"; };
+		6F51A17D308E58B100E95204 /* OnlineBrowser-DESIGN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "OnlineBrowser-DESIGN.md"; sourceTree = "<group>"; };
 		6F7618D91F49697F00D793D7 /* Machine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Machine.swift; sourceTree = "<group>"; };
 		6F8E15381F3B14E100A34AB4 /* testz80.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = testz80.sna; sourceTree = "<group>"; };
 		6F8E153E1F3B2ECA00A34AB4 /* uridium.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = uridium.sna; sourceTree = "<group>"; };
@@ -152,6 +157,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6F51A174308E503D00E95204 /* ZIPFoundation in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,6 +172,7 @@
 				6F2063AF28B1289E007A69FF /* Z80Loader.swift */,
 				6F51A16E308E1C0200E95204 /* TapLoader.swift */,
 				6F51A170308E217600E95204 /* TzxLoader.swift */,
+				6F51A175308E508100E95204 /* ZipLoader.swift */,
 			);
 			path = Loaders;
 			sourceTree = "<group>";
@@ -271,6 +278,7 @@
 				6FA10DA0308E0A7600F0B47F /* EmulatorView.swift */,
 				6FA10DA2308E0A9000F0B47F /* SpeccyMacApp.swift */,
 				6F51A16C308E1BC300E95204 /* TapeDeck.swift */,
+				6F51A17D308E58B100E95204 /* OnlineBrowser-DESIGN.md */,
 			);
 			path = speccyMac;
 			sourceTree = "<group>";
@@ -310,6 +318,9 @@
 			dependencies = (
 			);
 			name = speccyMac;
+			packageProductDependencies = (
+				6F51A173308E503D00E95204 /* ZIPFoundation */,
+			);
 			productName = speccyMac;
 			productReference = 6FFB31501F22379B00C15CD7 /* speccyMac.app */;
 			productType = "com.apple.product-type.application";
@@ -350,6 +361,9 @@
 				Base,
 			);
 			mainGroup = 6FFB31471F22379B00C15CD7;
+			packageReferences = (
+				6F51A172308E503D00E95204 /* XCRemoteSwiftPackageReference "ZIPFoundation" */,
+			);
 			productRefGroup = 6FFB31511F22379B00C15CD7 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -387,6 +401,7 @@
 				6F93325E1F4F6B35000CA284 /* chuckie.sna in Resources */,
 				6FBB5FFC29A249F100F369A8 /* aquaplane.z80 in Resources */,
 				6F33B92D1F38F56900B886CD /* monty.sna in Resources */,
+				6F51A17E308E58B100E95204 /* OnlineBrowser-DESIGN.md in Resources */,
 				6FCC17D51F3EDE0300B867E1 /* cybernoid2.sna in Resources */,
 				6FCC17D21F3EDDF900B867E1 /* batman.sna in Resources */,
 				6F93325F1F4F6B38000CA284 /* batty.sna in Resources */,
@@ -463,6 +478,7 @@
 				6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */,
 				6FA10DA3308E0A9000F0B47F /* SpeccyMacApp.swift in Sources */,
 				6F2063AE28B12878007A69FF /* SNALoader.swift in Sources */,
+				6F51A176308E508100E95204 /* ZipLoader.swift in Sources */,
 				6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */,
 				6F51A16F308E1C0200E95204 /* TapLoader.swift in Sources */,
 				6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */,
@@ -839,6 +855,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6F51A172308E503D00E95204 /* XCRemoteSwiftPackageReference "ZIPFoundation" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/weichsel/ZIPFoundation";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.9.20;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6F51A173308E503D00E95204 /* ZIPFoundation */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6F51A172308E503D00E95204 /* XCRemoteSwiftPackageReference "ZIPFoundation" */;
+			productName = ZIPFoundation;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6FFB31481F22379B00C15CD7 /* Project object */;
 }

@@ -162,6 +162,8 @@ Unlike snapshots, tapes are **played in real time**: the loader expands the tape
 | `.tap` | `TapLoader.swift` | Blocks expanded with standard ROM timings. |
 | `.tzx` | `TzxLoader.swift` | Block-structured tape; see coverage below. |
 
+**Zip archives** (`Loaders/ZipLoader.swift`, via the ZIPFoundation package): a `.zip` is unwrapped by `Spectrum.loadGame` before dispatch — the first entry whose extension is a supported game type (`.sna/.z80/.tap/.tzx`, chosen deterministically by sorted path) is extracted to a temporary file and loaded through the normal path. So any supported format works zipped, including real-time tape loading. Multi-game archives currently load the first match.
+
 - **`TapeDeck`** holds the pulse list and plays it: `advance(_:)` (called from `tick()`) counts down the current pulse and flips the EAR level when it elapses; `currentLevel` is the EAR input. Transport is `play`/`stop`/`rewind`. Shared UI/emulation state is guarded by an `NSLock`, with a lock-free `isActive` gate so the emulation hot path does nothing when no tape is playing.
 - **EAR injection** — `Spectrum.input()` ORs the tape level into bit 6 of the `0xFE` keyboard-port read, which is what the ROM `LD-BYTES` routine samples.
 - **Loading sound** — `tick()` also mixes the tape level into bit 6 of the value sent to `AudioStreamer.updateSample`, so the loading tone plays through the speaker as on real hardware.
@@ -292,6 +294,7 @@ Game file (.sna/.z80) ──► Loader ──► Memory + Z80 registers
 | `Loaders/Z80Loader.swift` | ~90 | .z80 v1 format loader |
 | `Loaders/TapLoader.swift` | ~90 | .tap tape → pulse expansion |
 | `Loaders/TzxLoader.swift` | ~230 | .tzx tape → pulse expansion |
+| `Loaders/ZipLoader.swift` | ~65 | .zip → extract inner game (ZIPFoundation) |
 | `TapeDeck.swift` | ~130 | Real-time tape pulse playback |
 | `Machine.swift` | ~60 | Machine protocol + extension |
 | `Structs.swift` | ~55 | Colour, KeyMap, Game structs |

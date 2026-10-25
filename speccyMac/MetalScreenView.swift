@@ -447,7 +447,8 @@ final class MetalScreenView: MTKView {
            let path = paths.first {
 
             let fileExtension = (path as NSString).pathExtension.lowercased()
-            if SupportedGameTypes.allCases.first(where: { $0.rawValue == fileExtension }) != nil {
+            if fileExtension == "zip" ||
+               SupportedGameTypes.allCases.first(where: { $0.rawValue == fileExtension }) != nil {
                 return .copy
             }
         }

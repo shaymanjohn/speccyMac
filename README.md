@@ -21,13 +21,18 @@ Collaborators welcomed.
 * Joypad support
 * Hi-res border
 * Check all timings
-* Contended memory
-* Add zip support
-* Add Z80 file support
-* Add TZX/SZX file support
+* SZX file support
 * 128K mode
 * AY sounds
 * Lots more unit tests
+
+## Done
+
+* Contended memory
+* Zip support
+* Z80 file support
+* TAP and TZX tape loading (with fast load)
+* Metal rendering with display modes (crisp / smooth / scanlines / CRT)
 
 ## Acknowledgements
 

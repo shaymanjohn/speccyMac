@@ -437,6 +437,17 @@ class Spectrum: Machine {
         clicks = 0
 
         let ext = gameUrl.pathExtension.lowercased()
+
+        if ext == "zip" {
+            // Unwrap the archive and load the first supported game inside it.
+            if let inner = ZipLoader.extractGame(from: gameUrl) {
+                loadGame(inner)
+            } else {
+                tapeLoadFailed(gameUrl)
+            }
+            return
+        }
+
         let type = SupportedGameTypes.allCases.first { $0.rawValue == ext }
 
         if type?.isTape == true {

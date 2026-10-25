@@ -39,11 +39,15 @@ struct ContentView: View {
         machine.games.sorted { $0.name < $1.name }
     }
 
-    // Content types the file importer accepts (.sna / .z80 / .tap).
+    // Content types the file importer accepts (.sna / .z80 / .tap / .tzx / .zip).
     private var importableTypes: [UTType] {
-        SupportedGameTypes.allCases.compactMap {
+        var types = SupportedGameTypes.allCases.compactMap {
             UTType(filenameExtension: $0.rawValue)
         }
+        if let zip = UTType(filenameExtension: "zip") {
+            types.append(zip)
+        }
+        return types
     }
 
     var body: some View {
