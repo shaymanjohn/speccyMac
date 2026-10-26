@@ -49,6 +49,7 @@
 		6FA4F429308F9D0C00A957C9 /* CPUStateLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F428308F9D0C00A957C9 /* CPUStateLock.swift */; };
 		6FA4F42B308FADA100A957C9 /* AYChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F42A308FADA100A957C9 /* AYChip.swift */; };
 		6FA4F42D308FAE1E00A957C9 /* AYChipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F42C308FAE1E00A957C9 /* AYChipTests.swift */; };
+		6FA4F42F308FC1F400A957C9 /* AY-DEBUG-NOTES.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FA4F42E308FC1F400A957C9 /* AY-DEBUG-NOTES.md */; };
 		6FBB5FFC29A249F100F369A8 /* aquaplane.z80 in Resources */ = {isa = PBXBuildFile; fileRef = 6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */; };
 		6FC90B4F1F5295AA002506DC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC90B4E1F5295AA002506DC /* README.md */; };
 		6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */; };
@@ -130,6 +131,7 @@
 		6FA4F428308F9D0C00A957C9 /* CPUStateLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUStateLock.swift; sourceTree = "<group>"; };
 		6FA4F42A308FADA100A957C9 /* AYChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AYChip.swift; sourceTree = "<group>"; };
 		6FA4F42C308FAE1E00A957C9 /* AYChipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AYChipTests.swift; sourceTree = "<group>"; };
+		6FA4F42E308FC1F400A957C9 /* AY-DEBUG-NOTES.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "AY-DEBUG-NOTES.md"; sourceTree = "<group>"; };
 		6FB18B4E236493C100E33924 /* Jenkinsfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Jenkinsfile; sourceTree = SOURCE_ROOT; };
 		6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */ = {isa = PBXFileReference; lastKnownFileType = file; path = aquaplane.z80; sourceTree = "<group>"; };
 		6FC1A73B3038D8E400F3C4A8 /* HLSD.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = HLSD.md; sourceTree = "<group>"; };
@@ -309,6 +311,7 @@
 				6F51A17D308E58B100E95204 /* OnlineBrowser-DESIGN.md */,
 				6FA4F424308F9BBF00A957C9 /* Spectrum128.swift */,
 				6FA4F42A308FADA100A957C9 /* AYChip.swift */,
+				6FA4F42E308FC1F400A957C9 /* AY-DEBUG-NOTES.md */,
 			);
 			path = speccyMac;
 			sourceTree = "<group>";
@@ -436,6 +439,7 @@
 				6F51A17E308E58B100E95204 /* OnlineBrowser-DESIGN.md in Resources */,
 				6FCC17D51F3EDE0300B867E1 /* cybernoid2.sna in Resources */,
 				6FCC17D21F3EDDF900B867E1 /* batman.sna in Resources */,
+				6FA4F42F308FC1F400A957C9 /* AY-DEBUG-NOTES.md in Resources */,
 				6F93325F1F4F6B38000CA284 /* batty.sna in Resources */,
 				6FCC17DD1F3EDE1F00B867E1 /* starquake.sna in Resources */,
 				6FEFA91E1F223B5A00F9AD93 /* z80ops.json in Resources */,

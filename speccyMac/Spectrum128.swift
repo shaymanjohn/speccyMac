@@ -30,6 +30,7 @@ final class Spectrum128: Spectrum {
 
     // AY-3-8912 sound chip.
     private let ay = AYChip()
+    private var diagN = 0   // TEMP
 
     override init() {
         super.init()
@@ -90,20 +91,30 @@ final class Spectrum128: Spectrum {
         return super.input(high, low: low)
     }
 
-    override func output(_ port: UInt16, byte: UInt8) {        // 0x7FFD memory paging port: decoded when A1 and A15 are both 0.
-        if (port & 0x8002) == 0 {
-            applyPaging(byte)
-            return
-        }
-
-        // AY-3-8912 sound: 0xFFFD selects a register, 0xBFFD writes data.
-        if (port & 0xC002) == 0xC000 {
-            ay.selectRegister(byte)
-            return
-        }
-        if (port & 0xC002) == 0x8000 {
-            ay.writeData(byte)
-            return
+    override func output(_ port: UInt16, byte: UInt8) {
+        // 128K I/O decode (all respond with A1 = 0):
+        //   paging  0x7FFD : A15=0, A14=1
+        //   AY data 0xBFFD : A15=1, A14=0
+        //   AY sel  0xFFFD : A15=1, A14=1
+        if (port & 0x0002) == 0 {
+            switch port & 0xC000 {
+            case 0x4000:               // A15=0, A14=1 -> paging
+                applyPaging(byte)
+                return
+            case 0xC000:               // A15=1, A14=1 -> AY register select
+                if diagN < 8 {
+                    let z = processor as! ZilogZ80
+                    FileHandle.standardError.write("DIAGSEL port=\(String(port,radix:16)) selectByte=\(byte) a=\(z.regA)\n".data(using:.utf8)!)
+                    diagN += 1
+                }
+                ay.selectRegister(byte)
+                return
+            case 0x8000:               // A15=1, A14=0 -> AY data write
+                ay.writeData(byte)
+                return
+            default:                   // A15=0, A14=0 -> not a control port
+                break
+            }
         }
 
         // Otherwise fall through to the ULA (border/beeper) on even ports.
