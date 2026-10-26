@@ -21,6 +21,14 @@ struct SpeccyMacApp: App {
 }
 
 struct ContentView: View {
+    // Supported machine models. 48K is the default.
+    enum Model: String, CaseIterable, Identifiable {
+        case spectrum48 = "48K"
+        case spectrum128 = "128K"
+        var id: String { rawValue }
+    }
+
+    @State private var model: Model = .spectrum48
     // The emulator machine lives for the lifetime of the view.
     @State private var machine: Machine = Spectrum()
     @State private var displayMode: MetalScreenView.DisplayMode = .crisp
@@ -55,6 +63,16 @@ struct ContentView: View {
             .frame(minWidth: 320, minHeight: 288)
             .toolbar {
                 ToolbarItemGroup {
+                    Menu("Model") {
+                        Picker("Model", selection: $model) {
+                            ForEach(Model.allCases) { m in
+                                Text(m.rawValue).tag(m)
+                            }
+                        }
+                        .pickerStyle(.inline)
+                        .labelsHidden()
+                    }
+
                     Menu("Games") {
                         Picker("Games", selection: $selectedGameFile) {
                             ForEach(games, id: \.file) { game in
@@ -66,6 +84,12 @@ struct ContentView: View {
                     }
 
                     Button("Load…") { showingImporter = true }
+
+                    Button("Reset") {
+                        machine.resetMachine()
+                        selectedGameFile = nil
+                        refreshTapeState()
+                    }
 
                     Button(tapePlaying ? "Stop Tape" : "Play Tape") {
                         if tapePlaying {
@@ -104,6 +128,20 @@ struct ContentView: View {
                    let game = games.first(where: { $0.file == file }) {
                     loadBuiltIn(game)
                 }
+            }
+            .onChange(of: model) { _, newModel in
+                // Stop the outgoing machine's emulation thread, then swap in a
+                // fresh machine for the new model. Changing `machine` together
+                // with the .id(model) on EmulatorView makes SwiftUI tear down
+                // and rebuild the NSView, which wires and starts the new core.
+                machine.processor.stop()
+                switch newModel {
+                case .spectrum48:  machine = Spectrum()
+                case .spectrum128: machine = Spectrum128()
+                }
+                selectedGameFile = nil
+                tapeLoaded = false
+                tapePlaying = false
             }
             .task {
                 // Keep the toolbar's tape state in sync with the deck, which can

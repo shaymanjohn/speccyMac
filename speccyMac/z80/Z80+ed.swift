@@ -54,7 +54,7 @@ extension ZilogZ80 {
             
         case 0x51: // out (c), d
             machine.contendIO(bc)
-            machine.output(regC, byte: regD)
+            machine.output(bc, byte: regD)
             
         case 0x52:  // sbc hl, de
             sbcHL(de)
@@ -127,7 +127,7 @@ extension ZilogZ80 {
             
         case 0x79:  // out (c), a
             machine.contendIO(bc)
-            machine.output(regC, byte: regA)
+            machine.output(bc, byte: regA)
             
         case 0x7a:  // adc hl, sp
             adcHL(sp)

@@ -490,7 +490,7 @@ extension ZilogZ80 {
             
         case 0xd3:  // out (n), a
             machine.contendIO(UInt16(regA) << 8 | UInt16(first))
-            machine.output(first, byte: regA)
+            machine.output(UInt16(regA) << 8 | UInt16(first), byte: regA)
             
         case 0xd4:  // call nc, nn
             if regF & ZilogZ80.cBit > 0 {

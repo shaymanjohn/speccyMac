@@ -15,11 +15,12 @@ class RegisterPairTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
+        CPUStateLock.lock.lock()
         z80 = ZilogZ80(memory: Memory("48.rom"))
     }
     
     override func tearDown() {
+        CPUStateLock.lock.unlock()
         super.tearDown()
     }
 

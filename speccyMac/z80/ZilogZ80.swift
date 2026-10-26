@@ -14,6 +14,7 @@ protocol Processor: AnyObject {
     func pause()
     func unpause()
     func reset()
+    func stop()
     func incCounters(_ amount: UInt32)
     
     var counter:    UInt32 { get set }
@@ -106,6 +107,8 @@ class ZilogZ80 : Processor {
     var halted:        Bool = false
     var interruptMode: UInt8 = 0
     var running:       Bool = false
+    // Set by the emulation loop when it has fully exited (see stop()).
+    var stopped:       Bool = false
     
     static let cBit:     UInt8 = 1 << 0
     static let nBit:     UInt8 = 1 << 1
@@ -181,6 +184,7 @@ class ZilogZ80 : Processor {
         var byte3:  UInt8
         
         running = true
+        stopped = false
         
         while running {
             
@@ -253,11 +257,35 @@ class ZilogZ80 : Processor {
                 machine.tick()
             }
         }
+
+        // The loop has exited; signal stop() that the thread is done.
+        stopped = true
     }
     
     final func pause() {
         paused = true
         Thread.sleep(forTimeInterval: 0.1)
+    }
+
+    /// Permanently end the emulation loop so the background thread exits.
+    /// Blocks (briefly) until the loop has actually stopped, so callers can
+    /// safely discard or reset the machine afterwards without racing the
+    /// emulation thread (e.g. switching 48K/128K model).
+    final func stop() {
+        if !running {
+            stopped = true
+            return
+        }
+        running = false
+        paused = false
+
+        // Wait for the loop to acknowledge exit. It may be mid frame-sleep
+        // (~20ms), so poll with a cap well above that.
+        var waited = 0
+        while !stopped && waited < 500 {   // up to ~500ms
+            Thread.sleep(forTimeInterval: 0.001)
+            waited += 1
+        }
     }
     
     final func unpause() {
@@ -363,7 +391,12 @@ class ZilogZ80 : Processor {
             lastFrame = timeNow
         }
         
-        counter -= machine.ticksPerFrame
+        // `counter` can be reset to 0 on another thread (pause/unpause, a
+        // snapshot load, or a model switch) between the frame-boundary guard
+        // in start() and here. Subtract only when it's still past the frame
+        // length; otherwise clamp to 0 so we never underflow this UInt32.
+        let frame = machine.ticksPerFrame
+        counter = counter >= frame ? counter - frame : 0
         machine.ula = counter
         machine.videoRow = 0
         

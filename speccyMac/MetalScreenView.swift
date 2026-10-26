@@ -98,10 +98,15 @@ final class MetalScreenView: MTKView {
             fatalError("Metal is not supported on this device")
         }
 
-        // The emulator pushes frames at its own cadence, so draw on demand
-        // rather than on a continuous timer.
-        isPaused = true
-        enableSetNeedsDisplay = true
+        // Drive drawing continuously at 50Hz. On-demand drawing
+        // (isPaused + enableSetNeedsDisplay + setNeedsDisplay) works for the
+        // initial view, but a view recreated by a SwiftUI rebuild (e.g. after a
+        // model switch) doesn't reliably receive those on-demand display passes
+        // and never presents. A continuous timer re-presents the latest frame
+        // snapshot each tick, which is robust across rebuilds.
+        isPaused = false
+        enableSetNeedsDisplay = false
+        preferredFramesPerSecond = 50
         framebufferOnly = true
         colorPixelFormat = .bgra8Unorm
         // Letterbox the Spectrum image against a black surround.

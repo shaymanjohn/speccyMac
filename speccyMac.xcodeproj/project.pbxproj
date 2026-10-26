@@ -42,6 +42,11 @@
 		6FA4F27E308F64CA00A957C9 /* Z80LoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F27D308F64CA00A957C9 /* Z80LoaderTests.swift */; };
 		6FA4F280308F66E200A957C9 /* SZXLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F27F308F66E200A957C9 /* SZXLoader.swift */; };
 		6FA4F282308F670F00A957C9 /* SZXLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F281308F670F00A957C9 /* SZXLoaderTests.swift */; };
+		6FA4F422308F9A9E00A957C9 /* 128-0.rom in Resources */ = {isa = PBXBuildFile; fileRef = 6FA4F420308F9A9E00A957C9 /* 128-0.rom */; };
+		6FA4F423308F9A9E00A957C9 /* 128-1.rom in Resources */ = {isa = PBXBuildFile; fileRef = 6FA4F421308F9A9E00A957C9 /* 128-1.rom */; };
+		6FA4F425308F9BBF00A957C9 /* Spectrum128.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F424308F9BBF00A957C9 /* Spectrum128.swift */; };
+		6FA4F427308F9C6B00A957C9 /* Spectrum128Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F426308F9C6B00A957C9 /* Spectrum128Tests.swift */; };
+		6FA4F429308F9D0C00A957C9 /* CPUStateLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F428308F9D0C00A957C9 /* CPUStateLock.swift */; };
 		6FBB5FFC29A249F100F369A8 /* aquaplane.z80 in Resources */ = {isa = PBXBuildFile; fileRef = 6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */; };
 		6FC90B4F1F5295AA002506DC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC90B4E1F5295AA002506DC /* README.md */; };
 		6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */; };
@@ -116,6 +121,11 @@
 		6FA4F27D308F64CA00A957C9 /* Z80LoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z80LoaderTests.swift; sourceTree = "<group>"; };
 		6FA4F27F308F66E200A957C9 /* SZXLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SZXLoader.swift; sourceTree = "<group>"; };
 		6FA4F281308F670F00A957C9 /* SZXLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SZXLoaderTests.swift; sourceTree = "<group>"; };
+		6FA4F420308F9A9E00A957C9 /* 128-0.rom */ = {isa = PBXFileReference; lastKnownFileType = file; path = "128-0.rom"; sourceTree = SOURCE_ROOT; };
+		6FA4F421308F9A9E00A957C9 /* 128-1.rom */ = {isa = PBXFileReference; lastKnownFileType = file; path = "128-1.rom"; sourceTree = SOURCE_ROOT; };
+		6FA4F424308F9BBF00A957C9 /* Spectrum128.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spectrum128.swift; sourceTree = "<group>"; };
+		6FA4F426308F9C6B00A957C9 /* Spectrum128Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spectrum128Tests.swift; sourceTree = "<group>"; };
+		6FA4F428308F9D0C00A957C9 /* CPUStateLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUStateLock.swift; sourceTree = "<group>"; };
 		6FB18B4E236493C100E33924 /* Jenkinsfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Jenkinsfile; sourceTree = SOURCE_ROOT; };
 		6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */ = {isa = PBXFileReference; lastKnownFileType = file; path = aquaplane.z80; sourceTree = "<group>"; };
 		6FC1A73B3038D8E400F3C4A8 /* HLSD.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = HLSD.md; sourceTree = "<group>"; };
@@ -207,6 +217,8 @@
 				6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */,
 				6FA4F27D308F64CA00A957C9 /* Z80LoaderTests.swift */,
 				6FA4F281308F670F00A957C9 /* SZXLoaderTests.swift */,
+				6FA4F426308F9C6B00A957C9 /* Spectrum128Tests.swift */,
+				6FA4F428308F9D0C00A957C9 /* CPUStateLock.swift */,
 			);
 			path = speccyMacTests;
 			sourceTree = "<group>";
@@ -276,6 +288,8 @@
 				6F8BE3D4215198D300F2357D /* z80 */,
 				6FEFA9101F2239AD00F9AD93 /* Games */,
 				6FEFA91D1F223B3A00F9AD93 /* 48.rom */,
+				6FA4F420308F9A9E00A957C9 /* 128-0.rom */,
+				6FA4F421308F9A9E00A957C9 /* 128-1.rom */,
 				6FFB31571F22379B00C15CD7 /* Assets.xcassets */,
 				6FEFA91B1F223AA400F9AD93 /* z80ops.json */,
 				6FFB315C1F22379B00C15CD7 /* Info.plist */,
@@ -288,6 +302,7 @@
 				6FA10DA2308E0A9000F0B47F /* SpeccyMacApp.swift */,
 				6F51A16C308E1BC300E95204 /* TapeDeck.swift */,
 				6F51A17D308E58B100E95204 /* OnlineBrowser-DESIGN.md */,
+				6FA4F424308F9BBF00A957C9 /* Spectrum128.swift */,
 			);
 			path = speccyMac;
 			sourceTree = "<group>";
@@ -396,6 +411,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6FCC17D31F3EDDFC00B867E1 /* cobra.sna in Resources */,
+				6FA4F422308F9A9E00A957C9 /* 128-0.rom in Resources */,
+				6FA4F423308F9A9E00A957C9 /* 128-1.rom in Resources */,
 				6FCC17D71F3EDE0A00B867E1 /* greenberet.sna in Resources */,
 				6FCC17D91F3EDE1100B867E1 /* hypersports.sna in Resources */,
 				6F8E15411F3B2F9500A34AB4 /* uridium.sna in Resources */,
@@ -457,11 +474,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				6FA4F282308F670F00A957C9 /* SZXLoaderTests.swift in Sources */,
+				6FA4F427308F9C6B00A957C9 /* Spectrum128Tests.swift in Sources */,
 				6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */,
 				6FE5147C1F3732A3004F0751 /* RegisterPairTests.swift in Sources */,
 				6FFE6FC21F376BEF00EBCC3B /* MemoryTests.swift in Sources */,
 				6FE5147A1F372D96004F0751 /* RegisterTests.swift in Sources */,
 				6FA4F27E308F64CA00A957C9 /* Z80LoaderTests.swift in Sources */,
+				6FA4F429308F9D0C00A957C9 /* CPUStateLock.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,6 +512,7 @@
 				6F51A176308E508100E95204 /* ZipLoader.swift in Sources */,
 				6F7618DA1F49697F00D793D7 /* Machine.swift in Sources */,
 				6F51A16F308E1C0200E95204 /* TapLoader.swift in Sources */,
+				6FA4F425308F9BBF00A957C9 /* Spectrum128.swift in Sources */,
 				6F17920A1F31B0D700A984F0 /* Array+extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -27,6 +27,7 @@ class SZXLoader: GameLoaderProtocol {
     private enum MachineID {
         static let zx16k: UInt8 = 0
         static let zx48k: UInt8 = 1
+        static let zx128k: UInt8 = 2
     }
 
     func load(data: Data) -> Bool {
@@ -43,8 +44,20 @@ class SZXLoader: GameLoaderProtocol {
         }
 
         let machineId = data[6]
-        if machineId != MachineID.zx16k && machineId != MachineID.zx48k {
-            print(".szx only 16K/48K machines are supported (machineId=\(machineId))")
+        let is128K = machineId == MachineID.zx128k
+        let is48K = machineId == MachineID.zx16k || machineId == MachineID.zx48k
+
+        if !is128K && !is48K {
+            print(".szx unsupported machine (machineId=\(machineId))")
+            return false
+        }
+        // Model must match the active machine's memory layout.
+        if is128K && !z80.memory.banked {
+            print(".szx 128K image - switch to the 128K model to load this")
+            return false
+        }
+        if is48K && z80.memory.banked {
+            print(".szx 48K image - switch to the 48K model to load this")
             return false
         }
 
@@ -68,9 +81,9 @@ class SZXLoader: GameLoaderProtocol {
                 if !loadZ80Regs(data, at: bodyStart, size: size) { return false }
                 sawRegisters = true
             case "RAMP":
-                if !loadRamPage(data, at: bodyStart, size: size) { return false }
+                if !loadRamPage(data, at: bodyStart, size: size, is128K: is128K) { return false }
             case "SPCR":
-                loadSpecRegs(data, at: bodyStart, size: size)
+                loadSpecRegs(data, at: bodyStart, size: size, is128K: is128K)
             default:
                 // Unknown / unneeded chunk - skip it. This is what keeps the
                 // format forward compatible.
@@ -147,7 +160,7 @@ class SZXLoader: GameLoaderProtocol {
 
     // ZXSTRAMPAGE: WORD wFlags (bit0 = zlib compressed), BYTE chPageNo,
     // then the (optionally compressed) 16K page data.
-    private func loadRamPage(_ data: Data, at base: Int, size: Int) -> Bool {
+    private func loadRamPage(_ data: Data, at base: Int, size: Int, is128K: Bool) -> Bool {
         if size < 3 {
             print(".szx RAMP chunk too small")
             return false
@@ -157,19 +170,10 @@ class SZXLoader: GameLoaderProtocol {
         let pageNo = data[base + 2]
         let compressed = (flags & 0x0001) != 0
 
-        // Map the 48K pages onto Spectrum addresses. Other pages belong to
-        // ROM or 128K banks we don't model, so skip them.
-        let pageBase: UInt16
-        switch pageNo {
-        case 5: pageBase = 0x4000
-        case 2: pageBase = 0x8000
-        case 0: pageBase = 0xC000
-        default: return true   // ignore non-48K pages, not an error
-        }
-
         let payloadStart = base + 3
         let payloadLen = size - 3
 
+        // Decompress / copy the 16K page into a local buffer first.
         let pageBytes: [UInt8]
         if compressed {
             guard let inflated = inflate(data, at: payloadStart,
@@ -186,18 +190,39 @@ class SZXLoader: GameLoaderProtocol {
             pageBytes = Array(data[payloadStart..<payloadStart + 0x4000])
         }
 
-        for jx in 0..<0x4000 {
-            z80.memory.set(pageBase + UInt16(jx), byte: pageBytes[jx])
+        if is128K {
+            // chPageNo is the RAM bank number (0-7) directly.
+            guard let bank = z80.memory.ramBank(Int(pageNo)) else {
+                return true   // non-existent bank - ignore
+            }
+            for jx in 0..<0x4000 { bank[jx] = pageBytes[jx] }
+        } else {
+            // 48K: pages 5/2/0 map to 0x4000/0x8000/0xC000; ignore others.
+            let pageBase: UInt16
+            switch pageNo {
+            case 5: pageBase = 0x4000
+            case 2: pageBase = 0x8000
+            case 0: pageBase = 0xC000
+            default: return true
+            }
+            for jx in 0..<0x4000 {
+                z80.memory.set(pageBase + UInt16(jx), byte: pageBytes[jx])
+            }
         }
 
         return true
     }
 
-    // ZXSTSPECREGS: BYTE chBorder, chPaging, chPaging2, chFe, 4 reserved.
-    private func loadSpecRegs(_ data: Data, at base: Int, size: Int) {
+    // ZXSTSPECREGS: BYTE chBorder, ch7ffd, ch1ffd/chEff7, chFe, 4 reserved.
+    private func loadSpecRegs(_ data: Data, at base: Int, size: Int, is128K: Bool) {
         guard size >= 1 else { return }
         let border = data[base] & 0x07
         z80.machine.output(0xfe, byte: border)
+
+        // On 128K, byte 1 is the last value written to the paging port 0x7FFD.
+        if is128K && size >= 2 {
+            z80.machine.output(0x7ffd, byte: data[base + 1])
+        }
     }
 
     // MARK: - Reading helpers

@@ -191,8 +191,6 @@ class Z80Loader: GameLoaderProtocol {
         ext.pc = UInt16(data[extStart]) + (UInt16(data[extStart + 1]) << 8)
         ext.hardwareMode = data[extStart + 2]
 
-        // Only 48K machines are emulated. Reject obvious 128K images so we
-        // don't silently load something that won't run correctly.
         //   v2: modes 3+ are 128K;  v3: modes 4+ are 128K.
         let is128K: Bool
         if ext.length == 23 {
@@ -200,13 +198,25 @@ class Z80Loader: GameLoaderProtocol {
         } else {
             is128K = ext.hardwareMode >= 4
         }
-        if is128K {
-            print(".z80 128K images are not supported")
+
+        // 128K images need a banked (128K) machine. If the active machine is
+        // 48K, we can't load them - tell the user to switch model.
+        if is128K && !z80.memory.banked {
+            print(".z80 128K image - switch to the 128K model to load this")
+            return false
+        }
+        // Likewise a 48K image can't populate a 128K machine's banks here.
+        if !is128K && z80.memory.banked {
+            print(".z80 48K image - switch to the 48K model to load this")
             return false
         }
 
         z80.interruptMode = v1.flags2 & 0x03
         z80.machine.output(0xfe, byte: (v1.flags1 >> 1) & 0x07)
+
+        // For 128K, the byte at extended-header offset 3 is the last value
+        // written to port 0x7FFD (paging state). Apply it after loading pages.
+        let paging7ffd: UInt8 = is128K ? data[extStart + 3] : 0
 
         // Memory page blocks follow the extended header.
         var offset = extEnd
@@ -218,39 +228,80 @@ class Z80Loader: GameLoaderProtocol {
 
             // A length of 0xFFFF means 16384 uncompressed bytes (no RLE).
             let uncompressed = blockLen == 0xFFFF
-
-            // Map the Spectrum page number onto a 48K address. Pages other
-            // than these belong to ROM or to 128K banks we don't model.
-            let pageBase: UInt16?
-            switch pageNumber {
-            case 4:  pageBase = 0x8000
-            case 5:  pageBase = 0x4000
-            case 8:  pageBase = 0xC000
-            default: pageBase = nil
-            }
-
             let byteCount = uncompressed ? 0x4000 : blockLen
             if offset + byteCount > data.count {
                 print(".z80 page block truncated")
                 return false
             }
 
-            if let base = pageBase {
-                if uncompressed {
-                    for jx in 0..<0x4000 {
-                        z80.memory.set(base + UInt16(jx), byte: data[offset + jx])
+            if is128K {
+                // 128K: page numbers 3-10 map to RAM banks 0-7.
+                if pageNumber >= 3 && pageNumber <= 10,
+                   let bank = z80.memory.ramBank(Int(pageNumber) - 3) {
+                    if uncompressed {
+                        for jx in 0..<0x4000 { bank[jx] = data[offset + jx] }
+                    } else {
+                        decompressToBank(data: data, from: offset, length: blockLen, bank: bank)
                     }
-                } else {
-                    decompressPage(data: data, from: offset, length: blockLen, base: base)
+                }
+            } else {
+                // 48K: pages 4/5/8 map to 0x8000/0x4000/0xC000.
+                let pageBase: UInt16?
+                switch pageNumber {
+                case 4:  pageBase = 0x8000
+                case 5:  pageBase = 0x4000
+                case 8:  pageBase = 0xC000
+                default: pageBase = nil
+                }
+                if let base = pageBase {
+                    if uncompressed {
+                        for jx in 0..<0x4000 {
+                            z80.memory.set(base + UInt16(jx), byte: data[offset + jx])
+                        }
+                    } else {
+                        decompressPage(data: data, from: offset, length: blockLen, base: base)
+                    }
                 }
             }
 
             offset += byteCount
         }
 
+        if is128K {
+            z80.machine.output(0x7ffd, byte: paging7ffd)
+        }
+
         z80.pc = ext.pc
 
         return true
+    }
+
+    // Decompress a single 16K page block (RLE, no end marker) directly into a
+    // 128K RAM bank buffer (bypasses paging/write-protection).
+    private func decompressToBank(data: Data, from: Int, length: Int, bank: UnsafeMutablePointer<UInt8>) {
+        var src = from
+        let end = from + length
+        var to = 0
+
+        while src < end && to < 0x4000 {
+            let left = end - src
+            let byte = data[src]
+
+            if byte == 0xed && left >= 4 && data[src + 1] == 0xed {
+                let runLength = Int(data[src + 2])
+                let value = data[src + 3]
+                for _ in 0..<runLength {
+                    if to >= 0x4000 { break }
+                    bank[to] = value
+                    to += 1
+                }
+                src += 4
+            } else {
+                bank[to] = byte
+                src += 1
+                to += 1
+            }
+        }
     }
 
     // Decompress a single 16K page block (RLE, no end marker) into RAM

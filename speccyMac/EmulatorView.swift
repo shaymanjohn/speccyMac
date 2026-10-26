@@ -50,6 +50,19 @@ struct EmulatorView: NSViewRepresentable {
     }
 
     func updateNSView(_ nsView: EmulatorInputView, context: Context) {
+        // If the machine instance changed (e.g. a 48K/128K model switch), re-wire
+        // the existing input and Metal views to the new machine and start it,
+        // reusing the same views rather than rebuilding them. Recreating the
+        // MTKView via a SwiftUI `.id` rebuild left the new view not presenting.
+        if context.coordinator.machine !== machine {
+            machine.emulatorView = nsView
+            if let metal = context.coordinator.metalView {
+                machine.metalView = metal
+            }
+            machine.start()
+            context.coordinator.machine = machine
+        }
+
         // Reflect SwiftUI state changes (e.g. display-mode picker) into the view.
         context.coordinator.metalView?.setDisplayMode(displayMode)
     }

@@ -14,15 +14,17 @@ class Spectrum: Machine {
     var processor: Processor
     var memory:    Memory
 
-    let ticksPerFrame: UInt32 = 69888
+    var ticksPerFrame: UInt32 = 69888
 
     var clicks: UInt8 = 0
 
     var ula:      UInt32 = 0
     var videoRow: UInt16 = 0
 
-    // Contended memory delay table - indexed by T-state within frame
-    let contentionTable = UnsafeMutablePointer<UInt8>.allocate(capacity: 69888)
+    // Contended memory delay table - indexed by T-state within frame.
+    // Sized for the longest supported frame (128K = 70908 T-states); the 48K
+    // machine only uses the first 69888 entries.
+    let contentionTable = UnsafeMutablePointer<UInt8>.allocate(capacity: 70908)
 
     weak var emulatorView:   EmulatorInputView?
     weak var metalView:      MetalScreenView?
@@ -220,7 +222,7 @@ class Spectrum: Machine {
         // Non-contended + non-ULA: no contention
     }
 
-    final func captureRow(_ row: UInt16) {
+    func captureRow(_ row: UInt16) {
         var pixelAddress  = screenRowAddress[Int(row)]
         var colourAddress = attributeRowAddress[Int(row >> 3)]
 
@@ -286,6 +288,22 @@ class Spectrum: Machine {
             for key in downKeys {
                 if key < keyMap.count && keyMap[key] > 0 {
                     keysDown.append(keyMap[key])
+                }
+            }
+
+            // Cursor keys. The Spectrum keyboard has no dedicated arrow keys;
+            // cursor movement is Caps Shift + 5/6/7/8 (left/down/up/right). The
+            // 128K menu navigates with these, and it also drives cursor movement
+            // in 48K BASIC. Mac arrow key codes: left 123, right 124, down 125,
+            // up 126. Each injects Caps Shift (0xFE01) plus the number key.
+            let capsShift: UInt16 = 0xfe01
+            for key in downKeys {
+                switch key {
+                case 123: keysDown.append(capsShift); keysDown.append(0xf710) // left  = Caps + 5
+                case 125: keysDown.append(capsShift); keysDown.append(0xef10) // down  = Caps + 6
+                case 126: keysDown.append(capsShift); keysDown.append(0xef08) // up    = Caps + 7
+                case 124: keysDown.append(capsShift); keysDown.append(0xef04) // right = Caps + 8
+                default: break
                 }
             }
 
@@ -371,8 +389,9 @@ class Spectrum: Machine {
         return byte
     }
 
-    final func output(_ port: UInt8, byte: UInt8) {
-        if port == 0xfe {
+    func output(_ port: UInt16, byte: UInt8) {
+        // The ULA responds to any even port (bit 0 == 0); 0xFE is the usual one.
+        if port & 0x0001 == 0 {
             borderColourIndex = byte & 0x07
             clicks = byte
         }
@@ -427,9 +446,23 @@ class Spectrum: Machine {
                 break
             }
 
-            ula -= 224
+            // `ula` can be reset to 0 on another thread (load/unpause/model
+            // switch) between the guard above and here; clamp rather than
+            // underflow this UInt32.
+            ula = ula >= 224 ? ula - 224 : 0
             videoRow += 1
         }
+    }
+
+    /// Reset the machine to its power-on state (ROM boots to the prompt).
+    func resetMachine() {
+        processor.pause()
+        clicks = 0
+        processor.reset()
+        videoRow = 0
+        ula = 0
+        processor.counter = 0
+        processor.unpause()
     }
 
     func loadGame(_ gameUrl: URL) {

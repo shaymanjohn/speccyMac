@@ -19,9 +19,11 @@ class MemoryTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        CPUStateLock.lock.lock()
     }
     
     override func tearDown() {
+        CPUStateLock.lock.unlock()
         super.tearDown()
     }
 
