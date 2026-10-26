@@ -61,6 +61,95 @@ class Spectrum128Tests: XCTestCase {
                        "OUT (C),H did not select the AY register (write landed elsewhere)")
     }
 
+    // Regression: a music player drives the AY entirely through the CPU's
+    // OUT (C),r opcodes. This exercises the full live path - opcode dispatch,
+    // 0xFFFD/0xBFFD port decode, register latch, and rendering - and asserts
+    // the result is audible (guards the "no sound" regression) and at the
+    // correct pitch (guards the octave-low tone-period regression).
+    func testAYProducesAudibleTone() {
+        guard let ay = spectrum.beeper.ay else {
+            return XCTFail("128K machine has no AY chip wired into the beeper")
+        }
+
+        // Player-style sequence for a ~440Hz note on channel A:
+        //   period = clock / (16 * 440) ~= 252 = 0x00FC.
+        // Select each register on 0xFFFD (B=0xFF,C=0xFD), write on 0xBFFD
+        // (B=0xBF,C=0xFD), using real OUT (C),A (ED 79) opcodes.
+        func out(selectReg r: UInt8, data: UInt8) {
+            z80.regB = 0xFF; z80.regC = 0xFD; z80.regA = r
+            z80.edprefix(opcode: 0x79, first: 0, second: 0)   // OUT (C),A -> select
+            z80.regB = 0xBF; z80.regC = 0xFD; z80.regA = data
+            z80.edprefix(opcode: 0x79, first: 0, second: 0)   // OUT (C),A -> data
+        }
+
+        out(selectReg: 0, data: 0xFC)          // tone A fine
+        out(selectReg: 1, data: 0x00)          // tone A coarse
+        out(selectReg: 8, data: 0x0F)          // channel A full volume
+        out(selectReg: 7, data: 0b00111110)    // mixer: tone A enabled only
+
+        // Confirm the writes landed in the AY via the live path.
+        spectrum.output(0xfffd, byte: 7)
+        XCTAssertEqual(spectrum.input(0xff, low: 0xfd), 0b00111110,
+                       "mixer did not receive the value written via OUT (C),A")
+
+        // Render one second and measure peak amplitude and pitch.
+        let sampleRate = 48_000
+        let buf = UnsafeMutablePointer<Float>.allocate(capacity: sampleRate)
+        buf.initialize(repeating: 0, count: sampleRate)
+        defer { buf.deallocate() }
+        ay.render(into: buf, count: sampleRate,
+                  ayClocksPerSample: Float(1_773_400.0 / Double(sampleRate)))
+
+        var peak: Float = 0
+        for i in 0..<sampleRate { peak = max(peak, abs(buf[i])) }
+        XCTAssertGreaterThan(peak, 0.05, "AY produced no audible output (silent)")
+
+        // Count rising zero-crossings about the square wave's midpoint to get
+        // the fundamental frequency. Expect ~440Hz (allow generous tolerance).
+        let mid = peak / 2
+        var cycles = 0
+        for i in 1..<sampleRate where buf[i - 1] < mid && buf[i] >= mid { cycles += 1 }
+        XCTAssertEqual(Double(cycles), 440, accuracy: 30,
+                       "AY tone pitch wrong (expected ~440Hz, got \(cycles)Hz)")
+    }
+
+    // Regression: loading a game from TAPE calls resetMachine(), which resets
+    // the AY. Confirm the chip stays wired to the beeper and reachable through
+    // the 0xFFFD/0xBFFD ports afterwards, so a tape-loaded 128K game can still
+    // drive sound.
+    func testAYSurvivesTapeLoadReset() {
+        spectrum.resetMachine()
+        XCTAssertNotNil(spectrum.beeper.ay, "AY unwired from beeper after reset")
+
+        spectrum.output(0xfffd, byte: 7)
+        spectrum.output(0xbffd, byte: 0x3E)
+        spectrum.output(0xfffd, byte: 7)
+        XCTAssertEqual(spectrum.input(0xff, low: 0xfd), 0x3E,
+                       "AY not reachable through ports after tape-load reset")
+    }
+
+    // Regression: Cybernoid's 128K player selects the AY register with
+    // `OUT (C),E` (ED 59). That opcode was missing, so every music data write
+    // landed in register 14 and the mixer stayed muted (total silence).
+    func testOutCEViaSelectsAYRegister() {
+        // Seed register 5 with a known value via the normal path.
+        spectrum.output(0xfffd, byte: 5)
+        spectrum.output(0xbffd, byte: 0xAA)
+
+        // Select register 5 using OUT (C),E: BC = 0xFFFD, E = 5.
+        z80.regB = 0xFF
+        z80.regC = 0xFD
+        z80.regE = 5
+        z80.edprefix(opcode: 0x59, first: 0, second: 0)   // OUT (C),E
+
+        // A data write must now land in register 5, overwriting 0xAA.
+        spectrum.output(0xbffd, byte: 0x55)
+
+        spectrum.output(0xfffd, byte: 5)
+        XCTAssertEqual(spectrum.input(0xff, low: 0xfd), 0x55,
+                       "OUT (C),E did not select the AY register (write landed elsewhere)")
+    }
+
     func testBankSelectAt0xC000() {
         let mem = spectrum.memory
 

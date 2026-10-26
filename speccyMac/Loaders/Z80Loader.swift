@@ -158,6 +158,7 @@ class Z80Loader: GameLoaderProtocol {
 
     // MARK: - Version 2 / 3
 
+    // swiftlint:disable:next cyclomatic_complexity
     private func loadV2V3(data: Data, v1: V1Header) -> Bool {
         let v1HeaderLen = 30
 

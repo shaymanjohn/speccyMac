@@ -326,7 +326,7 @@ extension ZilogZ80 {
         case 0xff: regA |= (1 << 7)
             
         default:
-            break
+            logUnhandledOpcode(prefix: "CB ", opcode: opcode)
         }        
         
         pc = pc &+ cbLength[Int(opcode)]        

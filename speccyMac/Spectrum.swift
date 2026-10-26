@@ -36,7 +36,6 @@ class Spectrum: Machine {
     var borderColourIndex: UInt8 = 7
 
     let beeper = AudioStreamer()
-
     // Tape playback engine (feeds the EAR bit during LOAD).
     let tapeDeck = TapeDeck()
 

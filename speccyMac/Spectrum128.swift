@@ -7,8 +7,8 @@
 //   - 128KB RAM in eight 16KB banks, paged via port 0x7FFD
 //   - shadow screen (display bank 5 or 7, selected by 0x7FFD bit 3)
 //
-//  AY-3-8912 sound is stubbed for now (ports 0xFFFD/0xBFFD are accepted but
-//  ignored) - see README "AY sounds" to-do.
+//  AY-3-8912 sound is emulated (AYChip), driven via ports 0xFFFD (register
+//  select) and 0xBFFD (data write) and mixed into the audio frame.
 //
 
 import Foundation
@@ -30,7 +30,6 @@ final class Spectrum128: Spectrum {
 
     // AY-3-8912 sound chip.
     private let ay = AYChip()
-    private var diagN = 0   // TEMP
 
     override init() {
         super.init()
@@ -102,11 +101,6 @@ final class Spectrum128: Spectrum {
                 applyPaging(byte)
                 return
             case 0xC000:               // A15=1, A14=1 -> AY register select
-                if diagN < 8 {
-                    let z = processor as! ZilogZ80
-                    FileHandle.standardError.write("DIAGSEL port=\(String(port,radix:16)) selectByte=\(byte) a=\(z.regA)\n".data(using:.utf8)!)
-                    diagN += 1
-                }
                 ay.selectRegister(byte)
                 return
             case 0x8000:               // A15=1, A14=0 -> AY data write
@@ -122,7 +116,6 @@ final class Spectrum128: Spectrum {
     }
 
     // MARK: - Screen
-
     // The 128K ULA shows either bank 5 (normal) or bank 7 (shadow). Bank 5 is
     // mapped at 0x4000 so the normal case uses the inherited capture; for the
     // shadow bank we read bank 7's bytes directly.

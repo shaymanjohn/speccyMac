@@ -187,7 +187,7 @@ extension ZilogZ80 {
             sp = ixy
             
         default:
-            break
+            logUnhandledOpcode(prefix: "DD/FD ", opcode: opcode)
         }        
         
         pc = pc &+ ddLength[Int(opcode)]        

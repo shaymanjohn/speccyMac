@@ -727,7 +727,7 @@ extension ZilogZ80 {
             rst(0x38)
             
         default:
-            break
+            logUnhandledOpcode(prefix: "", opcode: opcode)
         }                
         
         pc = pc &+ unprefixedLength[Int(opcode)]

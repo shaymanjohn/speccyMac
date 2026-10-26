@@ -115,6 +115,14 @@ extension ZilogZ80 {
             machine.contendIO(bc)
             regE = machine.input(regB, low: regC)
             regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regE]
+
+        case 0x59:  // out (c), e
+            // Was MISSING. Cybernoid's 128K AY player selects the AY register
+            // with `OUT (C),E` (ED 59); without this the register-select was
+            // silently dropped and all music data landed in register 14,
+            // leaving the mixer muted -> total silence.
+            machine.contendIO(bc)
+            machine.output(bc, byte: regE)
             
         case 0x5a:  // adc hl, de
             adcHL(de)
@@ -247,7 +255,7 @@ extension ZilogZ80 {
             de = de &- 1
             
         default:
-            break
+            logUnhandledOpcode(prefix: "ED ", opcode: opcode)
         }        
         
         pc = pc &+ edLength[Int(opcode)]        

@@ -303,6 +303,25 @@ class ZilogZ80 : Processor {
         counter += amount        
         machine.ula += amount
     }
+
+    // Tracks (prefix, opcode) pairs already reported by logUnhandledOpcode, so a
+    // given unimplemented instruction is logged only once rather than flooding.
+    private var reportedUnhandled = Set<Int>()
+
+    /// Report an opcode that fell through a dispatcher's `default` case without
+    /// being handled. Logged once per unique (prefix, opcode) to stderr. This
+    /// surfaces missing instruction implementations (e.g. the AY-select
+    /// `OUT (C),E`/ED 59 that was silently dropped) instead of letting them pass
+    /// unnoticed.
+    final func logUnhandledOpcode(prefix: String, opcode: UInt8) {
+        let key = (prefix.hashValue &* 31) ^ Int(opcode)
+        if reportedUnhandled.insert(key).inserted {
+            let pc16 = String(pc, radix: 16)
+            let op = String(opcode, radix: 16)
+            FileHandle.standardError.write(
+                "Z80: unhandled opcode \(prefix)\(op) at pc=\(pc16)\n".data(using: .utf8)!)
+        }
+    }
     
     final func parseInstructions() {
         guard let path = Bundle.main.path(forResource: "z80ops", ofType: "json"),

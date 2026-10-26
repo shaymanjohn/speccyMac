@@ -184,7 +184,13 @@ final class AYChip {
 
                 for ch in 0..<3 {
                     toneCounter[ch] += step
-                    let period = tonePeriod(ch) * 16
+                    // The tone output line toggles each time the divided counter
+                    // reaches the period, so a full square-wave cycle spans two
+                    // periods. The AY note formula f = clock / (16 * period) is the
+                    // toggle rate, so compare against period * 8 (half of 16) to
+                    // toggle at the correct rate. Using * 16 here produced notes an
+                    // octave too low.
+                    let period = tonePeriod(ch) * 8
                     if toneCounter[ch] >= period {
                         toneCounter[ch] -= period
                         toneState[ch].toggle()

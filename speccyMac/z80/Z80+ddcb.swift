@@ -38,7 +38,7 @@ extension ZilogZ80 {
             memory.indexSet(bitValue, address: offsetAddress)            
             
         default:
-            break
+            logUnhandledOpcode(prefix: "DDCB/FDCB ", opcode: opcode)
         }
 
         pc = pc &+ cbLength[Int(opcode)] + 2
