@@ -55,6 +55,45 @@ extension ZilogZ80 {
         case 0x51: // out (c), d
             machine.contendIO(bc)
             machine.output(bc, byte: regD)
+
+        // in/out for the remaining registers (B, C, H, L). These were missing
+        // and are needed by AY music players that select registers with e.g.
+        // `OUT (C),B` - without them the register-select is silently dropped.
+        case 0x40:  // in b, (c)
+            machine.contendIO(bc)
+            regB = machine.input(regB, low: regC)
+            regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regB]
+
+        case 0x41:  // out (c), b
+            machine.contendIO(bc)
+            machine.output(bc, byte: regB)
+
+        case 0x48:  // in c, (c)
+            machine.contendIO(bc)
+            regC = machine.input(regB, low: regC)
+            regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regC]
+
+        case 0x49:  // out (c), c
+            machine.contendIO(bc)
+            machine.output(bc, byte: regC)
+
+        case 0x60:  // in h, (c)
+            machine.contendIO(bc)
+            regH = machine.input(regB, low: regC)
+            regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regH]
+
+        case 0x61:  // out (c), h
+            machine.contendIO(bc)
+            machine.output(bc, byte: regH)
+
+        case 0x68:  // in l, (c)
+            machine.contendIO(bc)
+            regL = machine.input(regB, low: regC)
+            regF = (regF & ZilogZ80.cBit) | ZilogZ80.sz53pvTable[regL]
+
+        case 0x69:  // out (c), l
+            machine.contendIO(bc)
+            machine.output(bc, byte: regL)
             
         case 0x52:  // sbc hl, de
             sbcHL(de)

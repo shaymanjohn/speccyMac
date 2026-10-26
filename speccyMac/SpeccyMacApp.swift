@@ -131,9 +131,9 @@ struct ContentView: View {
             }
             .onChange(of: model) { _, newModel in
                 // Stop the outgoing machine's emulation thread, then swap in a
-                // fresh machine for the new model. Changing `machine` together
-                // with the .id(model) on EmulatorView makes SwiftUI tear down
-                // and rebuild the NSView, which wires and starts the new core.
+                // fresh machine for the new model. EmulatorView.updateNSView
+                // detects the new machine instance and re-wires the existing
+                // views to it (no view rebuild).
                 machine.processor.stop()
                 switch newModel {
                 case .spectrum48:  machine = Spectrum()
@@ -144,12 +144,19 @@ struct ContentView: View {
                 tapePlaying = false
             }
             .task {
-                // Keep the toolbar's tape state in sync with the deck, which can
-                // stop on its own (on the emulation thread) at the end of a tape.
+                // Keep the toolbar's tape state in sync with the deck. This
+                // covers paths that don't call refreshTapeState() directly -
+                // notably drag-and-drop loading, which goes through the Metal
+                // view's drag delegate - and the deck stopping on its own at
+                // the end of a tape (on the emulation thread).
                 while !Task.isCancelled {
                     let playing = machine.tapePlaying
                     if playing != tapePlaying {
                         tapePlaying = playing
+                    }
+                    let loaded = machine.tapeLoaded
+                    if loaded != tapeLoaded {
+                        tapeLoaded = loaded
                     }
                     try? await Task.sleep(nanoseconds: 300_000_000)  // 0.3s
                 }

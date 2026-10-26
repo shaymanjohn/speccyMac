@@ -278,7 +278,7 @@ class Spectrum: Machine {
     }
 
 // swiftlint:disable cyclomatic_complexity
-    final func input(_ high: UInt8, low: UInt8) -> UInt8 {
+    func input(_ high: UInt8, low: UInt8) -> UInt8 {
         var byte: UInt8 = 0x00
 
         if low == 0xfe {            // keyboard port
@@ -496,12 +496,10 @@ class Spectrum: Machine {
 
             if let pulses = pulses {
                 tapeDeck.load(pulses: pulses)
-                processor.reset()
-                videoRow = 0
-                ula = 0
+                // Reset to the power-on prompt (model-aware: restores 128K
+                // paging/ROM), then the user presses Play and LOAD "".
                 lastTapeCounter = 0
-                processor.counter = 0
-                processor.unpause()
+                resetMachine()
             } else {
                 tapeLoadFailed(gameUrl)
             }

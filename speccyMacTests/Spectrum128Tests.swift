@@ -36,6 +36,31 @@ class Spectrum128Tests: XCTestCase {
         XCTAssertTrue(spectrum.memory.banked, "128K memory should be banked")
     }
 
+    // Regression: the ED-prefixed OUT (c),r opcodes for B/C/H/L were missing,
+    // so AY music players that select a register with e.g. `OUT (C),H` had the
+    // select silently dropped and all data landed in register 14 (total
+    // silence). Verify `OUT (C),H` (ED 61) reaches the AY register-select.
+    func testOutCRSelectsAYRegister() {
+        // Seed register 3 with a known value via the normal path.
+        spectrum.output(0xfffd, byte: 3)
+        spectrum.output(0xbffd, byte: 0xAA)
+
+        // Select register 3 using OUT (C),H: BC = 0xFFFD (AY select port),
+        // H = 3 (the register number). Port and value are independent here.
+        z80.regB = 0xFF
+        z80.regC = 0xFD
+        z80.regH = 3
+        z80.edprefix(opcode: 0x61, first: 0, second: 0)   // OUT (C),H
+
+        // A data write must now land in register 3, overwriting 0xAA.
+        spectrum.output(0xbffd, byte: 0x55)
+
+        // Read register 3 back.
+        spectrum.output(0xfffd, byte: 3)
+        XCTAssertEqual(spectrum.input(0xff, low: 0xfd), 0x55,
+                       "OUT (C),H did not select the AY register (write landed elsewhere)")
+    }
+
     func testBankSelectAt0xC000() {
         let mem = spectrum.memory
 

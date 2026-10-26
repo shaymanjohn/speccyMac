@@ -36,6 +36,13 @@ class AudioStreamer {
 
     var machine: Machine!
 
+    // Optional AY-3-8912 chip (128K). When set, its output is mixed into each
+    // frame alongside the beeper.
+    var ay: AYChip?
+
+    // AY clock is half the CPU clock (3.5469 MHz / 2 ≈ 1.7734 MHz on 128K).
+    private let ayClockRate = 1_773_400.0
+
     init() {
         for i in 0..<kRingBufferSize {
             ringBuffer[i] = 0.0
@@ -136,6 +143,13 @@ class AudioStreamer {
             for i in start..<kSamplesPerFrame {
                 frameBuffer[i] = sample
             }
+        }
+
+        // Mix the AY chip (128K) over the beeper waveform for this frame.
+        if let ay = ay {
+            let ayClocksPerSample = Float(ayClockRate / kSampleRate)
+            ay.render(into: frameBuffer, count: kSamplesPerFrame,
+                      ayClocksPerSample: ayClocksPerSample)
         }
 
         // Push completed frame into the ring buffer (non-blocking)

@@ -47,6 +47,8 @@
 		6FA4F425308F9BBF00A957C9 /* Spectrum128.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F424308F9BBF00A957C9 /* Spectrum128.swift */; };
 		6FA4F427308F9C6B00A957C9 /* Spectrum128Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F426308F9C6B00A957C9 /* Spectrum128Tests.swift */; };
 		6FA4F429308F9D0C00A957C9 /* CPUStateLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F428308F9D0C00A957C9 /* CPUStateLock.swift */; };
+		6FA4F42B308FADA100A957C9 /* AYChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F42A308FADA100A957C9 /* AYChip.swift */; };
+		6FA4F42D308FAE1E00A957C9 /* AYChipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F42C308FAE1E00A957C9 /* AYChipTests.swift */; };
 		6FBB5FFC29A249F100F369A8 /* aquaplane.z80 in Resources */ = {isa = PBXBuildFile; fileRef = 6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */; };
 		6FC90B4F1F5295AA002506DC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC90B4E1F5295AA002506DC /* README.md */; };
 		6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */; };
@@ -126,6 +128,8 @@
 		6FA4F424308F9BBF00A957C9 /* Spectrum128.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spectrum128.swift; sourceTree = "<group>"; };
 		6FA4F426308F9C6B00A957C9 /* Spectrum128Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Spectrum128Tests.swift; sourceTree = "<group>"; };
 		6FA4F428308F9D0C00A957C9 /* CPUStateLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CPUStateLock.swift; sourceTree = "<group>"; };
+		6FA4F42A308FADA100A957C9 /* AYChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AYChip.swift; sourceTree = "<group>"; };
+		6FA4F42C308FAE1E00A957C9 /* AYChipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AYChipTests.swift; sourceTree = "<group>"; };
 		6FB18B4E236493C100E33924 /* Jenkinsfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Jenkinsfile; sourceTree = SOURCE_ROOT; };
 		6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */ = {isa = PBXFileReference; lastKnownFileType = file; path = aquaplane.z80; sourceTree = "<group>"; };
 		6FC1A73B3038D8E400F3C4A8 /* HLSD.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = HLSD.md; sourceTree = "<group>"; };
@@ -219,6 +223,7 @@
 				6FA4F281308F670F00A957C9 /* SZXLoaderTests.swift */,
 				6FA4F426308F9C6B00A957C9 /* Spectrum128Tests.swift */,
 				6FA4F428308F9D0C00A957C9 /* CPUStateLock.swift */,
+				6FA4F42C308FAE1E00A957C9 /* AYChipTests.swift */,
 			);
 			path = speccyMacTests;
 			sourceTree = "<group>";
@@ -303,6 +308,7 @@
 				6F51A16C308E1BC300E95204 /* TapeDeck.swift */,
 				6F51A17D308E58B100E95204 /* OnlineBrowser-DESIGN.md */,
 				6FA4F424308F9BBF00A957C9 /* Spectrum128.swift */,
+				6FA4F42A308FADA100A957C9 /* AYChip.swift */,
 			);
 			path = speccyMac;
 			sourceTree = "<group>";
@@ -475,6 +481,7 @@
 			files = (
 				6FA4F282308F670F00A957C9 /* SZXLoaderTests.swift in Sources */,
 				6FA4F427308F9C6B00A957C9 /* Spectrum128Tests.swift in Sources */,
+				6FA4F42D308FAE1E00A957C9 /* AYChipTests.swift in Sources */,
 				6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */,
 				6FE5147C1F3732A3004F0751 /* RegisterPairTests.swift in Sources */,
 				6FFE6FC21F376BEF00EBCC3B /* MemoryTests.swift in Sources */,
@@ -498,6 +505,7 @@
 				6FEFA90F1F2238C200F9AD93 /* ZilogZ80.swift in Sources */,
 				6F51A16D308E1BC300E95204 /* TapeDeck.swift in Sources */,
 				6FEFA92C1F22503000F9AD93 /* Z80+unprefixed.swift in Sources */,
+				6FA4F42B308FADA100A957C9 /* AYChip.swift in Sources */,
 				6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */,
 				6FEFA9261F224F9000F9AD93 /* Z80+cb.swift in Sources */,
 				6FEFA9281F224FC000F9AD93 /* Z80+dd.swift in Sources */,

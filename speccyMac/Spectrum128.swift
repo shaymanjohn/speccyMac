@@ -28,6 +28,9 @@ final class Spectrum128: Spectrum {
     // 128K runs a longer frame than the 48K machine.
     private let ticks128: UInt32 = 70908
 
+    // AY-3-8912 sound chip.
+    private let ay = AYChip()
+
     override init() {
         super.init()
 
@@ -40,16 +43,20 @@ final class Spectrum128: Spectrum {
         ticksPerFrame = ticks128
         rebuildContentionTable()
 
+        // Wire the AY chip into the audio path.
+        beeper.ay = ay
+
         // Power-on paging: ROM 0, RAM bank 0 at 0xC000, normal screen.
         applyPaging(0x00)
     }
 
     /// Reset to power-on: unlock and restore default paging, wipe all RAM
-    /// banks, then do the standard CPU/video reset so the 128K ROM reboots.
+    /// banks, reset the AY chip, then do the standard CPU/video reset.
     override func resetMachine() {
         pagingLocked = false
         applyPaging(0x00)
         memory.clearAllBanks()
+        ay.reset()
         super.resetMachine()
     }
 
@@ -74,20 +81,28 @@ final class Spectrum128: Spectrum {
 
     // MARK: - I/O
 
-    override func output(_ port: UInt16, byte: UInt8) {
-        // 0x7FFD memory paging port: decoded when A1 and A15 are both 0.
+    override func input(_ high: UInt8, low: UInt8) -> UInt8 {
+        // Reading port 0xFFFD returns the currently selected AY register.
+        let port = (UInt16(high) << 8) | UInt16(low)
+        if (port & 0xC002) == 0xC000 {
+            return ay.readData()
+        }
+        return super.input(high, low: low)
+    }
+
+    override func output(_ port: UInt16, byte: UInt8) {        // 0x7FFD memory paging port: decoded when A1 and A15 are both 0.
         if (port & 0x8002) == 0 {
             applyPaging(byte)
             return
         }
 
-        // AY-3-8912 sound (0xFFFD register select, 0xBFFD data write) - stubbed.
+        // AY-3-8912 sound: 0xFFFD selects a register, 0xBFFD writes data.
         if (port & 0xC002) == 0xC000 {
-            // register select - ignored for now
+            ay.selectRegister(byte)
             return
         }
         if (port & 0xC002) == 0x8000 {
-            // data write - ignored for now
+            ay.writeData(byte)
             return
         }
 
