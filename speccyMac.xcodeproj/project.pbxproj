@@ -15,6 +15,7 @@
 		6F2063AC28B127C9007A69FF /* GameLoaderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2063AB28B127C9007A69FF /* GameLoaderProtocol.swift */; };
 		6F2063AE28B12878007A69FF /* SNALoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2063AD28B12878007A69FF /* SNALoader.swift */; };
 		6F2063B028B1289E007A69FF /* Z80Loader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F2063AF28B1289E007A69FF /* Z80Loader.swift */; };
+		6F285D7B308FF2FB001D8CA3 /* BlockCompareTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F285D7A308FF2FB001D8CA3 /* BlockCompareTests.swift */; };
 		6F28AA271F53F31A00FCAA58 /* manic.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F28AA261F53F31A00FCAA58 /* manic.sna */; };
 		6F33B92A1F38F56000B886CD /* brucelee.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9221F38F55200B886CD /* brucelee.sna */; };
 		6F33B92B1F38F56300B886CD /* deathchase.sna in Resources */ = {isa = PBXBuildFile; fileRef = 6F33B9261F38F55200B886CD /* deathchase.sna */; };
@@ -97,6 +98,7 @@
 		6F2063AB28B127C9007A69FF /* GameLoaderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameLoaderProtocol.swift; sourceTree = "<group>"; };
 		6F2063AD28B12878007A69FF /* SNALoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SNALoader.swift; sourceTree = "<group>"; };
 		6F2063AF28B1289E007A69FF /* Z80Loader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z80Loader.swift; sourceTree = "<group>"; };
+		6F285D7A308FF2FB001D8CA3 /* BlockCompareTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockCompareTests.swift; sourceTree = "<group>"; };
 		6F28AA261F53F31A00FCAA58 /* manic.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = manic.sna; sourceTree = "<group>"; };
 		6F33B9221F38F55200B886CD /* brucelee.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = brucelee.sna; sourceTree = "<group>"; };
 		6F33B9231F38F55200B886CD /* monty.sna */ = {isa = PBXFileReference; lastKnownFileType = file; path = monty.sna; sourceTree = "<group>"; };
@@ -226,6 +228,7 @@
 				6FA4F426308F9C6B00A957C9 /* Spectrum128Tests.swift */,
 				6FA4F428308F9D0C00A957C9 /* CPUStateLock.swift */,
 				6FA4F42C308FAE1E00A957C9 /* AYChipTests.swift */,
+				6F285D7A308FF2FB001D8CA3 /* BlockCompareTests.swift */,
 			);
 			path = speccyMacTests;
 			sourceTree = "<group>";
@@ -344,7 +347,6 @@
 				6FFB314C1F22379B00C15CD7 /* Sources */,
 				6FFB314D1F22379B00C15CD7 /* Frameworks */,
 				6FFB314E1F22379B00C15CD7 /* Resources */,
-				6FA6CAD625B2CCFF0077BDFF /* Swiftlint */,
 			);
 			buildRules = (
 			);
@@ -364,8 +366,9 @@
 		6FFB31481F22379B00C15CD7 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0900;
-				LastUpgradeCheck = 1340;
+				LastUpgradeCheck = 2710;
 				ORGANIZATIONNAME = "John Ward";
 				TargetAttributes = {
 					6FE5146E1F372CF1004F0751 = {
@@ -456,28 +459,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		6FA6CAD625B2CCFF0077BDFF /* Swiftlint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = Swiftlint;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if test -d \"/opt/homebrew/bin/\"; then\n  PATH=\"/opt/homebrew/bin/:${PATH}\"\nfi\n\nexport PATH\n\nif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		6FE5146B1F372CF1004F0751 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -490,6 +471,7 @@
 				6FE5147C1F3732A3004F0751 /* RegisterPairTests.swift in Sources */,
 				6FFE6FC21F376BEF00EBCC3B /* MemoryTests.swift in Sources */,
 				6FE5147A1F372D96004F0751 /* RegisterTests.swift in Sources */,
+				6F285D7B308FF2FB001D8CA3 /* BlockCompareTests.swift in Sources */,
 				6FA4F27E308F64CA00A957C9 /* Z80LoaderTests.swift in Sources */,
 				6FA4F429308F9D0C00A957C9 /* CPUStateLock.swift in Sources */,
 			);
@@ -546,6 +528,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = speccyMacTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -566,6 +549,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = speccyMacTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -614,9 +598,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -635,6 +621,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG TEST";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -652,6 +639,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 20190929;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = speccyMac/Info.plist;
@@ -676,6 +664,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = speccyMacTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -724,9 +713,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -745,6 +736,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -787,9 +779,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -801,6 +795,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.14;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_PRECOMPILE_BRIDGING_HEADER = NO;
@@ -817,6 +813,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 20190929;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = B227458282;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -846,6 +843,7 @@
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 20190929;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = B7LWR6U3HW;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = B227458282;
 				ENABLE_HARDENED_RUNTIME = YES;

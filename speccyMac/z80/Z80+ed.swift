@@ -218,25 +218,17 @@ extension ZilogZ80 {
             de = de &+ 1
             hl = hl &+ 1
             
-        case 0xb1:  // cpir
-            let val = memory.get(hl)
-            var temp = regA &- val
-            let lookup = ((regA & 0x08) >> 3) | ((val & 0x08) >> 2) | ((temp & 0x08) >> 1)
+        case 0xa1:  // cpi
+            cpBlock(increment: true, repeating: false)
 
-            bc = bc &- 1
-            regF = (regF & ZilogZ80.cBit) | (bc > 0 ? (ZilogZ80.pvBit | ZilogZ80.nBit) : ZilogZ80.nBit) | ZilogZ80.halfCarrySub[lookup] | (temp > 0 ? 0 : ZilogZ80.zBit) | (temp & ZilogZ80.sBit)
-            
-            if regF & ZilogZ80.hBit > 0 {
-                temp = temp &- 1
-            }
-            
-            regF |= (temp & ZilogZ80.threeBit) | ((temp & 0x02) > 0 ? ZilogZ80.fiveBit : 0)
-            
-            if (regF & (ZilogZ80.pvBit | ZilogZ80.zBit)) == ZilogZ80.pvBit {
-                pc = pc &- 2
-                incCounters(5)
-            }
-            hl = hl &+ 1
+        case 0xa9:  // cpd
+            cpBlock(increment: false, repeating: false)
+
+        case 0xb1:  // cpir
+            cpBlock(increment: true, repeating: true)
+
+        case 0xb9:  // cpdr
+            cpBlock(increment: false, repeating: true)
             
         case 0xb8:  // lddr
             var val = memory.get(hl)
@@ -263,5 +255,32 @@ extension ZilogZ80 {
         
         incR()
         incR()
+    }
+
+    /// Shared implementation of the block-compare instructions CPI/CPD (single
+    /// step) and CPIR/CPDR (repeating). Compares A with (HL), then moves HL by
+    /// one in the given direction and decrements BC. Flags match the existing
+    /// CPIR/CPDR handling. When `repeating` and neither BC==0 nor a match, the
+    /// instruction re-executes (PC backed up by 2) with the extra 5 T-states.
+    private func cpBlock(increment: Bool, repeating: Bool) {
+        let val = memory.get(hl)
+        var temp = regA &- val
+        let lookup = ((regA & 0x08) >> 3) | ((val & 0x08) >> 2) | ((temp & 0x08) >> 1)
+
+        bc = bc &- 1
+        regF = (regF & ZilogZ80.cBit) | (bc > 0 ? (ZilogZ80.pvBit | ZilogZ80.nBit) : ZilogZ80.nBit) | ZilogZ80.halfCarrySub[lookup] | (temp > 0 ? 0 : ZilogZ80.zBit) | (temp & ZilogZ80.sBit)
+
+        if regF & ZilogZ80.hBit > 0 {
+            temp = temp &- 1
+        }
+
+        regF |= (temp & ZilogZ80.threeBit) | ((temp & 0x02) > 0 ? ZilogZ80.fiveBit : 0)
+
+        if repeating && (regF & (ZilogZ80.pvBit | ZilogZ80.zBit)) == ZilogZ80.pvBit {
+            pc = pc &- 2
+            incCounters(5)
+        }
+
+        hl = increment ? (hl &+ 1) : (hl &- 1)
     }
 }
