@@ -31,6 +31,16 @@ struct V1Header {
     var flags2: UInt8 = 0
 }
 
+// Extended header that follows the 30-byte v1 header in v2/v3 files.
+// The length word at offset 30 distinguishes the versions:
+//   23      -> version 2
+//   54 / 55 -> version 3
+struct ExtendedHeader {
+    var length: UInt16 = 0      // additional header length (not counting these 2 bytes)
+    var pc: UInt16 = 0          // real PC lives here in v2/v3
+    var hardwareMode: UInt8 = 0 // machine type
+}
+
 class Z80Loader: GameLoaderProtocol {
     
     let z80: ZilogZ80
@@ -75,6 +85,9 @@ class Z80Loader: GameLoaderProtocol {
         if v1.flags1 == 255 { v1.flags1 = 1 }
         v1.r = (v1.r & 0x7f) | (v1.flags1 << 7)
 
+        // Registers common to all versions come from the v1 header.
+        loadCommonRegisters(v1)
+
         if (v1.pc != 0) {
             print(".z80 version 1 file")
 
@@ -86,36 +99,6 @@ class Z80Loader: GameLoaderProtocol {
 
             let isCompressed = v1.flags1 & (1 << 5) != 0
             print("  \(!isCompressed ? "un" : "")compressed data")
-
-            // prepare CPU and hardware
-
-            z80.i = v1.i
-
-            z80.exhl = v1.exhl
-            z80.exde = v1.exde
-            z80.exbc = v1.exbc
-            z80.exaf = (UInt16(v1.exa) << 8) + UInt16(v1.exf)
-
-            z80.hl = v1.hl
-            z80.de = v1.de
-            z80.bc = v1.bc
-            z80.iy = v1.iy
-            z80.ix = v1.ix
-
-            if v1.iff != 0 {
-                z80.interrupts = true
-                z80.iff1 = 1
-                z80.iff2 = 1
-            } else {
-                z80.interrupts = false
-                z80.iff1 = 0
-                z80.iff2 = 0
-            }
-
-            z80.regR = v1.r
-
-            z80.af = (UInt16(v1.a) << 8) + UInt16(v1.f)
-            ZilogZ80.sp = v1.sp
 
             z80.interruptMode = v1.flags2 & 0x03
             z80.machine.output(0xfe, byte: (v1.flags1 >> 1) & 0x07)
@@ -169,9 +152,168 @@ class Z80Loader: GameLoaderProtocol {
 
             return true
         } else {
-            print(".z80 version 2 or 3 file")
+            return loadV2V3(data: data, v1: v1)
+        }
+    }
 
+    // MARK: - Version 2 / 3
+
+    private func loadV2V3(data: Data, v1: V1Header) -> Bool {
+        let v1HeaderLen = 30
+
+        // We need at least the 2-byte extended-header length word.
+        if data.count < v1HeaderLen + 2 {
+            print(".z80 v2/v3 file too short")
             return false
         }
+
+        var ext = ExtendedHeader()
+        ext.length = UInt16(data[v1HeaderLen]) + (UInt16(data[v1HeaderLen + 1]) << 8)
+
+        switch ext.length {
+        case 23:
+            print(".z80 version 2 file")
+        case 54, 55:
+            print(".z80 version 3 file")
+        default:
+            print(".z80 unknown extended header length \(ext.length)")
+            return false
+        }
+
+        // Extended header body starts right after the length word.
+        let extStart = v1HeaderLen + 2
+        let extEnd = extStart + Int(ext.length)
+        if data.count < extEnd {
+            print(".z80 extended header truncated")
+            return false
+        }
+
+        ext.pc = UInt16(data[extStart]) + (UInt16(data[extStart + 1]) << 8)
+        ext.hardwareMode = data[extStart + 2]
+
+        // Only 48K machines are emulated. Reject obvious 128K images so we
+        // don't silently load something that won't run correctly.
+        //   v2: modes 3+ are 128K;  v3: modes 4+ are 128K.
+        let is128K: Bool
+        if ext.length == 23 {
+            is128K = ext.hardwareMode >= 3
+        } else {
+            is128K = ext.hardwareMode >= 4
+        }
+        if is128K {
+            print(".z80 128K images are not supported")
+            return false
+        }
+
+        z80.interruptMode = v1.flags2 & 0x03
+        z80.machine.output(0xfe, byte: (v1.flags1 >> 1) & 0x07)
+
+        // Memory page blocks follow the extended header.
+        var offset = extEnd
+
+        while offset + 3 <= data.count {
+            let blockLen = Int(data[offset]) + (Int(data[offset + 1]) << 8)
+            let pageNumber = data[offset + 2]
+            offset += 3
+
+            // A length of 0xFFFF means 16384 uncompressed bytes (no RLE).
+            let uncompressed = blockLen == 0xFFFF
+
+            // Map the Spectrum page number onto a 48K address. Pages other
+            // than these belong to ROM or to 128K banks we don't model.
+            let pageBase: UInt16?
+            switch pageNumber {
+            case 4:  pageBase = 0x8000
+            case 5:  pageBase = 0x4000
+            case 8:  pageBase = 0xC000
+            default: pageBase = nil
+            }
+
+            let byteCount = uncompressed ? 0x4000 : blockLen
+            if offset + byteCount > data.count {
+                print(".z80 page block truncated")
+                return false
+            }
+
+            if let base = pageBase {
+                if uncompressed {
+                    for jx in 0..<0x4000 {
+                        z80.memory.set(base + UInt16(jx), byte: data[offset + jx])
+                    }
+                } else {
+                    decompressPage(data: data, from: offset, length: blockLen, base: base)
+                }
+            }
+
+            offset += byteCount
+        }
+
+        z80.pc = ext.pc
+
+        return true
+    }
+
+    // Decompress a single 16K page block (RLE, no end marker) into RAM
+    // starting at `base`. Writes are clamped to the 16K page.
+    private func decompressPage(data: Data, from: Int, length: Int, base: UInt16) {
+        var src = from
+        let end = from + length
+        var to = 0
+
+        while src < end && to < 0x4000 {
+            let left = end - src
+            let byte = data[src]
+
+            if byte == 0xed && left >= 4 && data[src + 1] == 0xed {
+                let runLength = Int(data[src + 2])
+                let value = data[src + 3]
+
+                for _ in 0..<runLength {
+                    if to >= 0x4000 { break }
+                    z80.memory.set(base + UInt16(to), byte: value)
+                    to += 1
+                }
+                src += 4
+            } else {
+                z80.memory.set(base + UInt16(to), byte: byte)
+                src += 1
+                to += 1
+            }
+        }
+    }
+
+    // MARK: - Shared register setup
+
+    // Load the CPU registers that are identical across all .z80 versions
+    // (everything in the 30-byte v1 header except PC, interrupt mode and
+    // the border colour, which differ or are handled per-version).
+    private func loadCommonRegisters(_ v1: V1Header) {
+        z80.i = v1.i
+
+        z80.exhl = v1.exhl
+        z80.exde = v1.exde
+        z80.exbc = v1.exbc
+        z80.exaf = (UInt16(v1.exa) << 8) + UInt16(v1.exf)
+
+        z80.hl = v1.hl
+        z80.de = v1.de
+        z80.bc = v1.bc
+        z80.iy = v1.iy
+        z80.ix = v1.ix
+
+        if v1.iff != 0 {
+            z80.interrupts = true
+            z80.iff1 = 1
+            z80.iff2 = 1
+        } else {
+            z80.interrupts = false
+            z80.iff1 = 0
+            z80.iff2 = 0
+        }
+
+        z80.regR = v1.r
+
+        z80.af = (UInt16(v1.a) << 8) + UInt16(v1.f)
+        ZilogZ80.sp = v1.sp
     }
 }

@@ -11,6 +11,7 @@ import Foundation
 enum SupportedGameTypes: String, CaseIterable {
     case SNA = "sna"
     case Z80 = "z80"
+    case SZX = "szx"
     case TAP = "tap"
     case TZX = "tzx"
     
@@ -22,6 +23,8 @@ enum SupportedGameTypes: String, CaseIterable {
             return SNALoader.self
         case .Z80:
             return Z80Loader.self
+        case .SZX:
+            return SZXLoader.self
         case .TAP, .TZX:
             return nil
         }

@@ -39,6 +39,9 @@
 		6FA10DA1308E0A7600F0B47F /* EmulatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA10DA0308E0A7600F0B47F /* EmulatorView.swift */; };
 		6FA10DA3308E0A9000F0B47F /* SpeccyMacApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA10DA2308E0A9000F0B47F /* SpeccyMacApp.swift */; };
 		6FA3852E1F39BCEF006CC865 /* EmulatorInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */; };
+		6FA4F27E308F64CA00A957C9 /* Z80LoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F27D308F64CA00A957C9 /* Z80LoaderTests.swift */; };
+		6FA4F280308F66E200A957C9 /* SZXLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F27F308F66E200A957C9 /* SZXLoader.swift */; };
+		6FA4F282308F670F00A957C9 /* SZXLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FA4F281308F670F00A957C9 /* SZXLoaderTests.swift */; };
 		6FBB5FFC29A249F100F369A8 /* aquaplane.z80 in Resources */ = {isa = PBXBuildFile; fileRef = 6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */; };
 		6FC90B4F1F5295AA002506DC /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC90B4E1F5295AA002506DC /* README.md */; };
 		6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */; };
@@ -110,6 +113,9 @@
 		6FA10DA0308E0A7600F0B47F /* EmulatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorView.swift; sourceTree = "<group>"; };
 		6FA10DA2308E0A9000F0B47F /* SpeccyMacApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeccyMacApp.swift; sourceTree = "<group>"; };
 		6FA3852D1F39BCEF006CC865 /* EmulatorInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmulatorInputView.swift; sourceTree = "<group>"; };
+		6FA4F27D308F64CA00A957C9 /* Z80LoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Z80LoaderTests.swift; sourceTree = "<group>"; };
+		6FA4F27F308F66E200A957C9 /* SZXLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SZXLoader.swift; sourceTree = "<group>"; };
+		6FA4F281308F670F00A957C9 /* SZXLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SZXLoaderTests.swift; sourceTree = "<group>"; };
 		6FB18B4E236493C100E33924 /* Jenkinsfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Jenkinsfile; sourceTree = SOURCE_ROOT; };
 		6FBB5FFB29A249F100F369A8 /* aquaplane.z80 */ = {isa = PBXFileReference; lastKnownFileType = file; path = aquaplane.z80; sourceTree = "<group>"; };
 		6FC1A73B3038D8E400F3C4A8 /* HLSD.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = HLSD.md; sourceTree = "<group>"; };
@@ -173,6 +179,7 @@
 				6F51A16E308E1C0200E95204 /* TapLoader.swift */,
 				6F51A170308E217600E95204 /* TzxLoader.swift */,
 				6F51A175308E508100E95204 /* ZipLoader.swift */,
+				6FA4F27F308F66E200A957C9 /* SZXLoader.swift */,
 			);
 			path = Loaders;
 			sourceTree = "<group>";
@@ -198,6 +205,8 @@
 				6FE514791F372D96004F0751 /* RegisterTests.swift */,
 				6FE5147B1F3732A3004F0751 /* RegisterPairTests.swift */,
 				6FCA5BA61F38B38200A22E92 /* AccumulatorTests.swift */,
+				6FA4F27D308F64CA00A957C9 /* Z80LoaderTests.swift */,
+				6FA4F281308F670F00A957C9 /* SZXLoaderTests.swift */,
 			);
 			path = speccyMacTests;
 			sourceTree = "<group>";
@@ -447,10 +456,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6FA4F282308F670F00A957C9 /* SZXLoaderTests.swift in Sources */,
 				6FCA5BA71F38B38200A22E92 /* AccumulatorTests.swift in Sources */,
 				6FE5147C1F3732A3004F0751 /* RegisterPairTests.swift in Sources */,
 				6FFE6FC21F376BEF00EBCC3B /* MemoryTests.swift in Sources */,
 				6FE5147A1F372D96004F0751 /* RegisterTests.swift in Sources */,
+				6FA4F27E308F64CA00A957C9 /* Z80LoaderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -474,6 +485,7 @@
 				6FEFA92A1F224FF500F9AD93 /* Z80+ed.swift in Sources */,
 				6FEFA9221F223FCE00F9AD93 /* Loader.swift in Sources */,
 				6FA10D9F308DEDB600F0B47F /* MetalScreenView.swift in Sources */,
+				6FA4F280308F66E200A957C9 /* SZXLoader.swift in Sources */,
 				6F036DBF1F44C68D005A16D0 /* Spectrum.swift in Sources */,
 				6FEFA92E1F2250B200F9AD93 /* Z80+ddcb.swift in Sources */,
 				6FA10DA3308E0A9000F0B47F /* SpeccyMacApp.swift in Sources */,
