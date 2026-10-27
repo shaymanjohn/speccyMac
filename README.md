@@ -6,7 +6,7 @@ Please see issues to check known problems. Please raise more if yours isn't ther
 
 Collaborators welcomed.
 
-![ScreenShot](https://user-images.githubusercontent.com/622889/29965616-351e1960-8f06-11e7-81e5-813cc66977b0.png)
+<img width="1092" height="1046" alt="Screenshot 2026-10-27 at 06 37 09" src="https://github.com/user-attachments/assets/3bc56b36-2c5b-4410-80fe-123f177c1137" />
 
 ## Notes
 
