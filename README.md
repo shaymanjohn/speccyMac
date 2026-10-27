@@ -19,11 +19,11 @@ Collaborators welcomed.
 ## Done
 
 * Contended memory
-- 128K support with AY
+* 128K support with AY
 * Zip support
 * Z80 file support (thanks to hippietrail)
 * TAP and TZX tape loading (with fast load)
-- SZX support
+* SZX support
 * Metal rendering with display modes (crisp / smooth / scanlines / CRT)
 
 ## Acknowledgements
