@@ -245,6 +245,30 @@ extension ZilogZ80 {
             
             hl = hl &- 1
             de = de &- 1
+
+        case 0xa2:  // ini
+            inBlock(increment: true, repeating: false)
+
+        case 0xaa:  // ind
+            inBlock(increment: false, repeating: false)
+
+        case 0xb2:  // inir
+            inBlock(increment: true, repeating: true)
+
+        case 0xba:  // indr
+            inBlock(increment: false, repeating: true)
+
+        case 0xa3:  // outi
+            outBlock(increment: true, repeating: false)
+
+        case 0xab:  // outd
+            outBlock(increment: false, repeating: false)
+
+        case 0xb3:  // otir
+            outBlock(increment: true, repeating: true)
+
+        case 0xbb:  // otdr
+            outBlock(increment: false, repeating: true)
             
         default:
             logUnhandledOpcode(prefix: "ED ", opcode: opcode)
@@ -255,6 +279,65 @@ extension ZilogZ80 {
         
         incR()
         incR()
+    }
+
+    /// Shared implementation of the block-input instructions INI/IND (single
+    /// step) and INIR/INDR (repeating). Reads a byte from port (C), stores it at
+    /// (HL), decrements B, then moves HL in the given direction. Flag behaviour
+    /// follows the documented Z80 model (see Fuse / "The Undocumented Z80").
+    private func inBlock(increment: Bool, repeating: Bool) {
+        machine.contendIO(bc)
+        let value = machine.input(regB, low: regC)
+        memory.set(hl, byte: value)
+
+        regB = regB &- 1
+        hl = increment ? (hl &+ 1) : (hl &- 1)
+
+        // For IN block ops the carry/half-carry term uses (C +/- 1).
+        let cAdjust = increment ? (regC &+ 1) : (regC &- 1)
+        let k = UInt16(value) &+ UInt16(cAdjust)
+
+        var flags = ZilogZ80.sz53Table[regB]                 // S, Z, 5, 3 from B
+        if value & 0x80 != 0 { flags |= ZilogZ80.nBit }       // N = bit 7 of the data
+        if k > 0xff { flags |= ZilogZ80.hBit | ZilogZ80.cBit }
+        flags |= ZilogZ80.parityBit[Int((UInt8(k & 0x07)) ^ regB)]
+        regF = flags
+
+        // INIR/INDR repeat while B != 0. The edTstates base for these opcodes is
+        // already the repeating cost (21), so re-execute by backing PC up without
+        // adding the extra 5 T-states that the LDIR-family (base 16) needs.
+        if repeating && regB != 0 {
+            pc = pc &- 2
+        }
+    }
+
+    /// Shared implementation of the block-output instructions OUTI/OUTD (single
+    /// step) and OTIR/OTDR (repeating). Reads (HL), decrements B, outputs the
+    /// byte to port (C), then moves HL in the given direction. Flag behaviour
+    /// follows the documented Z80 model (see Fuse / "The Undocumented Z80").
+    private func outBlock(increment: Bool, repeating: Bool) {
+        let value = memory.get(hl)
+        regB = regB &- 1
+        machine.contendIO(bc)
+        machine.output(bc, byte: value)
+
+        hl = increment ? (hl &+ 1) : (hl &- 1)
+
+        // For OUT block ops the carry/half-carry term uses L (after HL moved).
+        let k = UInt16(value) &+ UInt16(regL)
+
+        var flags = ZilogZ80.sz53Table[regB]                 // S, Z, 5, 3 from B
+        if value & 0x80 != 0 { flags |= ZilogZ80.nBit }       // N = bit 7 of the data
+        if k > 0xff { flags |= ZilogZ80.hBit | ZilogZ80.cBit }
+        flags |= ZilogZ80.parityBit[Int((UInt8(k & 0x07)) ^ regB)]
+        regF = flags
+
+        // OTIR/OTDR repeat while B != 0. The edTstates base for these opcodes is
+        // already the repeating cost (21), so re-execute by backing PC up without
+        // adding the extra 5 T-states that the LDIR-family (base 16) needs.
+        if repeating && regB != 0 {
+            pc = pc &- 2
+        }
     }
 
     /// Shared implementation of the block-compare instructions CPI/CPD (single

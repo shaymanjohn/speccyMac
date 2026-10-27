@@ -54,6 +54,9 @@ extension ZilogZ80 {
         case 0x2b:  // dec ixy
             ixy = ixy &- 1
             
+        case 0x2c:  // inc ixl
+            ixyl = regInc(ixyl)
+            
         case 0x2d:  // dec ixl
             ixyl = regDec(ixyl)
             
@@ -187,7 +190,15 @@ extension ZilogZ80 {
             sp = ixy
             
         default:
-            logUnhandledOpcode(prefix: "DD/FD ", opcode: opcode)
+            // A DD/FD prefix in front of an opcode that does not reference HL/(HL)
+            // is ineffective on real hardware: the prefix behaves like a NOP (4 T-states,
+            // one R increment) and the opcode then executes in its normal, unprefixed form.
+            // Consume only the prefix byte here and let the main fetch loop re-read and
+            // execute the opcode unprefixed, so it gets the correct length and T-states.
+            pc = pc &+ 1
+            incCounters(4)
+            incR()
+            return
         }        
         
         pc = pc &+ ddLength[Int(opcode)]        
